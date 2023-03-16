@@ -1,0 +1,9 @@
+FROM node:18
+
+WORKDIR /food-service/
+COPY ./package.json /food-service/
+COPY ./yarn.lock /food-service/
+RUN yarn install
+
+COPY . /food-service/
+CMD yarn start:dev

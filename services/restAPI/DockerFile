@@ -1,0 +1,9 @@
+FROM node:18
+
+WORKDIR /road-service/
+COPY ./package.json /road-service/
+COPY ./yarn.lock /road-service/
+RUN yarn install
+
+COPY . /road-service/
+CMD yarn start:dev
