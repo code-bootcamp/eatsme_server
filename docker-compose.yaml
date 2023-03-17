@@ -34,7 +34,13 @@ services:
     ports:
       - 3306:3306
 
-  eatsme-mongodb:
-    image: mongo:5
-    ports:
-      - 27017:27017
+    eatsme-mongodb:
+        image: mongo:5
+        ports:
+            - 27017:27017
+
+    eatme-redis:
+        image: redis:latest
+        ports:
+            - 6379:6379
+
