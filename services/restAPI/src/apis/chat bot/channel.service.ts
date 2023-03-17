@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Configuration, OpenAIApi } from 'openai';
-// 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
 interface IChannelServiceQuestion {
   question: string;
 }
@@ -10,7 +9,7 @@ export class ChannelService {
   async questionGpt({ question }: IChannelServiceQuestion): Promise<string> {
     console.log(Object.values(question));
     const configuration = new Configuration({
-      apiKey: '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',
+      apiKey: process.env.CHAT_GPT_API_KEY,
     });
     const openai = new OpenAIApi(configuration);
 
