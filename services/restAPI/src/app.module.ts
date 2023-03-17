@@ -5,9 +5,12 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
+import { RestaurantModule } from './apis/restaurant/restaurant.module';
+
 
 @Module({
   imports: [
+    RestaurantModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MY_MONGODB), //
     CacheModule.register<RedisClientOptions>({

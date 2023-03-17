@@ -63,5 +63,4 @@ type Alarm {
 
 type Query {
   getHello: String!
-  findOneUser(userid: Float!): User!
 }
