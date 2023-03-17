@@ -38,3 +38,8 @@ services:
         image: mongo:5
         ports:
             - 27017:27017
+
+    eatme-redis:
+        image: redis:latest
+        ports:
+            - 6379:6379
