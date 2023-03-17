@@ -7,7 +7,6 @@ import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
 import { RestaurantModule } from './apis/restaurant/restaurant.module';
 
-
 @Module({
   imports: [
     RestaurantModule,
