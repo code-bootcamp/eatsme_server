@@ -24,17 +24,11 @@ type User {
   alarms: [Alarm!]!
 }
 
-type Board {
+type Alarm {
   id: String!
-  title: String!
-  createdAt: DateTime!
-  boardImg: String!
-  startPoint: String!
-  endPoint: String!
-  customName: String!
-  like: Int!
+  isAlarm: Boolean!
   users: User!
-  comments: [Comment!]!
+  comments: Comment!
 }
 
 type Reply {
@@ -51,11 +45,17 @@ type Comment {
   alarms: [Alarm!]!
 }
 
-type Alarm {
+type Board {
   id: String!
-  isAlarm: Boolean!
+  title: String!
+  createdAt: DateTime!
+  boardImg: String!
+  startPoint: String!
+  endPoint: String!
+  customName: String!
+  like: Int!
   users: User!
-  comments: Comment!
+  comments: [Comment!]!
 }
 
 type Query {
