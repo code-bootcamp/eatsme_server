@@ -2,28 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Reservation {
-  id: String!
-  table: Int!
-  time: DateTime!
-  users: User!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type User {
-  id: Int!
-  email: String!
-  nickname: String!
-  userImg: String!
-  reservations: [Reservation!]!
-  boards: [Board!]!
-  alarms: [Alarm!]!
-}
-
 type Board {
   id: String!
   title: String!
@@ -36,6 +14,11 @@ type Board {
   users: User!
   comments: [Comment!]!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Reply {
   id: String!
@@ -56,11 +39,36 @@ type Alarm {
   isAlarm: Boolean!
   users: User!
   comments: Comment!
-  password: String!
-  adress: String!
-  phon: String!
+}
+
+type Reservation {
+  id: String!
+  table: Int!
+  time: DateTime!
+  users: User!
+}
+
+type User {
+  id: String!
+  email: String!
+  nickname: String!
+  userImg: String!
+  reservations: [Reservation!]!
+  boards: [Board!]!
+  alarms: [Alarm!]!
 }
 
 type Query {
   getHello: String!
+}
+
+type Mutation {
+  checkEmail(email: String!): String!
+  createUser(createUserInput: CreateUserInput!): User!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  nickname: String!
 }
