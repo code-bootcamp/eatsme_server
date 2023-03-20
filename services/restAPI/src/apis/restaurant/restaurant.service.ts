@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import {
   IRestaurantServiceGetDetails,
   IRestaurantServiceGetDetailsReturn,
-  IRestaurantServicePostRestaurant,
+  IRestaurantServicePostAndGetRestaurant,
   IRestaurantServiceSaveNextPage,
 } from './interfaces/restaurantService.interface';
 import { Restaurant, RestaurantDocument } from './schemas/restaurant.schemas';
@@ -18,7 +18,7 @@ export class RestaurantService {
   ) {}
   async postRestaurant({
     section,
-  }: IRestaurantServicePostRestaurant): Promise<void> {
+  }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const config = {
       method: 'get',
@@ -116,5 +116,13 @@ export class RestaurantService {
     return result
       ? 'Restaurants(document)의 모든collection을 삭제했습니다. '
       : '실패';
+  }
+
+  getRestaurant(
+    section: IRestaurantServicePostAndGetRestaurant,
+  ): Promise<Restaurant[]> {
+    return this.RestaurantModel.find({
+      section: section.section,
+    });
   }
 }

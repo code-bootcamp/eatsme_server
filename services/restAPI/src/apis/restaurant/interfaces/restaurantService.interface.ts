@@ -1,4 +1,4 @@
-export interface IRestaurantServicePostRestaurant {
+export interface IRestaurantServicePostAndGetRestaurant {
   section: string;
 }
 export interface IRestaurantServiceGetDetails {
