@@ -5,7 +5,8 @@ export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema()
 export class Restaurant {
-  @Prop({ type: String, required: false })
+  //section정보가 없을 경우 db에 저장하지 못하게 만들었다.
+  @Prop({ type: String, required: true })
   section: string;
 
   @Prop({ type: String })

@@ -29,14 +29,13 @@ export class RestaurantService {
     //현재페이지의 정보를 DB에 반복적으로 저장한다.
 
     const restaurantsInfos = result.data.results;
-    // console.log(restaurantsInfos);
-    await this.saveRepeat(restaurantsInfos);
+    await this.saveRepeat({ restaurantsInfos, section });
     //다음페이지의 정보를 저장한다.
     const nextPageToken = result.data.next_page_token;
     this.saveNextPage({ nextPageToken, section });
   }
 
-  saveRepeat(restaurantsInfos): void {
+  saveRepeat({ restaurantsInfos, section }): void {
     restaurantsInfos.forEach(async (el) => {
       const {
         formatted_address: address,
@@ -48,25 +47,29 @@ export class RestaurantService {
       } = el;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
-      console.log(details);
       const {
         formatted_phone_number: phoneNumber,
         weekday_text: openingHours,
       } = details;
 
-      //몽고DB에 저장
-      // if (rating >= 4.6) {
-      //   const postRestaurant = await new this.RestaurantModel({
-      //     name,
-      //     address,
-      //     location,
-      //     userRatingsTotal,
-      //     rating,
-      //     phoneNumber,
-      //     openingHours,
-      //   }).save();
-      //   // console.log(postRestaurant);
-      // }
+      if (rating >= 4.6) {
+        //이미 있는지 확인하고 없는 경우에만 DB에 저장한다.
+        const findRestaurant = await this.RestaurantModel.findOne({
+          name,
+        }).exec();
+        if (!findRestaurant) {
+          const postRestaurant = await new this.RestaurantModel({
+            name,
+            address,
+            location,
+            userRatingsTotal,
+            rating,
+            phoneNumber,
+            openingHours,
+            section,
+          }).save();
+        }
+      }
     });
   }
   async getDetails(
@@ -98,7 +101,7 @@ export class RestaurantService {
         setTimeout(async () => {
           const result = await axios(nextConfig);
           const restaurantsInfos = result.data.results;
-          await this.saveRepeat(restaurantsInfos);
+          await this.saveRepeat({ restaurantsInfos, section });
           const nextPageToken = result.data.next_page_token;
           if (nextPageToken) {
             return getNextRestaurant({ nextPageToken });
