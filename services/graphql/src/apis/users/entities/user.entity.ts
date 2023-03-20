@@ -11,11 +11,11 @@ export class User {
   @Field(() => String)
   id: string;
 
-  @Column({ type: 'varchar', length: 36 })
+  @Column({ type: 'varchar', length: 30 })
   @Field(() => String)
   email: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column()
   // @Field(() => String)
   password: string;
 
@@ -23,7 +23,7 @@ export class User {
   @Field(() => String)
   nickname: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100 , nullable: true})
   @Field(() => String)
   userImg: string;
 

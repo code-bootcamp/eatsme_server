@@ -15,11 +15,32 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type User {
-  id: Int!
+  id: String!
   email: String!
   nickname: String!
   userImg: String!
   reservations: [Reservation!]!
+  boards: [Board!]!
+  alarms: [Alarm!]!
+}
+
+type Alarm {
+  id: String!
+  isAlarm: Boolean!
+  users: User!
+  comments: Comment!
+}
+
+type Reply {
+  id: String!
+  reply: String!
+  comments: Comment!
+}
+
+type Comment {
+  id: String!
+  comment: String!
+  replies: [Reply!]!
   boards: [Board!]!
   alarms: [Alarm!]!
 }
@@ -37,30 +58,34 @@ type Board {
   comments: [Comment!]!
 }
 
-type Reply {
-  id: String!
-  reply: String!
-  comments: Comment!
-}
-
-type Comment {
-  id: String!
-  comment: String!
-  replies: [Reply!]!
-  boards: [Board!]!
-  alarms: [Alarm!]!
-}
-
-type Alarm {
-  id: String!
-  isAlarm: Boolean!
-  users: User!
-  comments: Comment!
-  password: String!
-  adress: String!
-  phon: String!
-}
-
 type Query {
   getHello: String!
+  fetchAirport(boardId: String!): Board!
+  fetchBoards: [Board!]!
+}
+
+type Mutation {
+  createBoard(createBoardInput: CreateBoardInput!): Board!
+  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
+  deleteAirport(boardId: String!): Boolean!
+}
+
+input CreateBoardInput {
+  title: String!
+  createdAt: DateTime! = "2023-03-19T03:54:38.872Z"
+  boardImg: String!
+  startPoint: String!
+  endPoint: String!
+  customName: String!
+  like: Int! = 0
+}
+
+input UpdateBoardInput {
+  title: String
+  createdAt: DateTime = "2023-03-19T03:54:38.872Z"
+  boardImg: String
+  startPoint: String
+  endPoint: String
+  customName: String
+  like: Int = 0
 }

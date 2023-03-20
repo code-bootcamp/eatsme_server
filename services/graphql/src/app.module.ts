@@ -7,10 +7,14 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
+import { BoardModule } from './apis/boards/boards.module';
+import { CommentModule } from './apis/Comments/comments.module';
 
 @Module({
   imports: [
     //
+    CommentModule,
+    BoardModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

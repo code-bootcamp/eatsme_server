@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Comment } from 'src/apis/Comments/entities/comment.entity';
+
 import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
@@ -25,7 +26,7 @@ export class Board {
   @Field(() => Date)
   createdAt: Date;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, nullable: true})
   @Field(() => String)
   boardImg: string;
 
@@ -45,12 +46,12 @@ export class Board {
   @Field(() => Int)
   like: number;
 
-  @ManyToOne(() => User, (user) => user.boards)
-  @Field(() => User)
-  users: User;
+  // @ManyToOne(() => User, (user) => user.boards)
+  // @Field(() => User)
+  // users: User;
 
-  @JoinTable()
-  @ManyToMany(() => Comment, (comment) => comment.boards)
-  @Field(() => [Comment])
-  comments: Comment[];
+  // @JoinTable()
+  // @ManyToMany(() => Comment, (comment) => comment.boards)
+  // @Field(() => [Comment])
+  // comments: Comment[];
 }
