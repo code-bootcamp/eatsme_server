@@ -29,9 +29,9 @@ export class RestaurantService {
     //현재페이지의 정보를 DB에 반복적으로 저장한다.
 
     const restaurantsInfos = result.data.results;
-    console.log(restaurantsInfos);
+    // console.log(restaurantsInfos);
     await this.saveRepeat(restaurantsInfos);
-    // //다음페이지의 정보를 저장한다.
+    //다음페이지의 정보를 저장한다.
     const nextPageToken = result.data.next_page_token;
     this.saveNextPage({ nextPageToken, section });
   }
@@ -48,24 +48,25 @@ export class RestaurantService {
       } = el;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
+      console.log(details);
       const {
         formatted_phone_number: phoneNumber,
         weekday_text: openingHours,
       } = details;
 
       //몽고DB에 저장
-      if (rating >= 4.6) {
-        const postRestaurant = await new this.RestaurantModel({
-          name,
-          address,
-          location,
-          userRatingsTotal,
-          rating,
-          phoneNumber,
-          openingHours,
-        }).save();
-        // console.log(postRestaurant);
-      }
+      // if (rating >= 4.6) {
+      //   const postRestaurant = await new this.RestaurantModel({
+      //     name,
+      //     address,
+      //     location,
+      //     userRatingsTotal,
+      //     rating,
+      //     phoneNumber,
+      //     openingHours,
+      //   }).save();
+      //   // console.log(postRestaurant);
+      // }
     });
   }
   async getDetails(
@@ -74,7 +75,7 @@ export class RestaurantService {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const placeConfig = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
+      url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours,photo`,
     };
     const result = await axios(placeConfig);
     const { formatted_phone_number, opening_hours } = result.data.result;
@@ -106,5 +107,11 @@ export class RestaurantService {
       }
     };
     getNextRestaurant({ nextPageToken });
+  }
+  async deleteAllCollection(): Promise<string> {
+    const result = await this.RestaurantModel.collection.drop();
+    return result
+      ? 'Restaurants(document)의 모든collection을 삭제했습니다. '
+      : '실패';
   }
 }
