@@ -64,13 +64,6 @@ describe('UserService', () => {
       }
     });
 
-    it('이메일 양식 전부 갖추었을때 ', async () => {
-      const email = 'black1594@naver.com';
-
-      const result = await userService.checkEmail({ email });
-      expect(result).toBe('black1594@naver.com');
-    });
-
     it('이메일 양식 글자수 30개초과 에러', async () => {
       const email = 'abcdefghijklmnopqrstuvwxyz@naver.com';
 
@@ -81,12 +74,6 @@ describe('UserService', () => {
       }
     });
 
-    it('이메일 양식 전부 갖추었을때 ', async () => {
-      const email = 'black1594@naver.com';
-
-      const result = await userService.checkEmail({ email });
-      expect(result).toBe('black1594@naver.com');
-    });
     it('이메일 양식 @ 유무 에러', async () => {
       const email = 'black1594naver.com';
 

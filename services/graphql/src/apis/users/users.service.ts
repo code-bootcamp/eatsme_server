@@ -5,9 +5,10 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import {
   IUserFindOneByUser,
-  IUsersCheckEmailAndFindOneByEmail,
   IUsersCreate,
+  IUsersFindOneByEmail,
   IUsersFindOneByNickname,
+  IUsersSendToTemplate,
 } from './interfaces/user-service.interface';
 import * as bcrypt from 'bcrypt';
 
@@ -31,19 +32,17 @@ export class UserService {
   }
 
   //-----이메일 만드는 방식 확인-----
-  async checkEmail({
-    email,
-  }: IUsersCheckEmailAndFindOneByEmail): Promise<string> {
+  async checkEmail({ email }: IUsersFindOneByEmail): Promise<string> {
     if (!email || !email.includes('@') || 30 <= email.length) {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
     await this.isFindOneByEmail({ email });
-    // await this.sendToTemplate({ email });
+    await this.sendToTemplate({ email });
     return `${email}`;
   }
 
   //-----이메일인증번호 템플릿 전송-----
-  async sendToTemplate({ email }: IUsersCheckEmailAndFindOneByEmail) {
+  async sendToTemplate({ email }: IUsersSendToTemplate) {
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
@@ -72,9 +71,7 @@ export class UserService {
   }
 
   //-----이메일 db 유무확인-----
-  async isFindOneByEmail({
-    email,
-  }: IUsersCheckEmailAndFindOneByEmail): Promise<User> {
+  async isFindOneByEmail({ email }: IUsersFindOneByEmail): Promise<User> {
     const isValidEmail = await this.userRepository.findOne({
       where: { email },
     });

@@ -4,7 +4,15 @@ export interface IUserFindOneByUser {
   userId: string;
 }
 
-export interface IUsersCheckEmailAndFindOneByEmail {
+export interface IUsersCheckEmail {
+  email: string;
+}
+
+export interface IUsersFindOneByEmail {
+  email: string;
+}
+
+export interface IUsersSendToTemplate {
   email: string;
 }
 
