@@ -23,11 +23,12 @@ export class RestaurantService {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&opennow`,
     };
+
     const result = await axios(config);
     //현재페이지의 정보를 DB에 반복적으로 저장한다.
-    const restaurantsInfos = result.data.results;
+    const restaurantsInfos = result.data.result;
     await this.saveRepeat(restaurantsInfos);
-    //다음페이지의 정보를 저장한다.
+    // //다음페이지의 정보를 저장한다.
     const nextPageToken = result.data.next_page_token;
     this.saveNextPage({ nextPageToken, section });
   }
@@ -35,26 +36,25 @@ export class RestaurantService {
   saveRepeat(arr) {
     arr.forEach(async (el) => {
       const {
-        formatted_address,
+        formatted_address: address,
         geometry,
         place_id,
         name,
         rating,
-        user_ratings_total,
+        user_ratings_total: userRatingsTotal,
       } = el;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
 
       //몽공DB에
       const postRestaurant = await new this.RestaurantModel({
-        name: name,
-        address: formatted_address,
-        geometryLocation: location,
-        userRatingsTotal: user_ratings_total,
-        rating: rating,
+        name,
+        address,
+        location,
+        userRatingsTotal,
+        rating,
       }).save();
       console.log(postRestaurant);
-      return postRestaurant;
     });
   }
   async getDetails(place_id: IRestaurantServiceGetDetails): Promise<object> {
@@ -63,11 +63,15 @@ export class RestaurantService {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
     };
-    const result = await axios(placeConfig);
-    const { formatted_phone_number, opening_hours } = result.data.result;
-    const { weekday_text } = opening_hours;
+    try {
+      const result = await axios(placeConfig);
+      const { formatted_phone_number, opening_hours } = result.data.result;
+      const { weekday_text } = opening_hours;
 
-    return { formatted_phone_number, weekday_text };
+      return { formatted_phone_number, weekday_text };
+    } catch (error) {
+      throw new Error(`Error fetching place details: ${error}`);
+    }
   }
 
   saveNextPage({ nextPageToken, section }: IRestaurantServiceSaveNextPage) {
