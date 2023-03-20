@@ -4,7 +4,6 @@ import { BoardsResolver } from "./boards.resolvor";
 import { BoardsService } from "./boards.service";
 import { Board } from "./entities/board.entity";
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([ 

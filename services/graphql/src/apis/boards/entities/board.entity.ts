@@ -14,7 +14,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-
 @Entity()
 @ObjectType()
 export class Board {
