@@ -1,23 +1,30 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
+import { Model } from 'mongoose';
 import {
   IRestaurantServiceGetDetails,
   IRestaurantServicePostRestaurant,
   IRestaurantServiceSaveNextPage,
 } from './interfaces/restaurantService.interface';
+import { Restaurant, RestaurantDocument } from './schemas/restaurant.schemas';
 
 @Injectable()
 export class RestaurantService {
+  constructor(
+    @InjectModel(Restaurant.name)
+    private RestaurantModel: Model<RestaurantDocument>,
+  ) {}
   async postRestaurant({
     section,
   }: IRestaurantServicePostRestaurant): Promise<void> {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const config = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&opennow&fields=current_opening_hours`,
+      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&opennow`,
     };
     const result = await axios(config);
-    //DB에 반복적으로 저장한다.
+    //현재페이지의 정보를 DB에 반복적으로 저장한다.
     const restaurantsInfos = result.data.results;
     await this.saveRepeat(restaurantsInfos);
     //다음페이지의 정보를 저장한다.
@@ -26,7 +33,6 @@ export class RestaurantService {
   }
 
   saveRepeat(arr) {
-    let num = 0;
     arr.forEach(async (el) => {
       const {
         formatted_address,
@@ -36,18 +42,19 @@ export class RestaurantService {
         rating,
         user_ratings_total,
       } = el;
+      const { location } = geometry;
       const details = await this.getDetails(place_id);
-      num++;
-      console.log(
-        'num:',
-        num,
-        name,
-        formatted_address,
-        geometry.location,
-        rating,
-        user_ratings_total,
-        details,
-      );
+
+      //몽공DB에
+      const postRestaurant = await new this.RestaurantModel({
+        name: name,
+        address: formatted_address,
+        geometryLocation: location,
+        userRatingsTotal: user_ratings_total,
+        rating: rating,
+      }).save();
+      console.log(postRestaurant);
+      return postRestaurant;
     });
   }
   async getDetails(place_id: IRestaurantServiceGetDetails): Promise<object> {
@@ -58,7 +65,9 @@ export class RestaurantService {
     };
     const result = await axios(placeConfig);
     const { formatted_phone_number, opening_hours } = result.data.result;
-    return { formatted_phone_number, opening_hours };
+    const { weekday_text } = opening_hours;
+
+    return { formatted_phone_number, weekday_text };
   }
 
   saveNextPage({ nextPageToken, section }: IRestaurantServiceSaveNextPage) {

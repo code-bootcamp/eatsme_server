@@ -5,25 +5,28 @@ export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema()
 export class Restaurant {
-  @Prop()
+  @Prop({ type: String, required: false })
+  section: string;
+
+  @Prop({ type: String })
   name: string;
 
-  @Prop()
-  formatted_address: string;
+  @Prop({ type: String })
+  address: string;
 
-  @Prop()
+  @Prop({ type: Object })
   geometryLocation: object;
 
-  @Prop()
-  user_ratings_total: string;
+  @Prop({ type: String })
+  userRatingsTotal: string;
 
-  @Prop()
-  formatted_phone_number: string;
+  @Prop({ type: String })
+  phoneNumber: string;
 
-  @Prop()
-  opening_hoursWeekday_text: object;
+  @Prop({ type: Object })
+  openingHours: object;
 
-  @Prop()
+  @Prop({ type: String })
   rating: string;
 }
 export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);
