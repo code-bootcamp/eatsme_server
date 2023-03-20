@@ -113,9 +113,9 @@ export class RestaurantService {
   }
   async deleteAllCollection(): Promise<string> {
     const result = await this.RestaurantModel.collection.drop();
-    return result
-      ? 'Restaurants(document)의 모든collection을 삭제했습니다. '
-      : '실패';
+    if (result) {
+      return 'Restaurants(document)의 모든collection을 삭제했습니다. ';
+    }
   }
 
   getRestaurant(
