@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Model } from 'mongoose';
 import {
   IRestaurantServiceGetDetails,
+  IRestaurantServiceGetDetailsReturn,
   IRestaurantServicePostRestaurant,
   IRestaurantServiceSaveNextPage,
 } from './interfaces/restaurantService.interface';
@@ -26,15 +27,17 @@ export class RestaurantService {
 
     const result = await axios(config);
     //현재페이지의 정보를 DB에 반복적으로 저장한다.
-    const restaurantsInfos = result.data.result;
+
+    const restaurantsInfos = result.data.results;
+    console.log(restaurantsInfos);
     await this.saveRepeat(restaurantsInfos);
     // //다음페이지의 정보를 저장한다.
     const nextPageToken = result.data.next_page_token;
     this.saveNextPage({ nextPageToken, section });
   }
 
-  saveRepeat(arr) {
-    arr.forEach(async (el) => {
+  saveRepeat(restaurantsInfos): void {
+    restaurantsInfos.forEach(async (el) => {
       const {
         formatted_address: address,
         geometry,
@@ -45,36 +48,44 @@ export class RestaurantService {
       } = el;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
+      const {
+        formatted_phone_number: phoneNumber,
+        weekday_text: openingHours,
+      } = details;
 
-      //몽공DB에
-      const postRestaurant = await new this.RestaurantModel({
-        name,
-        address,
-        location,
-        userRatingsTotal,
-        rating,
-      }).save();
-      console.log(postRestaurant);
+      //몽고DB에 저장
+      if (rating >= 4.6) {
+        const postRestaurant = await new this.RestaurantModel({
+          name,
+          address,
+          location,
+          userRatingsTotal,
+          rating,
+          phoneNumber,
+          openingHours,
+        }).save();
+        // console.log(postRestaurant);
+      }
     });
   }
-  async getDetails(place_id: IRestaurantServiceGetDetails): Promise<object> {
+  async getDetails(
+    place_id: IRestaurantServiceGetDetails,
+  ): Promise<IRestaurantServiceGetDetailsReturn> {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const placeConfig = {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
     };
-    try {
-      const result = await axios(placeConfig);
-      const { formatted_phone_number, opening_hours } = result.data.result;
-      const { weekday_text } = opening_hours;
-
-      return { formatted_phone_number, weekday_text };
-    } catch (error) {
-      throw new Error(`Error fetching place details: ${error}`);
-    }
+    const result = await axios(placeConfig);
+    const { formatted_phone_number, opening_hours } = result.data.result;
+    const { weekday_text } = opening_hours;
+    return { formatted_phone_number, weekday_text };
   }
 
-  saveNextPage({ nextPageToken, section }: IRestaurantServiceSaveNextPage) {
+  saveNextPage({
+    nextPageToken,
+    section,
+  }: IRestaurantServiceSaveNextPage): void {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const getNextRestaurant = async ({ nextPageToken }) => {
       if (nextPageToken) {
