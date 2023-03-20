@@ -15,7 +15,7 @@ export class User {
   @Field(() => String)
   email: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column()
   // @Field(() => String)
   password: string;
 

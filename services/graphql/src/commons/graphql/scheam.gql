@@ -5,20 +5,26 @@
 type Board {
   id: String!
   title: String!
-  createdAt: DateTime!
+  CreateAt: DateTime!
   boardImg: String!
   startPoint: String!
   endPoint: String!
   customName: String!
   like: Int!
   users: User!
-  comments: [Comment!]!
+  boardComments: [BoardComment!]!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type BoardComment {
+  id: String!
+  boards: Board!
+  comments: Comment!
+}
 
 type Reply {
   id: String!
@@ -30,7 +36,7 @@ type Comment {
   id: String!
   comment: String!
   replies: [Reply!]!
-  boards: [Board!]!
+  boardComments: [BoardComment!]!
   alarms: [Alarm!]!
 }
 
@@ -60,6 +66,7 @@ type User {
 
 type Query {
   getHello: String!
+  isValidNickname(nickname: String!): User!
 }
 
 type Mutation {

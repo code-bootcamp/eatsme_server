@@ -1,12 +1,13 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Comment } from 'src/apis/Comments/entities/comment.entity';
+import { BoardComment } from 'src/apis/boards-comments/boards-comments.entities/boards-comments.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -21,9 +22,9 @@ export class Board {
   @Field(() => String)
   title: string;
 
-  @Column({ type: 'date' })
+  @CreateDateColumn()
   @Field(() => Date)
-  createdAt: Date;
+  CreateAt: Date;
 
   @Column({ type: 'varchar', length: 100 })
   @Field(() => String)
@@ -49,8 +50,7 @@ export class Board {
   @Field(() => User)
   users: User;
 
-  @JoinTable()
-  @ManyToMany(() => Comment, (comment) => comment.boards)
-  @Field(() => [Comment])
-  comments: Comment[];
+  @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
+  @Field(() => [BoardComment])
+  boardComments: BoardComment[];
 }
