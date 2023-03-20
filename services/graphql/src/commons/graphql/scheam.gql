@@ -2,6 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+
 type Board {
   id: String!
   title: String!
@@ -87,4 +88,5 @@ input CreateUserInput {
   email: String!
   password: String!
   nickname: String!
+
 }

@@ -7,13 +7,17 @@ import { Restaurant, RestaurantSchema } from './schemas/restaurant.schemas';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    // MongooseModule.forFeature([
-    //   { rate: Restaurant.rate, schema: RestaurantSchema },
-    // ]),
-    MongooseModule.forRoot(process.env.MY_MONGODB), //
+
+    MongooseModule.forFeature([
+      { name: Restaurant.name, schema: RestaurantSchema },
+    ]),
   ],
-  controllers: [RestaurantController],
-  providers: [RestaurantService],
+  controllers: [
+    RestaurantController, //
+  ],
+  providers: [
+    RestaurantService, //
+  ],
+
 })
 export class RestaurantModule {}
