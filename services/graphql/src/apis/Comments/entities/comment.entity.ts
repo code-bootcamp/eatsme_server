@@ -1,14 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
-import { Board } from 'src/apis/boards/entities/board.entity';
+import { BoardComment } from 'src/apis/boards-comments/boards-comments.entities/boards-comments.entity';
 import { Reply } from 'src/apis/replies/entities/reply.entity';
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -25,9 +19,9 @@ export class Comment {
   @Field(() => [Reply])
   replies: Reply[];
 
-  @ManyToMany(() => Board, (board) => board.comments)
-  @Field(() => [Board])
-  boards: Board[];
+  @OneToMany(() => BoardComment, (boardComment) => boardComment.comments)
+  @Field(() => [BoardComment])
+  boardComments: BoardComment[];
 
   @OneToMany(() => Alarm, (alarm) => alarm.comments)
   @Field(() => [Alarm])

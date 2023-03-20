@@ -8,7 +8,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -27,7 +26,7 @@ export class Board {
 
   @CreateDateColumn()
   @Field(() => Date)
-  createdAt: Date;
+  CreateAt: Date;
 
   @Column({ type: 'varchar', length: 100 })
   @Field(() => String)
