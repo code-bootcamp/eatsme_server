@@ -5,6 +5,7 @@ export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema()
 export class Restaurant {
+
   @Prop({ type: String, required: false })
   section: string;
 
@@ -28,5 +29,6 @@ export class Restaurant {
 
   @Prop({ type: String })
   rating: string;
+
 }
 export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);
