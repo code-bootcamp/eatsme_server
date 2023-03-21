@@ -37,8 +37,8 @@ export class UserService {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
     await this.isFindOneByEmail({ email });
-    await this.sendToTemplate({ email });
-    return `${email}`;
+    // await this.sendToTemplate({ email });
+    return email;
   }
 
   //-----이메일인증번호 템플릿 전송-----
@@ -75,10 +75,10 @@ export class UserService {
     const isValidEmail = await this.userRepository.findOne({
       where: { email },
     });
-
     if (isValidEmail) {
       throw new ConflictException('이미 회원가입이 되어있는 이메일입니다.');
     }
+    console.log(isValidEmail, '########################');
     return isValidEmail;
   }
 
@@ -93,7 +93,7 @@ export class UserService {
     if (isValidNickname) {
       throw new ConflictException('이미 사용하고있는 닉네임입니다.');
     }
-
+    console.log(isValidNickname, '@@@@@@@123@@@@@@@@@@@@@@@');
     return isValidNickname;
   }
 
@@ -108,8 +108,6 @@ export class UserService {
     await this.isFindOneByNickname({ nickname });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    console.log(hashedPassword, '@@@@@@@@@@@@@@@@@');
 
     return this.userRepository.save({
       email,
@@ -126,7 +124,7 @@ export class UserService {
   // }: IUpdateUserServiceInput): Promise<User> {
   //   const user = await this.findOneByUser({ userId });
 
-  //   //이미지, 패스워드 해쉬처리 후에 다시 리팩토링 필요!
+  //   //이미지 후에 다시 리팩토링 필요!
   //   return this.userRepository.save({
   //     ...user,
   //     password,
