@@ -1,17 +1,14 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import moment from 'moment-timezone';
 import { BoardComment } from 'src/apis/boards-comments/boards-comments.entities/boards-comments.entity';
-import { Comment } from 'src/apis/Comments/entities/comment.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
+} from 'typeorm'; 
 
 @Entity()
 @ObjectType()
@@ -26,7 +23,7 @@ export class Board {
 
   @CreateDateColumn()
   @Field(() => Date)
-  CreateAt: Date;
+  createdAt: Date;
 
   @Column({ type: 'varchar', length: 100 })
   @Field(() => String)
@@ -52,7 +49,7 @@ export class Board {
   // @Field(() => User)
   // users: User;
 
-  @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
-  @Field(() => [BoardComment])
-  boardComments: BoardComment[];
+  // @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
+  // @Field(() => [BoardComment])
+  // boardComments: BoardComment[];
 }
