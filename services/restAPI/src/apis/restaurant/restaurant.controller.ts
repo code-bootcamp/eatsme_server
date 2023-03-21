@@ -7,20 +7,23 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Post('/road/restaurant')
-  postRestaurant(@Body() division: object): Promise<void> {
-    const [section] = Object.values(division);
-    return this.restaurantService.postRestaurant({ section });
-  }
-
-  @Delete('/road/restaurant')
-  deleteRestaurant(): Promise<string> {
-    //개발과정중 DB의 데이터를 확인하고 지우기 위해 만들었습니다.
-    return this.restaurantService.deleteAllCollection();
+  postRestaurant(
+    @Body() body: string, //
+  ): Promise<void> {
+    return this.restaurantService.postRestaurant({ body });
   }
 
   @Get('/road/restaurant')
-  getRestaurant(@Body() division: object): Promise<Restaurant[]> {
-    const [section] = Object.values(division);
-    return this.restaurantService.getRestaurant({ section });
+  getRestaurant(
+    @Body() body: string, //
+  ): Promise<Restaurant[]> {
+    return this.restaurantService.getRestaurants({ body });
+  }
+
+  @Delete('/road/restaurant')
+  deleteRestaurant(
+    @Body() body: string, //
+  ): Promise<string> {
+    return this.restaurantService.deleteCollection({ body });
   }
 }
