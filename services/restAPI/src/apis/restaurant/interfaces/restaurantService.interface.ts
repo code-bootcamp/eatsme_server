@@ -1,3 +1,5 @@
+import { Restaurant } from '../schemas/restaurant.schemas';
+
 export interface IRestaurantServicePostAndGetRestaurant {
   body: string;
 }

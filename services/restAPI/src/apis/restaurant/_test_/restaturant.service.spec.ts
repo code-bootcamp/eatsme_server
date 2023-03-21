@@ -170,10 +170,8 @@ class MockRestaurantModel {
     },
   ];
 
-  find({ section }) {
-    const Restaurant = this.Restaurants.filter(
-      (el) => el.section === section.section,
-    );
+  find({ body }) {
+    const Restaurant = this.Restaurants.filter((el) => el.section === body);
     return Restaurant.length ? Restaurant : null;
   }
 }
@@ -196,11 +194,21 @@ describe('RestaurantService', () => {
   });
 
   describe('getRestaurant', () => {
-    it('해당 행정구역의 추천식당 목록 반환!!', async () => {
-      const section = '서울시 강남구';
+    it('해당 행정구역의 추천식당 목록 반환하는 경우', async () => {
+      const body = '서울시 강남구';
+      console.log(body);
       const mockRestaurantModel = new MockRestaurantModel();
-      expect(await restaurantService.getRestaurant({ section })).toBe(
-        mockRestaurantModel.find({ section }),
+      expect(await restaurantService.getRestaurants({ body })).toBe(
+        mockRestaurantModel.find({ body }),
+      );
+    });
+
+    it('해당 행정구역의 추천식당 목록이 없는 경우', async () => {
+      const body = '서울시 강남구';
+      console.log(body);
+      const mockRestaurantModel = new MockRestaurantModel();
+      expect(await restaurantService.getRestaurants({ body })).toBe(
+        mockRestaurantModel.find({ body }),
       );
     });
   });

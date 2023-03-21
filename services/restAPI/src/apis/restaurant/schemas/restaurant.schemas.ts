@@ -10,7 +10,7 @@ export class Restaurant {
   section: string;
 
   @Prop({ type: String })
-  name: string;
+  restaurantName: string;
 
   @Prop({ type: String })
   address: string;

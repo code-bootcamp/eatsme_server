@@ -7,14 +7,15 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Post('/road/restaurant')
-  postRestaurant(
+  postRestaurants(
     @Body() body: string, //
   ): Promise<void> {
     return this.restaurantService.postRestaurant({ body });
   }
 
+  //!!---------------없는경우 등록하라고 에러 던지기-----------!!//
   @Get('/road/restaurant')
-  getRestaurant(
+  getRestaurants(
     @Body() body: string, //
   ): Promise<Restaurant[]> {
     return this.restaurantService.getRestaurants({ body });

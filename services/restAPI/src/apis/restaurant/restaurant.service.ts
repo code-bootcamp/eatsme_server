@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
@@ -31,11 +36,10 @@ export class RestaurantService {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&opennow`,
     };
+    //타입을 지정해주면 구조분해 할당으로 받아올수 있지 않을까?
     const result = await axios(config);
-    //현재페이지의 정보를 DB에 반복적으로 저장한다.
     const restaurantsInfos = result.data.results;
     this.saveRepeat({ restaurantsInfos, section });
-    //다음페이지의 정보를 저장한다.
     const nextPageToken = result.data.next_page_token;
     this.saveNextPage({ nextPageToken, section });
   }
@@ -49,7 +53,7 @@ export class RestaurantService {
         formatted_address: address,
         geometry,
         place_id,
-        name,
+        name: restaurantName,
         rating,
         user_ratings_total: userRatingsTotal,
       } = el;
@@ -63,11 +67,11 @@ export class RestaurantService {
       if (rating >= 4.5) {
         //이미 있는지 확인하고 없는 경우에만 DB에 저장한다.
         const findRestaurant = await this.RestaurantModel.findOne({
-          name,
+          restaurantName,
         }).exec();
         if (!findRestaurant) {
           const postRestaurant = await new this.RestaurantModel({
-            name,
+            restaurantName,
             address,
             location,
             userRatingsTotal,
@@ -121,23 +125,48 @@ export class RestaurantService {
     getNextRestaurant({ nextPageToken });
   }
 
-  async deleteCollection({
-    body,
-  }: IRestaurantServiceDeleteCollection): Promise<string> {
-    const result = await this.RestaurantModel.deleteOne({
-      _id: body,
-    });
-    return result.deletedCount
-      ? '정상적으로 지워졌습니다.'
-      : '이미 지워진 collection입니다.';
-  }
-
-  getRestaurants({
+  async getRestaurants({
     body,
   }: IRestaurantServiceGetRestaurant): Promise<Restaurant[]> {
-    const [section] = Object.values(body);
-    return this.RestaurantModel.find({
-      section,
-    });
+    const result = await this.RestaurantModel.find({
+      section: Object.values(body)[0],
+    }).exec();
+    if (!result[0]) {
+      throw new ForbiddenException(
+        '등록되지 않은 행정구역입니다. 등록후 조회해주세요',
+      );
+    }
+    return result;
+  }
+
+  deleteCollection({
+    body,
+  }: IRestaurantServiceDeleteCollection): Promise<string> {
+    // try {
+    //   const result = await this.RestaurantModel.deleteOne({
+    //     _id: Object.values(body)[0],
+    //   });
+    //   return result.deletedCount
+    //     ? '정상적으로 지워졌습니다.'
+    //     : '이미 지워진 collection입니다.';
+    // } catch (err) {
+    //   throw new ForbiddenException(
+    //     `현재 _id:${err.messageFormat}이며 정상적인 _id를 입력해주세요`,
+    //   );
+    // }
+    return this.RestaurantModel.deleteOne({
+      _id: Object.values(body)[0],
+    })
+      .then((res) => {
+        console.log(res);
+        return res.deletedCount
+          ? '정상적으로 지워졌습니다.'
+          : '이미 지워진 collection입니다.';
+      })
+      .catch((err) => {
+        throw new ForbiddenException(
+          `현재 _id:${err.messageFormat}이며 정상적인 _id를 입력해주세요`,
+        );
+      });
   }
 }
