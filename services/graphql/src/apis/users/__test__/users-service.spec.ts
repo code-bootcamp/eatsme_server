@@ -116,7 +116,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('checkNickname', () => {
+  describe('isFindOneByNickname', () => {
     it('닉네임 값을 입력 안한 경우', async () => {
       const nickname = '';
 
@@ -130,8 +130,8 @@ describe('UserService', () => {
     it('닉네임 값을 입력 한 경우 ', async () => {
       const nickname = '짱아';
 
-      const result = await userService.checkNickname({ nickname });
-      expect(result).toBe(nickname);
+      const result = await userService.isFindOneByNickname({ nickname });
+      expect(result).toBe(null);
     });
   });
 
@@ -238,8 +238,8 @@ describe('UserService', () => {
     it('닉네임 값을 입력 한 경우 ', async () => {
       const nickname = '짱아';
 
-      const result = await userService.checkNickname({ nickname });
-      expect(result).toBe(nickname);
+      const result = await userService.isFindOneByNickname({ nickname });
+      expect(result).toBe(null);
     });
 
     it('이메일,닉네임 양식 통과, db에 없는경우', async () => {
