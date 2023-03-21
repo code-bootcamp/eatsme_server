@@ -12,20 +12,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
-    MailerModule.forRootAsync({
-      useFactory: () => ({
-        transport: {
-          service: 'Gmail',
-          host: process.env.DATABASE_HOST,
-          port: Number(process.env.DATABASE_PORT),
-          secure: false, // upgrade later with STARTTLS
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        },
-      }),
-    }),
     UserModule, //
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -47,6 +33,20 @@ import { MailerModule } from '@nestjs-modules/mailer';
       store: redisStore,
       url: `redis://${process.env.REDIS_DATABASE_HOST}:6379`,
       isGlobal: true,
+    }),
+    MailerModule.forRootAsync({
+      useFactory: () => ({
+        transport: {
+          service: 'Gmail',
+          host: process.env.DATABASE_HOST,
+          port: Number(process.env.DATABASE_PORT),
+          secure: false, // upgrade later with STARTTLS
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        },
+      }),
     }),
   ],
   providers: [

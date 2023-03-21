@@ -9,6 +9,14 @@ export class UserResolver {
     private readonly userService: UserService, //
   ) {}
 
+  // -----회원 조회-----
+  @Query(() => User)
+  fetchUser(
+    @Args('userId') userId: string, //
+  ): Promise<User> {
+    return this.userService.findOneByUser({ userId });
+  }
+
   // -----이메일 인증하기-----
   @Mutation(() => String)
   async checkEmail(

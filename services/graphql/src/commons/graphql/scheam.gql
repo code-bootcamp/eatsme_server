@@ -66,9 +66,17 @@ type User {
 
 type Query {
   getHello: String!
+  fetchUser(userId: String!): User!
   isValidNickname(nickname: String!): User!
 }
 
 type Mutation {
   checkEmail(email: String!): String!
+  createUser(createUserInput: CreateUserInput!): User!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  nickname: String!
 }
