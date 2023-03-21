@@ -4,8 +4,7 @@ import { Repository } from "typeorm";
 import { Board } from "./entities/board.entity";
 import { 
   IBoardServiceCreate, 
-  IBoardServiceNullCheckEndPoint, 
-  IBoardServiceNullCheckStartPoint, 
+  IBoardServiceNullCheckList, 
   IBoardServiceNullCheckTitle, 
   IBoardsServiceFindOne, 
 } from "./interfaces/board-service.interface";
@@ -29,42 +28,36 @@ export class BoardsService {
   return this.boardsRepository.find()
  }
 
- //출발지 선택검증
- checkStartPoint({ startPoint }: IBoardServiceNullCheckStartPoint): string {
-  if(!/^[가-힣]*$/.test(startPoint) || startPoint === "") { // 나중에 프론트데이터받으면 조건값 수정할예정
-    throw new UnprocessableEntityException('출발지를 선택해주세요');
-  } 
-  return startPoint
- }
-
- //도착지 선택검증
- checkEndPoint({ endPoint }: IBoardServiceNullCheckEndPoint): string { 
-  if(!/^[가-힣]*$/.test(endPoint) || endPoint === "") { // 나중에 프론트데이터받으면 조건값 수정할예정
-    throw new UnprocessableEntityException('도착지를 선택해주세요');
+ //지역 선택검증
+ checkList({ startPoint, endPoint, title }: IBoardServiceNullCheckList): Promise<Board> {
+  const regions = ['도봉구', '노원구', '강북구', '은평구', '종로구', '성북구', '중랑구', '광진구', '동대문구',
+   '성동구', '중구', '종로구', '용산구', '서대문구', '마포구', '강서구', '양천구', '구로구', '영등포구',
+   '동작구', '관악구', '서초구', '강남구', '송파구', '강동구'];
+  // 출발지 선택검증
+   if(!regions.includes(startPoint)) { 
+    throw new UnprocessableEntityException('지역을 선택해주세요');
   }
-  return endPoint
- }
 
-  //제목 입력검증
-  checkTitle({ title }: IBoardServiceNullCheckTitle): string {
-    if(/^\s*$/.test(title)) {
-      throw new UnprocessableEntityException('제목을 제대로 입력해주세요');
-    }
-    return title
+  // 도착지 선택검증
+  if(!regions.includes(endPoint)) { 
+    throw new UnprocessableEntityException('지역을 선택해주세요');
+  }
+  
+  // 제목 검증
+  if(/^\s*$/.test(title)) {
+    throw new UnprocessableEntityException('제목을 제대로 입력해주세요');
+  }
+  return
  }
 
  //게시물 작성하기
-  async create({
-   createBoardInput
- }: IBoardServiceCreate): Promise<Board> {
+  async create({ createBoardInput }: IBoardServiceCreate): Promise<Board> {
     const {  title, startPoint, endPoint } = createBoardInput;
-    this.checkStartPoint({ startPoint });
-    this.checkEndPoint({ endPoint })
-    this.checkTitle({ title });
-    const result = await this.boardsRepository.save({
+
+    await this.checkList({ startPoint , endPoint, title });
+
+    return this.boardsRepository.save({
       ...createBoardInput
-   })
-   console.log(result);
-   return result;
+   });
  }
 }

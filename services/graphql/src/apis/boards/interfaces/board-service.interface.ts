@@ -6,14 +6,13 @@ export interface IBoardsServiceFindOne {
 
 export interface IBoardServiceNullCheckTitle {
  title: string;
+
 }
 
-export interface IBoardServiceNullCheckStartPoint {
- startPoint: string;
-}
-
-export interface IBoardServiceNullCheckEndPoint {
- endPoint: string;
+export interface IBoardServiceNullCheckList {
+ startPoint?: string;
+ endPoint?: string;
+ title?: string;
 }
 
 export interface IBoardServiceCreate {
