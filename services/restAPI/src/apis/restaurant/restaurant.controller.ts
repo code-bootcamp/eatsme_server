@@ -5,6 +5,7 @@ import { Restaurant } from './schemas/restaurant.schemas';
 @Controller()
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
+
   @Post('/road/restaurant')
   postRestaurant(@Body() division: object): Promise<void> {
     const [section] = Object.values(division);

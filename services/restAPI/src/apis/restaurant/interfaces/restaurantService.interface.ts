@@ -1,6 +1,7 @@
 export interface IRestaurantServicePostAndGetRestaurant {
   section: string;
 }
+
 export interface IRestaurantServiceGetDetails {
   place_id: string;
 }
