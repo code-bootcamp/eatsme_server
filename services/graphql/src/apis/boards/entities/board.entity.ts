@@ -1,13 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import moment from 'moment-timezone';
 import { BoardComment } from 'src/apis/boards-comments/boards-comments.entities/boards-comments.entity';
-import { Comment } from 'src/apis/Comments/entities/comment.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -48,9 +46,9 @@ export class Board {
   @Field(() => Int)
   like: number;
 
-  // @ManyToOne(() => User, (user) => user.boards)
-  // @Field(() => User)
-  // users: User;
+  @ManyToOne(() => User, (user) => user.boards)
+  @Field(() => User)
+  users: User;
 
   @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
   @Field(() => [BoardComment])
