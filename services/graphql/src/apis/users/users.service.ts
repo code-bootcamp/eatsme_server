@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import {
   IUserFindOneByUser,
+  IUsersCheckNickname,
   IUsersCreate,
   IUsersFindOneByEmail,
   IUsersFindOneByNickname,
@@ -78,11 +79,20 @@ export class UserService {
     if (isValidEmail) {
       throw new ConflictException('이미 회원가입이 되어있는 이메일입니다.');
     }
-    console.log(isValidEmail, '########################');
     return isValidEmail;
   }
 
-  //-----닉네임 db 유무확인-----
+  //-----닉네임 값 존재 확인-----
+  async checkNickname({
+    nickname, //
+  }: IUsersCheckNickname): Promise<string> {
+    if (!nickname) {
+      throw new ConflictException('닉네임을 입력해주세요');
+    }
+    return nickname;
+  }
+
+  //-----닉네임 db 유무확인 &&-----
   async isFindOneByNickname({
     nickname,
   }: IUsersFindOneByNickname): Promise<User> {
@@ -93,7 +103,6 @@ export class UserService {
     if (isValidNickname) {
       throw new ConflictException('이미 사용하고있는 닉네임입니다.');
     }
-    console.log(isValidNickname, '@@@@@@@123@@@@@@@@@@@@@@@');
     return isValidNickname;
   }
 

@@ -12,6 +12,10 @@ export interface IUsersFindOneByEmail {
   email: string;
 }
 
+export interface IUsersCheckNickname {
+  nickname: string;
+}
+
 export interface IUsersSendToTemplate {
   email: string;
 }
