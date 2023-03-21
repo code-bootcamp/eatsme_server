@@ -12,13 +12,13 @@ export class RestaurantController {
   }
 
   @Delete('/road/restaurant')
-  DeleteRestaurant(): Promise<string> {
+  deleteRestaurant(): Promise<string> {
     //개발과정중 DB의 데이터를 확인하고 지우기 위해 만들었습니다.
     return this.restaurantService.deleteAllCollection();
   }
 
   @Get('/road/restaurant')
-  GetRestaurant(@Body() division: object): Promise<Restaurant[]> {
+  getRestaurant(@Body() division: object): Promise<Restaurant[]> {
     const [section] = Object.values(division);
     return this.restaurantService.getRestaurant({ section });
   }

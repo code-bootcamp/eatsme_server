@@ -27,12 +27,11 @@ export class RestaurantService {
 
     const result = await axios(config);
     //현재페이지의 정보를 DB에 반복적으로 저장한다.
-
     const restaurantsInfos = result.data.results;
     await this.saveRepeat({ restaurantsInfos, section });
     //다음페이지의 정보를 저장한다.
     const nextPageToken = result.data.next_page_token;
-    this.saveNextPage({ nextPageToken, section });
+    await this.saveNextPage({ nextPageToken, section });
   }
 
   saveRepeat({ restaurantsInfos, section }): void {
@@ -52,7 +51,7 @@ export class RestaurantService {
         weekday_text: openingHours,
       } = details;
 
-      if (rating >= 4.6) {
+      if (rating >= 4.3) {
         //이미 있는지 확인하고 없는 경우에만 DB에 저장한다.
         const findRestaurant = await this.RestaurantModel.findOne({
           name,
@@ -68,6 +67,7 @@ export class RestaurantService {
             openingHours,
             section,
           }).save();
+          console.log(postRestaurant);
         }
       }
     });
@@ -100,7 +100,9 @@ export class RestaurantService {
         //2초정도의 지연시간이 없으면 같은 정보를 받아오므로 setTimeout으로 지연시켜주었다.
         setTimeout(async () => {
           const result = await axios(nextConfig);
+          console.log(result);
           const restaurantsInfos = result.data.results;
+          console.log(restaurantsInfos);
           await this.saveRepeat({ restaurantsInfos, section });
           const nextPageToken = result.data.next_page_token;
           if (nextPageToken) {
@@ -111,6 +113,7 @@ export class RestaurantService {
     };
     getNextRestaurant({ nextPageToken });
   }
+
   async deleteAllCollection(): Promise<string> {
     const result = await this.RestaurantModel.collection.drop();
     if (result) {

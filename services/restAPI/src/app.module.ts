@@ -11,7 +11,11 @@ import { RestaurantModule } from './apis/restaurant/restaurant.module';
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MY_MONGODB), //
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController, //
+  ],
+  providers: [
+    AppService, //
+  ],
 })
 export class AppModule {}
