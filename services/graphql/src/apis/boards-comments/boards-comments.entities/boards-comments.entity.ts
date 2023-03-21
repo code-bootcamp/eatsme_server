@@ -17,3 +17,4 @@ export class BoardComment {
   @ManyToOne(() => Comment, (comment) => comment.boardComments)
   @Field(() => Comment)
   comments: Comment;
+}
