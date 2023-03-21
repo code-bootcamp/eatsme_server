@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import * as redisStore from 'cache-manager-redis-store';
 import { RestaurantModule } from './apis/restaurant/restaurant.module';
 import { RedisClientOptions } from 'redis';
+import * as redisStore from 'cache-manager-redis-store';
+
 
 @Module({
   imports: [
@@ -19,7 +20,11 @@ import { RedisClientOptions } from 'redis';
       isGlobal: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController, //
+  ],
+  providers: [
+    AppService, //
+  ],
 })
 export class AppModule {}

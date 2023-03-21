@@ -1,7 +1,6 @@
-
-import { Body, Controller, Delete, Post } from '@nestjs/common';
-
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
+import { Restaurant } from './schemas/restaurant.schemas';
 
 @Controller()
 export class RestaurantController {
@@ -9,17 +8,22 @@ export class RestaurantController {
 
   @Post('/road/restaurant')
   postRestaurant(
-    @Body() division: object, //서울시의 각행정구역을 입력받는다.
+    @Body() body: string, //
   ): Promise<void> {
-    const [section] = Object.values(division);
-    return this.restaurantService.postRestaurant({ section });
+    return this.restaurantService.postRestaurant({ body });
+  }
+
+  @Get('/road/restaurant')
+  getRestaurant(
+    @Body() body: string, //
+  ): Promise<Restaurant[]> {
+    return this.restaurantService.getRestaurants({ body });
   }
 
   @Delete('/road/restaurant')
-  DeleteRestaurant(): Promise<string> {
-    //개발과정중 DB의 데이터를 확인하고 지우기 위해 만들었습니다.
-    return this.restaurantService.deleteAllCollection();
+  deleteRestaurant(
+    @Body() body: string, //
+  ): Promise<string> {
+    return this.restaurantService.deleteCollection({ body });
   }
-
-
 }
