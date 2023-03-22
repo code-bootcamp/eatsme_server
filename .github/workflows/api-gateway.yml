@@ -24,8 +24,8 @@ jobs:
 
     - name: Build and tag Docker image
       run: |-
-        docker build -t ${{secretes.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} ./api-gateway/DokcerFile.prod
-        docker push ${{secretes.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
+        docker build -t ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} ./api-gateway/DokcerFile.prod
+        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
     - name: Update VM with new image
       run: |-
-        docker service update --image ${{secretes.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_api-gateway
+        docker service update --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_api-gateway
