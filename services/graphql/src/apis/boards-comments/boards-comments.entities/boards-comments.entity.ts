@@ -18,4 +18,3 @@ export class BoardComment {
   @Field(() => Comment)
   comments: Comment;
 }
-

@@ -59,4 +59,5 @@ export class Board {
   // @Field(() => [BoardComment])
   // boardComments: BoardComment[];
 
+
 }
