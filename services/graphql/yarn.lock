@@ -1028,6 +1028,7 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-1.2.2.tgz#d9ddb143776e309dbc1a518ac1607fddac1e140e"
   integrity sha512-3dHxLXs3M0GPiriAcCFFJQHoDFUuzTD5w6JDhE7TyfT89YKpe6tcCCIqOZWdXmt9AZjjK30RkHRSFF+QEnWFQg==
 
+
 "@nestjs/microservices@^9.3.10":
   version "9.3.10"
   resolved "https://registry.yarnpkg.com/@nestjs/microservices/-/microservices-9.3.10.tgz#a3930fb04385ea7e1a0bd8ea2eaf953c3cd0c20c"

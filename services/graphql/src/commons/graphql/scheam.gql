@@ -65,17 +65,26 @@ type BoardComment {
 
 type Query {
   getHello: String!
+  fetchLoginUser: String!
+  fetchUser(userId: String!): User!
   isValidNickname(nickname: String!): User!
   fetchBoard(boardId: String!): Board!
   fetchBoards: [Board!]!
 }
 
 type Mutation {
+  login(loginAuthInput: LoginAuthInput!): String!
   checkEmail(email: String!): String!
-
   createUser(createUserInput: CreateUserInput!): User!
   createBoard(createBoardInput: CreateBoardInput!): Board!
 }
+
+
+input LoginAuthInput {
+  email: String!
+  password: String!
+}
+
 
 input CreateUserInput {
   email: String!

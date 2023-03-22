@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtAccessStrategy } from '../auth/strategies/jwt-access.strategy';
 import { User } from './entities/user.entity';
 import { UserResolver } from './users.resolver';
 import { UserService } from './users.service';
@@ -13,6 +14,9 @@ import { UserService } from './users.service';
   providers: [
     UserResolver, //
     UserService,
+  ],
+  exports: [
+    UserService, //
   ],
 })
 export class UserModule {}
