@@ -28,7 +28,7 @@ export class BoardsService {
  }
 
  //지역 선택검증
- checkList({ startPoint, endPoint, title }: IBoardsServiceNullCheckList): Promise<string> | void {
+ checkList({ startPoint, endPoint, title }: IBoardsServiceNullCheckList): void {
   // 출발 및 도착 선택검증
    if(!startPoint || !endPoint) { 
     throw new UnprocessableEntityException('지역을 선택해주세요');
@@ -44,8 +44,8 @@ export class BoardsService {
   async create({ createBoardInput }: IBoardsServiceCreate): Promise<Board> {
     const {  title, startPoint, endPoint } = createBoardInput;
 
-    await this.checkList({ startPoint , endPoint, title });
-    console.log(title)
+    this.checkList({ startPoint , endPoint, title });
+    
     return this.boardsRepository.save({
       ...createBoardInput
    });
