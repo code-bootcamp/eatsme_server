@@ -4,7 +4,7 @@ describe('checkEmail', () => {
   });
 });
 
-describe('isValidNicknmae', () => {
+describe('isValidNickname', () => {
   it('닉네임 db존재유무 확인', () => {
     //
   });

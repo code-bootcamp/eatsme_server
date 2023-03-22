@@ -7,7 +7,7 @@ export class ChannelController {
     private readonly channelService: ChannelService, //
   ) {}
 
-  @Post('/road/channel')
+  @Post('/info/channel')
   async getChannel(
     @Body() question: string, //
   ): Promise<string> {
