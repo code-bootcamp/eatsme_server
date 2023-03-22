@@ -95,7 +95,7 @@ describe('UserService', () => {
       const email = 'black1594@naver.com';
 
       const result = await userService.checkEmail({ email });
-      expect(result).toBe('black1594@naver.com');
+      expect(result).toBe(email);
     });
 
     it('db에 있는 이메일 입력했을 때', async () => {
@@ -127,15 +127,6 @@ describe('UserService', () => {
       }
     });
 
-    it('닉네임 값을 입력 한 경우 ', async () => {
-      const nickname = '짱아';
-
-      const result = await userService.isFindOneByNickname({ nickname });
-      expect(result).toBe(null);
-    });
-  });
-
-  describe('isValidNickname', () => {
     it('닉네임 db 유무확인', async () => {
       const nickname = '짱구';
 
@@ -146,7 +137,7 @@ describe('UserService', () => {
       }
     });
 
-    it('db에 없는 닉네임 입력했을 때', async () => {
+    it('닉네임 값을 입력 한 경우 ', async () => {
       const nickname = '짱아';
 
       const result = await userService.isFindOneByNickname({ nickname });
@@ -156,90 +147,97 @@ describe('UserService', () => {
 
   describe('create', () => {
     it('이메일 양식 값이 주어지지 않았을 때', async () => {
-      const email = '';
+      const mydata: IUsersCreate = {
+        createUserInput: {
+          email: '',
+          password: '12341234',
+          nickname: '짱아',
+        },
+      };
+
       try {
-        await userService.checkEmail({ email });
+        await userService.create({ ...mydata });
       } catch (err) {
         expect(err).toBeInstanceOf(ConflictException);
       }
     });
 
     it('이메일 양식 글자수 30개초과 에러', async () => {
-      const email = 'abcdefghijklmnopqrstuvwxyz@naver.com';
-
+      const mydata: IUsersCreate = {
+        createUserInput: {
+          email: 'abcdefghijklmnopqrstuvwxyz@naver.com',
+          password: '12341234',
+          nickname: '짱아',
+        },
+      };
       try {
-        await userService.checkEmail({ email });
+        await userService.create({ ...mydata });
       } catch (err) {
         expect(err).toBeInstanceOf(ConflictException);
       }
     });
 
     it('이메일 양식 @ 유무 에러', async () => {
-      const email = 'black1594naver.com';
+      const mydata: IUsersCreate = {
+        createUserInput: {
+          email: 'black1594naver.com',
+          password: '12341234',
+          nickname: '짱아',
+        },
+      };
 
       try {
-        await userService.checkEmail({ email });
+        await userService.create({ ...mydata });
       } catch (err) {
         expect(err).toBeInstanceOf(ConflictException);
       }
-    });
-
-    it('이메일 양식 전부 갖추었을때 ', async () => {
-      const email = 'black1594@naver.com';
-
-      const result = await userService.checkEmail({ email });
-      expect(result).toBe('black1594@naver.com');
     });
 
     it('db에 있는 이메일 입력했을 때', async () => {
-      const email = 'aaa@aaa.com';
-
+      const mydata: IUsersCreate = {
+        createUserInput: {
+          email: 'aaa@aaa.com',
+          password: '12341234',
+          nickname: '짱아',
+        },
+      };
       try {
-        await userService.checkEmail({ email });
+        await userService.create({ ...mydata });
       } catch (err) {
         expect(err).toBeInstanceOf(ConflictException);
       }
-    });
-
-    it('db에 없는 이메일 입력했을 때', async () => {
-      const email = 'black1594@naver.com';
-
-      const result = await userService.checkEmail({ email });
-      expect(result).toBe('black1594@naver.com');
     });
 
     it('닉네임 db 유무확인', async () => {
-      const nickname = '짱구';
+      const mydata: IUsersCreate = {
+        createUserInput: {
+          email: 'black1594@naver.com',
+          password: '12341234',
+          nickname: '짱구',
+        },
+      };
 
       try {
-        await userService.isFindOneByNickname({ nickname });
+        await userService.create({ ...mydata });
       } catch (err) {
         expect(err).toBeInstanceOf(ConflictException);
       }
-    });
-
-    it('db에 없는 닉네임 입력했을 때', async () => {
-      const nickname = '짱아';
-
-      const result = await userService.isFindOneByNickname({ nickname });
-      expect(result).toBe(null);
     });
 
     it('닉네임 값을 입력 안한 경우', async () => {
-      const nickname = '';
+      const mydata: IUsersCreate = {
+        createUserInput: {
+          email: 'black1594@naver.com',
+          password: '12341234',
+          nickname: '',
+        },
+      };
 
       try {
-        await userService.isFindOneByNickname({ nickname });
+        await userService.create({ ...mydata });
       } catch (err) {
         expect(err).toBeInstanceOf(ConflictException);
       }
-    });
-
-    it('닉네임 값을 입력 한 경우 ', async () => {
-      const nickname = '짱아';
-
-      const result = await userService.isFindOneByNickname({ nickname });
-      expect(result).toBe(null);
     });
 
     it('이메일,닉네임 양식 통과, db에 없는경우', async () => {

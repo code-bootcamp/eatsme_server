@@ -11,6 +11,7 @@ import { UserModule } from './apis/users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
+import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { BoardModule } from './apis/boards/boards.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/scheam.gql',
+      context: ({ req, res }) => ({ req, res }),
     }),
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as 'mysql',
@@ -42,7 +44,7 @@ import { BoardModule } from './apis/boards/boards.module';
       useFactory: () => ({
         transport: {
           service: 'Gmail',
-          host: process.env.DATABASE_HOST,
+          host: process.env.EMAIL_HOST,
           port: Number(process.env.DATABASE_PORT),
           secure: false, // upgrade later with STARTTLS
           auth: {
@@ -56,6 +58,7 @@ import { BoardModule } from './apis/boards/boards.module';
   providers: [
     AppResolver, //
     AppService,
+    JwtAccessStrategy,
   ],
 })
 export class AppModule {}

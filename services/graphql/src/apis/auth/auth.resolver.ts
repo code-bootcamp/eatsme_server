@@ -1,5 +1,7 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { IContext } from 'src/commons/interfaces/context';
 import { AuthService } from './auth.service';
+import { LoginAuthInput } from './dto/login-auth.input';
 
 @Resolver()
 export class AuthResolver {
@@ -9,9 +11,9 @@ export class AuthResolver {
 
   @Mutation(() => String)
   async login(
-    @Args('email') email: string, //
-    @Args('password') password: string,
+    @Args('loginAuthInput') loginAuthInput: LoginAuthInput,
+    @Context() context: IContext,
   ): Promise<string> {
-    return this.authService.login({ email, password });
+    return this.authService.login({ loginAuthInput, context });
   }
 }
