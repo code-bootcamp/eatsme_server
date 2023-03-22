@@ -27,7 +27,7 @@ export class BoardsResolver {
   createBoard(
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
   ): Promise<Board> {
-    return this.boardsService.create({ createBoardInput })
+    return this.boardsService.create({ createBoardInput }) 
   }
 
   @Mutation(() => Board)

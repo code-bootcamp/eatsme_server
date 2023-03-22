@@ -29,7 +29,7 @@ export class Board {
     },
   })
   @Field(() => Date)
-  createdAt: Date;
+  createdAt?: Date;
 
   @Column({ type: 'varchar', length: 100 })
   @Field(() => String)
@@ -51,9 +51,9 @@ export class Board {
   @Field(() => Int)
   like: number;
 
-  // @ManyToOne(() => User, (user) => user.boards)
-  // @Field(() => User)
-  // users: User;
+  @ManyToOne(() => User, (user) => user.boards)
+  @Field(() => User)
+  users: User;
 
   // @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
   // @Field(() => [BoardComment])

@@ -2,26 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Reservation {
-  id: String!
-  table: Int!
-  time: DateTime!
-  users: User!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type User {
-  id: String!
-  email: String!
-  nickname: String!
-  userImg: String!
-  reservations: [Reservation!]!
-}
-
 type Board {
   id: String!
   title: String!
@@ -31,6 +11,28 @@ type Board {
   endPoint: String!
   customName: String!
   like: Int!
+  users: User!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Reservation {
+  id: String!
+  table: Int!
+  time: DateTime!
+  users: User!
+}
+
+type User {
+  id: String!
+  email: String!
+  nickname: String!
+  userImg: String!
+  reservations: [Reservation!]!
+  boards: [Board!]!
 }
 
 type Reply {

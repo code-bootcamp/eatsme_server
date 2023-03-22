@@ -11,9 +11,9 @@ export interface IBoardsServiceNullCheckTitle {
 }
 
 export interface IBoardsServiceNullCheckList {
- startPoint: string;
- endPoint: string;
- title: string;
+  title: string,
+  startPoint: string,
+  endPoint: string,
 }
 
 export interface IBoardsServiceCreate {
@@ -21,7 +21,7 @@ export interface IBoardsServiceCreate {
 }
 
 export interface IBoardsServiceUpdate {
- boardId: string;
+ boardId: string,
  updateBoardInput: UpdateBoardInput;
 }
 
