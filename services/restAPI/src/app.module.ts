@@ -3,15 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RestaurantModule } from './apis/restaurant/restaurant.module';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
-import { RestaurantModule } from './apis/restaurant/restaurant.module';
-import { ChannelModule } from './apis/\bchat bot/channel.module';
+
 
 @Module({
   imports: [
     RestaurantModule,
-    ChannelModule,
+
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MY_MONGODB), //
     CacheModule.register<RedisClientOptions>({
@@ -20,7 +20,11 @@ import { ChannelModule } from './apis/\bchat bot/channel.module';
       isGlobal: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController, //
+  ],
+  providers: [
+    AppService, //
+  ],
 })
 export class AppModule {}
