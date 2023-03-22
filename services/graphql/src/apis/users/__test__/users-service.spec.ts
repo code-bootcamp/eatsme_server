@@ -9,12 +9,22 @@ class MockUserService {
   mydb = [
     { email: 'aaa@aaa.com', password: '12341234', nickname: '짱구' },
     { email: 'qqq@qqq.com', password: '1q2w3e4r', nickname: '철수' },
+    { email: 'www@www.com', password: 'qwerty12', nickname: '훈이' },
   ];
+
   findOne({ where }) {
     const users = this.mydb.filter((el) => el.email === where.email);
+    console.log(users, '@@@@@@@@@@@@@@');
     if (users.length) return users[0];
     return null;
   }
+
+  nicknameFindOne({ where }) {
+    const nicknames = this.mydb.filter((el) => el.nickname === where.nickname);
+    if (nicknames.length) return nicknames[0];
+    return null;
+  }
+
   save({ email, password, nickname }) {
     this.mydb.push({ email, password, nickname });
     return { email, password, nickname };
@@ -107,18 +117,25 @@ describe('UserService', () => {
       const result = await userService.checkEmail({ email });
       expect(result).toBe('black1594@naver.com');
     });
+  });
 
-    // describe('isValidNickname', () => {
-    //   it('닉네임 db 유무확인', async () => {
-    //     const myData = {
-    //       nickname: '짱구',
-    //    aaa@aaa.com };
+  describe('isValidNickname', () => {
+    it('닉네임 db 유무확인', async () => {
+      const nickname = '짱구';
 
-    //     try {
-    //       await userService.isFindOneByNickname({ ...myData });
-    //     } catch (err) {
-    //       expect(err).toBeInstanceOf(ConflictException);
-    //     }
-    //   });
+      try {
+        await userService.isFindOneByNickname({ nickname });
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConflictException);
+      }
+    });
+
+    it('db에 없는 닉네임 입력했을 때', async () => {
+      const nickname = '짱구';
+
+      const result = await userService.isFindOneByNickname({ nickname });
+      console.log(result);
+      expect(result).toBe(null);
+    });
   });
 });

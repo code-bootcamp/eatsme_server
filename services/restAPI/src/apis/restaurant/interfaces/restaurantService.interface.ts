@@ -1,5 +1,8 @@
-export interface IRestaurantServicePostRestaurant {
-  section: string;
+export interface IRestaurantServicePostAndGetRestaurant {
+  body: string;
+}
+export interface IRestaurantServiceGetRestaurant {
+  body: string;
 }
 
 export interface IRestaurantServiceGetDetails {
@@ -15,4 +18,6 @@ export interface IRestaurantServiceGetDetailsReturn {
   formatted_phone_number: string;
   weekday_text: string[];
 }
-
+export interface IRestaurantServiceDeleteCollection {
+  body: string;
+}
