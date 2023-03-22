@@ -2,26 +2,26 @@ version: '3.7'
 
 services:
     api-gateway:
-        image: asia.gcr.io/project-eatsme-backend/api-gateway:0.3
+        image: asia.gcr.io/project-eatsme-backend/api-gateway:0.1
         build:
             context: ./api-gateway/
-            dockerfile: DockerFile
+            dockerfile: DockerFile.prod
         ports:
             - 80:80
 
     food-service:
-        image: asia.gcr.io/project-eatsme-backend/food-service:0.3
+        image: asia.gcr.io/project-eatsme-backend/food-service:0.1
         build:
             context: ./services/graphql
-            dockerfile: DockerFile
+            dockerfile: DockerFile.prod
         env_file:
             - .env
 
     road-service:
-        image: asia.gcr.io/project-eatsme-backend/road-service:0.3
+        image: asia.gcr.io/project-eatsme-backend/road-service:0.1
         build:
             context: ./services/restAPI
-            dockerfile: DockerFile
+            dockerfile: DockerFile.prod
         env_file:
             - .env
 

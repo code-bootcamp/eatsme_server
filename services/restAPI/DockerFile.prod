@@ -3,7 +3,7 @@ FROM node:18
 WORKDIR /road-service/
 COPY ./package.json /road-service/
 COPY ./yarn.lock /road-service/
-RUN yarn install
+RUN yarn install --production
 
 COPY . /road-service/
-CMD yarn start:dev
+CMD yarn start:prod
