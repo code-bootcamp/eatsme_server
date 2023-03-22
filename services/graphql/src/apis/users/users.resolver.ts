@@ -1,4 +1,6 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateUserInput } from './entities/dto/create-user.input';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
@@ -10,6 +12,7 @@ export class UserResolver {
   ) {}
 
   // -----회원 조회-----
+  @UseGuards(AuthGuard)
   @Query(() => User)
   fetchUser(
     @Args('userId') userId: string, //

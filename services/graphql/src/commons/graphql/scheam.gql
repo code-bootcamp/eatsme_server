@@ -66,13 +66,26 @@ type User {
 
 type Query {
   getHello: String!
+  fetchBoard(boardId: String!): Board!
+  fetchBoards: [Board!]!
   fetchUser(userId: String!): User!
   isValidNickname(nickname: String!): User!
 }
 
 type Mutation {
+  login(email: String!, password: String!): String!
+  createBoard(createBoardInput: CreateBoardInput!): Board!
   checkEmail(email: String!): String!
   createUser(createUserInput: CreateUserInput!): User!
+}
+
+input CreateBoardInput {
+  title: String!
+  boardImg: String!
+  startPoint: String!
+  endPoint: String!
+  customName: String!
+  like: Int!
 }
 
 input CreateUserInput {

@@ -31,7 +31,6 @@ export class User {
   @Field(() => [Reservation])
   reservations: Reservation[];
 
-  fetchUser;
   @OneToMany(() => Board, (board) => board.users)
   @Field(() => [Board])
   boards: Board[];

@@ -30,13 +30,18 @@ export class UserService {
     return user;
   }
 
+  //-----유저email확인-----
+  async findOneByEmail({ email }: IUsersFindOneByEmail): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
   //-----이메일 만드는 방식 확인-----
   async checkEmail({ email }: IUsersFindOneByEmail): Promise<string> {
     if (!email || !email.includes('@') || 30 <= email.length) {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
     await this.isFindOneByEmail({ email });
-    await this.sendToTemplate({ email });
+    // await this.sendToTemplate({ email });
     return email;
   }
 
