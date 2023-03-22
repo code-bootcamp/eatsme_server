@@ -23,7 +23,9 @@ jobs:
 
     - name: Build and tag Docker image
       run: |-
-        docker build -f ./api-gateway/DockerFile -t ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
+        docker build \
+        -f ./api-gateway/DockerFile 
+        -t ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
         docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
     - name: Update VM with new image
       run: |-
