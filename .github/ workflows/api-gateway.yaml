@@ -2,8 +2,8 @@ name: Deploy to GCP VM
 
 on:
   push:
-      branches:
-          - 'master'
+    branches:
+      - master
 
 jobs:
   deploy:
