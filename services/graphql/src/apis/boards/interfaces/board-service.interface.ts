@@ -4,19 +4,18 @@ export interface IBoardsServiceFindOne {
  boardId: string;
 }
 
-export interface IBoardServiceNullCheckTitle {
+export interface IBoardsServiceNullCheckTitle {
+ title: string;
+
+}
+
+export interface IBoardsServiceNullCheckList {
+ startPoint: string;
+ endPoint: string;
  title: string;
 }
 
-export interface IBoardServiceNullCheckStartPoint {
- startPoint: string;
-}
-
-export interface IBoardServiceNullCheckEndPoint {
- endPoint: string;
-}
-
-export interface IBoardServiceCreate {
+export interface IBoardsServiceCreate {
  createBoardInput: CreateBoardInput;
 }
 

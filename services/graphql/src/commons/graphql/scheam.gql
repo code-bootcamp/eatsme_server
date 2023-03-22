@@ -2,17 +2,19 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Board {
+
+type Alarm {
   id: String!
-  title: String!
-  CreateAt: DateTime!
-  boardImg: String!
-  startPoint: String!
-  endPoint: String!
-  customName: String!
-  like: Int!
+  isAlarm: Boolean!
   users: User!
-  boardComments: [BoardComment!]!
+}
+
+type Reservation {
+
+  id: String!
+  table: Int!
+  time: DateTime!
+  users: User!
 }
 
 """
@@ -20,10 +22,26 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type BoardComment {
+
+type User {
   id: String!
-  boards: Board!
-  comments: Comment!
+  email: String!
+  nickname: String!
+  userImg: String!
+  reservations: [Reservation!]!
+  alarms: [Alarm!]!
+}
+
+type Board {
+
+  id: String!
+  title: String!
+  createdAt: DateTime!
+  boardImg: String!
+  startPoint: String!
+  endPoint: String!
+  customName: String!
+  like: Int!
 }
 
 type Reply {
@@ -37,38 +55,40 @@ type Comment {
   comment: String!
   replies: [Reply!]!
   boardComments: [BoardComment!]!
-  alarms: [Alarm!]!
 }
 
-type Alarm {
+type BoardComment {
   id: String!
-  isAlarm: Boolean!
-  users: User!
   comments: Comment!
 }
 
-type Reservation {
-  id: String!
-  table: Int!
-  time: DateTime!
-  users: User!
-}
-
-type User {
-  id: String!
-  email: String!
-  nickname: String!
-  userImg: String!
-  reservations: [Reservation!]!
-  boards: [Board!]!
-  alarms: [Alarm!]!
-}
 
 type Query {
   getHello: String!
   isValidNickname(nickname: String!): User!
+  fetchBoard(boardId: String!): Board!
+  fetchBoards: [Board!]!
 }
 
 type Mutation {
   checkEmail(email: String!): String!
+
+  createUser(createUserInput: CreateUserInput!): User!
+  createBoard(createBoardInput: CreateBoardInput!): Board!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  nickname: String!
+}
+
+input CreateBoardInput {
+  title: String!
+  boardImg: String!
+  startPoint: String!
+  endPoint: String!
+  customName: String!
+  like: Int!
+
 }
