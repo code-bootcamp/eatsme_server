@@ -30,7 +30,7 @@ jobs:
     - name: push tag Docker image
       run: |-
         whoami
-        sudo usermod -aG docker eatsmeproject
+        sudo usermod -aG docker runner
         docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
     
     - name: Update VM with new image
