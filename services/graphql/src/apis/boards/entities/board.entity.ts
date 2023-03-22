@@ -21,7 +21,13 @@ export class Board {
   @Field(() => String)
   title: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamp',
+    transformer: {
+      from: (value?: Date) => value,
+      to: () => new Date(new Date().getTime() + 9 * 60 * 60 * 1000),
+    },
+  })
   @Field(() => Date)
   createdAt: Date;
 
@@ -52,4 +58,5 @@ export class Board {
   // @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
   // @Field(() => [BoardComment])
   // boardComments: BoardComment[];
+
 }
