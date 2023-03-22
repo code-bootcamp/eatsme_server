@@ -1,4 +1,4 @@
-import { CreateUserInput } from '../entities/dto/create-user.input';
+import { CreateUserInput } from '../dto/create-user.input';
 
 export interface IUserFindOneByUser {
   userId: string;
@@ -10,6 +10,10 @@ export interface IUsersCheckEmail {
 
 export interface IUsersFindOneByEmail {
   email: string;
+}
+
+export interface IUsersCheckNickname {
+  nickname: string;
 }
 
 export interface IUsersSendToTemplate {
