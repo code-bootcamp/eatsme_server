@@ -10,9 +10,9 @@ export class BoardComment {
   @Field(() => String)
   id: string;
 
-  @ManyToOne(() => Board, (board) => board.boardComments)
-  @Field(() => Board)
-  boards: Board;
+  // @ManyToOne(() => Board, (board) => board.boardComments)
+  // @Field(() => Board)
+  // boards: Board;
 
   @ManyToOne(() => Comment, (comment) => comment.boardComments)
   @Field(() => Comment)
