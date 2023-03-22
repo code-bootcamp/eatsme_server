@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - master
-
+      
 jobs:
   deploy:
     name: Setup, Build, Deploy
@@ -24,9 +24,9 @@ jobs:
     - name: Build tag Docker image
       run: |-
         docker build \
-          -f ./api-gateway/DockerFile 
           -t ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
-          
+          -f ./api-gateway/DockerFile 
+    
     - name: push tag Docker image
       run: |-
         docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
