@@ -21,12 +21,16 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-    - name: Build and tag Docker image
+    - name: Build tag Docker image
       run: |-
         docker build \
           -f ./api-gateway/DockerFile 
           -t ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
+          
+    - name: push tag Docker image
+      run: |-
         docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
+    
     - name: Update VM with new image
       run: |-
         docker service update --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_api-gateway
