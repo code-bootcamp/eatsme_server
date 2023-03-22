@@ -5,7 +5,8 @@ import { Board } from "./entities/board.entity";
 import { 
   IBoardsServiceCreate, 
   IBoardsServiceFindOne,
-  IBoardsServiceNullCheckList, 
+  IBoardsServiceNullCheckList,
+  IBoardsServiceUpdate, 
 } from "./interfaces/board-service.interface";
 
 
@@ -40,14 +41,42 @@ export class BoardsService {
   }
  }
 
+ // 좋와요 증가 및 감소
+ async toggleLike(boardId: string, isLike: boolean): Promise<Board> {
+  const board = await this.findOne({ boardId });
+  if (isLike) {
+    board.like += 1; // 좋아요 수를 1 증가시킴
+  } else {
+    if (board.like > 0) {
+      board.like -= 1; // 좋아요 수를 1 감소시킴
+    }
+  }
+  return this.boardsRepository.save(board);
+ }
+
  //게시물 작성하기
   async create({ createBoardInput }: IBoardsServiceCreate): Promise<Board> {
     const {  title, startPoint, endPoint } = createBoardInput;
 
     this.checkList({ startPoint , endPoint, title });
-    
+
     return this.boardsRepository.save({
       ...createBoardInput
    });
+ }
+
+ //게시물 업데이트하기
+ async update({
+  boardId,
+  updateBoardInput,
+ }: IBoardsServiceUpdate): Promise<Board> {
+  const board = await this.findOne({ boardId });
+  const { title, startPoint, endPoint } = updateBoardInput
+  this.checkList({ startPoint , endPoint, title });
+
+  return this.boardsRepository.save({
+    ...board,
+    ...updateBoardInput,
+  });
  }
 }

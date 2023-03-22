@@ -1,4 +1,5 @@
 import { CreateBoardInput } from "../dto/create-board.input";
+import { UpdateBoardInput } from "../dto/update-board.input";
 
 export interface IBoardsServiceFindOne {
  boardId: string;
@@ -19,4 +20,8 @@ export interface IBoardsServiceCreate {
  createBoardInput: CreateBoardInput;
 }
 
+export interface IBoardsServiceUpdate {
+ boardId: string;
+ updateBoardInput: UpdateBoardInput;
+}
 

@@ -1,6 +1,7 @@
 import { Args, Mutation, Query, Resolver  } from "@nestjs/graphql";
 import { BoardsService } from "./boards.service";
 import { CreateBoardInput } from "./dto/create-board.input";
+import { UpdateBoardInput } from "./dto/update-board.input";
 import { Board } from "./entities/board.entity";
 
 
@@ -27,5 +28,13 @@ export class BoardsResolver {
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
   ): Promise<Board> {
     return this.boardsService.create({ createBoardInput })
+  }
+
+  @Mutation(() => Board)
+  updateBoard(
+    @Args('boardId') boardId: string,
+    @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
+  ): Promise<Board> {
+    return this.boardsService.update({ boardId, updateBoardInput });
   }
 }
