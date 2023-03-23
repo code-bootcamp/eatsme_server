@@ -271,7 +271,15 @@ describe('RestaurantController', () => {
     //   }).rejects.toThrowError(HttpException);
     // });
   });
-  describe('postRestaurants', () => {
-    it('행정구역 등록이 정상적으로 완료된 경우');
-  });
+  // describe('deleteRestaurants', () => {
+  //   it('존재하는 행정구역으로 정상적으로 삭제한 경우 확인 메세지를 반환한다.', async () => {
+  //     const result =
+  //     jest
+  //       .spyOn(restaurantService, 'deleteSection')
+  //       .mockImplementation(async ({ body }) => {
+  //         return result;
+  //       });
+  //     expect(await restaurantController.deleteRestaurant(body)).toBe(result);
+  //   });
+  // });
 });

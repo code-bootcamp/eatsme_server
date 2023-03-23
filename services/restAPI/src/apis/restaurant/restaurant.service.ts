@@ -74,6 +74,7 @@ export class RestaurantService {
             restaurantName,
           })
           .exec();
+        console.log('####');
         if (!findRestaurant) {
           const postRestaurant = await new this.restaurantModel({
             restaurantName,
@@ -85,7 +86,7 @@ export class RestaurantService {
             openingHours,
             section,
           }).save();
-          console.log([postRestaurant].length);
+          console.log(postRestaurant);
         }
       }
     });
@@ -171,7 +172,6 @@ export class RestaurantService {
   }
 
   deleteSection({ body }: IRestaurantServiceDeleteCollection): Promise<string> {
-    console.log(body);
     return this.restaurantModel
       .deleteMany({
         section: Object.values(body)[0],

@@ -42,7 +42,6 @@ export class RestaurantController {
   deleteRestaurants(
     @Body() body: string, //
   ): Promise<string> {
-    console.log(body);
     return this.restaurantService.deleteSection({ body });
   }
 }
