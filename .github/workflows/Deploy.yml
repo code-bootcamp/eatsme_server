@@ -65,7 +65,7 @@ jobs:
     - name: Update VM with new image
       run: |-
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
-        --command "docker service update --update-delay 5m --with-registry-auth --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_food-service"
+        --command "docker service update --update-delay 5m --with-registry-auth --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}a eatsme_food-service"
     
   road-service-deploy:
     needs: food-service-deploy
@@ -95,4 +95,4 @@ jobs:
     - name: Update VM with new image
       run: |-
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
-        --command "docker service update --update-delay 5m --with-registry-auth --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_road-service"
+        --command "docker service update --update-delay 5m --with-registry-auth --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}b eatsme_road-service"
