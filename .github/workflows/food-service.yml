@@ -1,4 +1,4 @@
-name: EatsMe - Deploy to GCP VM
+name: EatsMe - food Deploy to GCP VM
 
 on:
   workflow_dispatch: 
@@ -15,7 +15,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
  
-   - id: 'food-service auth'
+    - id: 'auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0'
       with:
