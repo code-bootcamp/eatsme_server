@@ -26,12 +26,12 @@ export class UserResolver {
   }
 
   // // -----회원가입-----
-  // @Mutation(() => User)
-  // createUser(
-  //   @Args('createUserInput') createUserInput: CreateUserInput,
-  // ): Promise<User> {
-  //   return this.userService.create({ createUserInput });
-  // }
+  @Mutation(() => User)
+  createUser(
+    @Args('createUserInput') createUserInput: CreateUserInput,
+  ): Promise<User> {
+    return this.userService.create({ createUserInput });
+  }
 
   // //-----비밀번호 인가-----  //로그인코드 만든 후 다시 작업
   // @Mutation(GqlAuthGuard('access')

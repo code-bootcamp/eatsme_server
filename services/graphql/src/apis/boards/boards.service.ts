@@ -1,10 +1,10 @@
 import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import e from "express";
 import { Repository } from "typeorm";
 import { Board } from "./entities/board.entity";
 import { 
   IBoardsServiceCreate, 
+  IBoardsServiceDelete, 
   IBoardsServiceFindOne,
   IBoardsServiceNullCheckList,
   IBoardsServiceUpdate, 
@@ -31,7 +31,7 @@ export class BoardsService {
 
  //지역 선택검증
  async checkList({ title, startPoint, endPoint }: IBoardsServiceNullCheckList): Promise<void> {
-  // 출발 및 도착 선택검증
+  // 출발,도착 선택검증 및 제목작성확인
   if(!startPoint || !endPoint) { 
     throw new UnprocessableEntityException('지역을 선택해주세요');
   } else if (!title.trim()){
@@ -52,14 +52,21 @@ export class BoardsService {
  //게시물 업데이트하기
  async update({ 
   boardId,
-  updateBoardInput }: IBoardsServiceUpdate): Promise<Board> {
+  updateBoardInput,
+  }: IBoardsServiceUpdate): Promise<Board> {
     const board = await this.findOne({ boardId });
-    const {  title, startPoint, endPoint } = updateBoardInput;
+    const { title, startPoint, endPoint } = updateBoardInput;
     await this.checkList({ title, startPoint, endPoint  });
 
     return this.boardsRepository.save({
       ...board,
       ...updateBoardInput,
     });
+  }
+
+  //게시물 삭제하기
+  async delete({ boardId }: IBoardsServiceDelete): Promise<boolean> {
+    const board = await this.boardsRepository.delete(boardId);
+    return board.affected ? true : false;
   }
 }

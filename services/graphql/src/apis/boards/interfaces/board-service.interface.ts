@@ -21,7 +21,11 @@ export interface IBoardsServiceCreate {
 }
 
 export interface IBoardsServiceUpdate {
- boardId: string,
+ boardId: string;
  updateBoardInput: UpdateBoardInput;
 }
+
+export interface IBoardsServiceDelete {
+  boardId: string;
+ }
 

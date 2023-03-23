@@ -62,8 +62,16 @@ type Query {
 
 type Mutation {
   checkEmail(email: String!): String!
+  createUser(createUserInput: CreateUserInput!): User!
   createBoard(createBoardInput: CreateBoardInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
+  deleteBoard(boardId: String!): Boolean!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  nickname: String!
 }
 
 input CreateBoardInput {
@@ -73,6 +81,7 @@ input CreateBoardInput {
   endPoint: String!
   customName: String!
   like: Int!
+  createdAt: DateTime! = "2023-03-23T14:58:03.707Z"
 }
 
 input UpdateBoardInput {
@@ -82,4 +91,5 @@ input UpdateBoardInput {
   endPoint: String
   customName: String
   like: Int
+  createdAt: DateTime = "2023-03-23T14:58:03.707Z"
 }

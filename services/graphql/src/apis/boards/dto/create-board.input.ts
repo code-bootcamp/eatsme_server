@@ -19,6 +19,9 @@ export class CreateBoardInput {
 
  @Field(() => Int)
  like: number;
+ 
+ @Field(() => Date)
+ createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
 
  // @Field(() => String)
  // userId: string;
