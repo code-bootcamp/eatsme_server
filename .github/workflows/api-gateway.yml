@@ -56,8 +56,7 @@ jobs:
 
     - name: Create VM with new image
       run: |
-        ls -al
-        cat .env
+        docker stack ps eatsme
         sudo docker swarm init
         sudo docker swarm join-token manager
         docker stack deploy --with-registry-auth -c docker-compose.prod.yaml eatsme
