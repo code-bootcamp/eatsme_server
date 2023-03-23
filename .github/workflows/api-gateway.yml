@@ -20,34 +20,10 @@ jobs:
       uses: 'google-github-actions/auth@v0'
       with:
         credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-    
-    - name: Generate Environment Variables File for Production
-      run: |
-        echo "MY_MONGODB=$MY_MONGODB" >> .env
-        echo "REDIS_DATABASE_HOST=$REDIS_DATABASE_HOST" >> .env
-        echo "DATABASE_USERNAME=$DATABASE_USERNAME" >> .env
-        echo "DATABASE_TYPE=$DATABASE_TYPE" >> .env
-        echo "DATABASE_PORT=$DATABASE_PORT" >> .env
-        echo "DATABASE_PASSWORD=$DATABASE_PASSWORD" >> .env
-        echo "DATABASE_HOST=$DATABASE_HOST" >> .env
-        echo "DATABASE_DATABASE=$DATABASE_DATABASE" >> .env
-        echo "MY_MONGODB=$MY_MONGODB" >> .env
-      env:
-        MY_MONGODB: ${{ secrets.MY_MONGODB }}
-        REDIS_DATABASE_HOST: ${{ secrets.REDIS_DATABASE_HOST }}
-        DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-        DATABASE_TYPE: ${{ secrets.DATABASE_TYPE }}
-        DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-        DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-        DATABASE_DATABASE: ${{ secrets.DATABASE_DATABASE }}
         
-    
     - name: Build tag Docker image
       run: |
-        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }}
         gcloud auth configure-docker
-        sudo cat /etc/group
         cd api-gateway
         docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} -f ./DockerFile .
     
@@ -55,8 +31,12 @@ jobs:
       run: |
         docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
 
-    - name: Create VM with new image
+    - name: GCP_connect
       run: |
-        sudo docker swarm init
-        sudo docker swarm join-token manager
-        docker stack deploy --with-registry-auth -c docker-compose.prod.yaml eatsme
+        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }}
+        ehco docker ps
+    
+#   - name : GCP_docker_swarm_stack_update
+#      run: |
+        
+
