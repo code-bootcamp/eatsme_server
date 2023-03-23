@@ -30,6 +30,8 @@ export class RestaurantService {
     @InjectModel(Restaurant.name)
     private readonly restaurantModel: Model<RestaurantDocument>,
   ) {}
+
+  //place api 요청에대한 에러도 잡아주자.
   async postRestaurants({
     body,
   }: IRestaurantServicePostAndGetRestaurant): Promise<string> {
@@ -37,10 +39,11 @@ export class RestaurantService {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const config = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&opennow`,
+      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko`,
     };
     //타입을 지정해주면 구조분해 할당으로 받아올수 있지 않을까?
     const result = await axios(config);
+    console.log(result);
     const restaurantsInfos = result.data.results;
     await this.saveRepeat({ restaurantsInfos, section });
     const nextPageToken = result.data.next_page_token;
@@ -104,10 +107,10 @@ export class RestaurantService {
     return { formatted_phone_number, weekday_text };
   }
 
-  saveNextPage({
+  async saveNextPage({
     nextPageToken,
     section,
-  }: IRestaurantServiceSaveNextPage): void {
+  }: IRestaurantServiceSaveNextPage): Promise<void> {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const getNextRestaurant = ({ nextPageToken }) => {
       if (nextPageToken) {
