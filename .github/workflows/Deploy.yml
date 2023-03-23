@@ -34,6 +34,8 @@ jobs:
         
     - name: api-gateway Update VM with new image
       run: |-
-        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} --command "docker service update --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }} eatsme_api-gateway"
+        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
+        --command "docker service ls" \
+        --command "docker service update --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }} eatsme_api-gateway"
     
    
