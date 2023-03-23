@@ -14,6 +14,7 @@ import { Restaurant } from './schemas/restaurant.schemas';
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
+  //등록한 식당의 갯수를 반환해보자.
   @Post('/info/road/restaurant')
   postRestaurants(
     @Body() body: string, //
@@ -35,5 +36,13 @@ export class RestaurantController {
     @Body() body: string, //
   ): Promise<string> {
     return this.restaurantService.deleteCollection({ body });
+  }
+
+  @Delete('/info/road/restaurants')
+  deleteRestaurants(
+    @Body() body: string, //
+  ): Promise<string> {
+    console.log(body);
+    return this.restaurantService.deleteSection({ body });
   }
 }

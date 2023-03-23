@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
@@ -22,8 +23,6 @@ import {
 } from './schemas/restaurant.schemas';
 
 import { Model, MongooseError } from 'mongoose';
-
-// import { MongooseExceptionFilter } from 'src/commons/filter/mongoose-exception.filter';
 
 @Injectable()
 export class RestaurantService {
@@ -86,7 +85,7 @@ export class RestaurantService {
             openingHours,
             section,
           }).save();
-          console.log(postRestaurant);
+          console.log([postRestaurant].length);
         }
       }
     });
@@ -166,6 +165,26 @@ export class RestaurantService {
       .catch((err) => {
         throw new HttpException(
           '잘못된 ID 형식입니다. 발급 받은 ID를 입력해주세요',
+          HttpStatus.BAD_REQUEST,
+        );
+      });
+  }
+
+  deleteSection({ body }: IRestaurantServiceDeleteCollection): Promise<string> {
+    console.log(body);
+    return this.restaurantModel
+      .deleteMany({
+        section: Object.values(body)[0],
+      })
+      .then((res) => {
+        console.log(res.deletedCount);
+        return res.deletedCount
+          ? `${res.deletedCount}개의 식당 정보를 정상적으로 지웠습니다.`
+          : '이미 지워진 행정구역입니다.';
+      })
+      .catch((err) => {
+        throw new HttpException(
+          '올바른 행정구역을 입력해주세요',
           HttpStatus.BAD_REQUEST,
         );
       });

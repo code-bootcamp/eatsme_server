@@ -271,4 +271,7 @@ describe('RestaurantController', () => {
     //   }).rejects.toThrowError(HttpException);
     // });
   });
+  describe('postRestaurants', () => {
+    it('행정구역 등록이 정상적으로 완료된 경우');
+  });
 });
