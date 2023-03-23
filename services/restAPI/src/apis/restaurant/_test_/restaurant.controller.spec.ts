@@ -271,15 +271,39 @@ describe('RestaurantController', () => {
     //   }).rejects.toThrowError(HttpException);
     // });
   });
-  // describe('deleteRestaurants', () => {
-  //   it('존재하는 행정구역으로 정상적으로 삭제한 경우 확인 메세지를 반환한다.', async () => {
-  //     const result =
-  //     jest
-  //       .spyOn(restaurantService, 'deleteSection')
-  //       .mockImplementation(async ({ body }) => {
-  //         return result;
-  //       });
-  //     expect(await restaurantController.deleteRestaurant(body)).toBe(result);
-  //   });
-  // });
+  describe('deleteRestaurants', () => {
+    it('존재하는 행정구역으로 요청한 경우 정상적으로 삭제한 경우 확인 메세지를 반환한다.', async () => {
+      const body = '서울시 강남구';
+      const result = '14개의 식당 정보를 정상적으로 지웠습니다.';
+      jest
+        .spyOn(restaurantService, 'deleteSection')
+        .mockImplementation(async ({ body }) => {
+          return result;
+        });
+      expect(await restaurantController.deleteRestaurants(body)).toBe(result);
+    });
+
+    it('이미 지워진 행정구역으로 요청한 경우 확인 메세지를 반환한다. ', async () => {
+      const body = '서울시 중구';
+      const result = '이미 지워진 행정구역입니다.';
+      jest
+        .spyOn(restaurantService, 'deleteSection')
+        .mockImplementation(async ({ body }) => {
+          return result;
+        });
+      expect(await restaurantController.deleteRestaurants(body)).toBe(result);
+    });
+  });
+  describe('postRestaurants', () => {
+    it('행정구역으로 식당정보 저장을 요청한 경우 확인 메세지를 반환한다.', async () => {
+      const body = '서울시 중구';
+      const result = '정상적으로 등록되었습니다.';
+      jest
+        .spyOn(restaurantService, 'deleteSection')
+        .mockImplementation(async ({ body }) => {
+          return result;
+        });
+      expect(await restaurantController.postRestaurants(body)).toBe(result);
+    });
+  });
 });

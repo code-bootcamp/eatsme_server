@@ -18,7 +18,7 @@ export class RestaurantController {
   @Post('/info/road/restaurant')
   postRestaurants(
     @Body() body: string, //
-  ): Promise<void> {
+  ): Promise<string> {
     return this.restaurantService.postRestaurants({ body });
   }
 

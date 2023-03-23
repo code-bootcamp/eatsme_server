@@ -32,7 +32,7 @@ export class RestaurantService {
   ) {}
   async postRestaurants({
     body,
-  }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
+  }: IRestaurantServicePostAndGetRestaurant): Promise<string> {
     const [section] = Object.values(body);
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const config = {
@@ -42,9 +42,10 @@ export class RestaurantService {
     //타입을 지정해주면 구조분해 할당으로 받아올수 있지 않을까?
     const result = await axios(config);
     const restaurantsInfos = result.data.results;
-    this.saveRepeat({ restaurantsInfos, section });
+    await this.saveRepeat({ restaurantsInfos, section });
     const nextPageToken = result.data.next_page_token;
-    this.saveNextPage({ nextPageToken, section });
+    await this.saveNextPage({ nextPageToken, section });
+    return '정상적으로 등록되었습니다.';
   }
 
   saveRepeat({
@@ -74,7 +75,6 @@ export class RestaurantService {
             restaurantName,
           })
           .exec();
-        console.log('####');
         if (!findRestaurant) {
           const postRestaurant = await new this.restaurantModel({
             restaurantName,
@@ -86,7 +86,6 @@ export class RestaurantService {
             openingHours,
             section,
           }).save();
-          console.log(postRestaurant);
         }
       }
     });
@@ -116,7 +115,7 @@ export class RestaurantService {
           method: 'get',
           url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&pagetoken=${nextPageToken}&opennow&fields=current_opening_hours`,
         };
-        //2초정도의 지연시간이 없으면 같은 정보를 받아오므로 setTimeout으로 지연시켜주었다.
+        //2초정도의 지연시간이 없으면 같은 정보를 받아오기 때문에 setTimeout으로 지연시켜주었다.
         setTimeout(async () => {
           const result = await axios(nextConfig);
           const restaurantsInfos = result.data.results;
@@ -177,16 +176,9 @@ export class RestaurantService {
         section: Object.values(body)[0],
       })
       .then((res) => {
-        console.log(res.deletedCount);
         return res.deletedCount
           ? `${res.deletedCount}개의 식당 정보를 정상적으로 지웠습니다.`
           : '이미 지워진 행정구역입니다.';
-      })
-      .catch((err) => {
-        throw new HttpException(
-          '올바른 행정구역을 입력해주세요',
-          HttpStatus.BAD_REQUEST,
-        );
       });
   }
 }
