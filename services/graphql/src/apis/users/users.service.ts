@@ -59,12 +59,21 @@ export class UserService {
   }
 
   //-----이메일인증번호 템플릿 전송-----
-  async sendToTemplate({ email }: IUsersSendToTemplate) {
+  async sendToTemplate({ email }: IUsersSendToTemplate): Promise<string> {
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
     );
 
+    const answer = await this.cacheManager.get(email);
+
+    if (answer) {
+      await this.cacheManager.del(email);
+    }
+
+    await this.cacheManager.set(email, authNumber, {
+      ttl: 180000,
+    });
     const eatsMeTemplate = `
     <html>
         <body>
@@ -84,7 +93,8 @@ export class UserService {
       subject: 'EatsMe 인증 번호입니다', //이메일 제목
       html: eatsMeTemplate,
     });
-    return authNumber;
+
+    return '전송완료';
   }
 
   //-----이메일 db 유무확인-----

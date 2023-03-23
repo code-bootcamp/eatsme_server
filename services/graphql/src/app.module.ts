@@ -12,6 +12,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
 import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
+import { JwtRestoreAccessStrategy } from './apis/auth/strategies/jwt-restoreAccess.strategy';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
     AppResolver, //
     AppService,
     JwtAccessStrategy,
+    JwtRestoreAccessStrategy,
   ],
 })
 export class AppModule {}

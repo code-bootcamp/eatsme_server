@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/commons/interfaces/context';
-import { GqlAuthAccessGuard } from '../auth/guards/gql-auth.guards';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
@@ -13,7 +13,7 @@ export class UserResolver {
   ) {}
 
   // -----로그인회원 조회-----
-  @UseGuards(GqlAuthAccessGuard)
+  @UseGuards(GqlAuthGuard('access'))
   @Query(() => String)
   fetchLoginUser(
     @Context() context: IContext, //
