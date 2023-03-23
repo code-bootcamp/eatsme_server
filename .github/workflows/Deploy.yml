@@ -37,6 +37,6 @@ jobs:
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
         --command "sudo su -" \
         --command "docker image prune -a" \
-        --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }} eatsme_api-gateway"
+        --command "docker service update --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }} eatsme_api-gateway"
     
    
