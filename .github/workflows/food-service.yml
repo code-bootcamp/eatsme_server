@@ -24,6 +24,7 @@ jobs:
     - name: Build tag Docker image
       run: |-
         gcloud auth configure-docker
+        ls
         cd ./service/graphql
         docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} -f ./DockerFile .
     
