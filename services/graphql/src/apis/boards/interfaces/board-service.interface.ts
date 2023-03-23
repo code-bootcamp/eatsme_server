@@ -1,4 +1,5 @@
 import { CreateBoardInput } from "../dto/create-board.input";
+import { UpdateBoardInput } from "../dto/update-board.input";
 
 export interface IBoardsServiceFindOne {
  boardId: string;
@@ -10,13 +11,21 @@ export interface IBoardsServiceNullCheckTitle {
 }
 
 export interface IBoardsServiceNullCheckList {
- startPoint: string;
- endPoint: string;
- title: string;
+  title: string,
+  startPoint: string,
+  endPoint: string,
 }
 
 export interface IBoardsServiceCreate {
  createBoardInput: CreateBoardInput;
 }
 
+export interface IBoardsServiceUpdate {
+ boardId: string;
+ updateBoardInput: UpdateBoardInput;
+}
+
+export interface IBoardsServiceDelete {
+  boardId: string;
+ }
 
