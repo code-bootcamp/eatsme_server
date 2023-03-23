@@ -7,8 +7,8 @@ on:
       - master
       
 jobs:
-  deploy:
-    name: Setup, Build, Deploy
+  eatsme-deploy:
+    name: eatsme-deploy
     runs-on: ubuntu-latest
     
     steps:
@@ -21,19 +21,21 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-    - name: Build tag Docker image
+    - name: api-gateway Build tag Docker image
       run: |-
         gcloud auth configure-docker
         cd api-gateway
-        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY }}:${{ github.sha }} -f ./DockerFile .
-    
-    - name: push tag Docker image
+        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }} -f ./DockerFile .
+      
+    - name: api-gateway push tag Docker image
       run: |-
-        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY }}:${{ github.sha }}
-    
-    - name: Update VM with new image
-      run: |-
-        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} --command "docker service update --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY }}:${{ github.sha }} eatsme_api-gateway"
+        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }}
         
+    - name: api-gateway Update VM with new image
+      run: |-
+        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} root@${{ secrets.GCP_VM_NAME }} --command "docker image ls" \
+        "docker service update --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }} eatsme_api-gateway"
+    
 
-   
+
+
