@@ -35,7 +35,7 @@ export class User {
   @Field(() => [Board])
   boards: Board[];
 
-  // @OneToMany(() => Alarm, (alarm) => alarm.users)
-  // @Field(() => [Alarm])
-  // alarms: Alarm[];
+  @OneToMany(() => Alarm, (alarm) => alarm.users)
+  @Field(() => [Alarm])
+  alarms: Alarm[];
 }

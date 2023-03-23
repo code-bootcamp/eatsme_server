@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { BoardComment } from 'src/apis/boards-comments/boards-comments.entities/boards-comments.entity';
-import { User } from 'src/apis/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
