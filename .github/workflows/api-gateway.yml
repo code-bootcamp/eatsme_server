@@ -1,5 +1,4 @@
-
-name: Deploy to GCP VM API-GATEWAY
+name: Deploy to GCP VM
 
 on:
   workflow_dispatch: 
