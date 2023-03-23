@@ -15,7 +15,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     
-    - id: 'auth'
+    - id: 'api-gateway auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0'
       with:
@@ -38,37 +38,5 @@ jobs:
         --command "sudo su -" \
         --command "docker image prune -a" \
         --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }} eatsme_api-gateway"
-        
-    - name: food-service Build tag Docker image
-      run: |-
-        cd services/graphql
-        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE}}:${{ github.sha }} -f ./DockerFile .
     
-    - name: food-service push tag Docker image
-      run: |-
-        docker image ls
-        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE}}:${{ github.sha }}
-    
-    - name: food-service Update VM with new image
-      run: |-
-        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
-        --command "sudo su -" \        
-        --command "sudo docker image prune -a" \
-        --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE}}:${{ github.sha }} eatsme_food-service"
-        
-    - name: road-service Build tag Docker image
-      run: |-
-        cd services/restAPI
-        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE}}:${{ github.sha }} -f ./DockerFile .
-        
-    - name: road-service push tag Docker image
-      run: |-
-        docker image ls
-        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE}}:${{ github.sha }}
-        
-    - name: road-service Update VM with new image
-      run: |-
-        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
-        --command "sudo su -" \        
-        --command "sudo docker image prune -a" \
-        --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE}}:${{ github.sha }} eatsme_road-service"
+   
