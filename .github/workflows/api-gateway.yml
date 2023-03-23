@@ -23,15 +23,12 @@ jobs:
 
     - name: Build tag Docker image
       run: |-
-        pwd
         gcloud auth configure-docker
         cd api-gateway
         docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} -f ./DockerFile .
     
     - name: push tag Docker image
       run: |-
-        whoami
-        sudo usermod -aG docker runner
         docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
     
     - name: Update VM with new image
