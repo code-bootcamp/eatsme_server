@@ -34,8 +34,6 @@ jobs:
     - name: Update VM with new image
       run: |-
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }}
-        whoami
-        docker info | grep Swarm
-        docker stack ls
-        sudo docker service ls
+        cd ..
+        ls
         sudo docker service update --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_api-gateway
