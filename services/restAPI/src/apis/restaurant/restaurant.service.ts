@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   HttpException,
   HttpStatus,
@@ -7,7 +8,6 @@ import {
 
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
-import { Model } from 'mongoose';
 import {
   IRestaurantServiceDeleteCollection,
   IRestaurantServiceGetDetails,
@@ -21,13 +21,17 @@ import {
   RestaurantDocument, //
 } from './schemas/restaurant.schemas';
 
+import { Model } from 'mongoose';
+
+// import { MongooseExceptionFilter } from 'src/commons/filter/mongoose-exception.filter';
+
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectModel(Restaurant.name)
-    private RestaurantModel: Model<RestaurantDocument>,
+    private readonly restaurantModel: Model<RestaurantDocument>,
   ) {}
-  async postRestaurant({
+  async postRestaurants({
     body,
   }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
     const [section] = Object.values(body);
@@ -66,11 +70,13 @@ export class RestaurantService {
 
       if (rating >= 4.5) {
         //이미 있는지 확인하고 없는 경우에만 DB에 저장한다.
-        const findRestaurant = await this.RestaurantModel.findOne({
-          restaurantName,
-        }).exec();
+        const findRestaurant = await this.restaurantModel
+          .findOne({
+            restaurantName,
+          })
+          .exec();
         if (!findRestaurant) {
-          const postRestaurant = await new this.RestaurantModel({
+          const postRestaurant = await new this.restaurantModel({
             restaurantName,
             address,
             location,
@@ -128,35 +134,29 @@ export class RestaurantService {
   async getRestaurants({
     body,
   }: IRestaurantServiceGetRestaurant): Promise<Restaurant[]> {
-    const result = await this.RestaurantModel.find({
-      section: Object.values(body)[0],
-    }).exec();
+    const result = await this.restaurantModel
+      .find({
+        section: Object.values(body)[0],
+      })
+      .exec();
     if (!result[0]) {
-      throw new ForbiddenException(
+      // throw new MongoError('등록되지 않은 행정구역입니다. 등록후 조회해주세요');
+      throw new HttpException(
         '등록되지 않은 행정구역입니다. 등록후 조회해주세요',
+        HttpStatus.BAD_REQUEST,
       );
+    } else {
+      return result;
     }
-    return result;
   }
 
   deleteCollection({
     body,
   }: IRestaurantServiceDeleteCollection): Promise<string> {
-    // try {
-    //   const result = await this.RestaurantModel.deleteOne({
-    //     _id: Object.values(body)[0],
-    //   });
-    //   return result.deletedCount
-    //     ? '정상적으로 지워졌습니다.'
-    //     : '이미 지워진 collection입니다.';
-    // } catch (err) {
-    //   throw new ForbiddenException(
-    //     `현재 _id:${err.messageFormat}이며 정상적인 _id를 입력해주세요`,
-    //   );
-    // }
-    return this.RestaurantModel.deleteOne({
-      _id: Object.values(body)[0],
-    })
+    return this.restaurantModel
+      .deleteOne({
+        _id: Object.values(body)[0],
+      })
       .then((res) => {
         console.log(res);
         return res.deletedCount
