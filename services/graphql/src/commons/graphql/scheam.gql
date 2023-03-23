@@ -5,47 +5,19 @@
 type Board {
   id: String!
   title: String!
-  CreateAt: DateTime!
+  createdAt: DateTime!
   boardImg: String!
   startPoint: String!
   endPoint: String!
   customName: String!
   like: Int!
   users: User!
-  boardComments: [BoardComment!]!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-type BoardComment {
-  id: String!
-  boards: Board!
-  comments: Comment!
-}
-
-type Reply {
-  id: String!
-  reply: String!
-  comments: Comment!
-}
-
-type Comment {
-  id: String!
-  comment: String!
-  replies: [Reply!]!
-  boardComments: [BoardComment!]!
-  alarms: [Alarm!]!
-}
-
-type Alarm {
-  id: String!
-  isAlarm: Boolean!
-  users: User!
-  comments: Comment!
-}
 
 type Reservation {
   id: String!
@@ -61,14 +33,73 @@ type User {
   userImg: String!
   reservations: [Reservation!]!
   boards: [Board!]!
-  alarms: [Alarm!]!
+}
+
+type Reply {
+  id: String!
+  reply: String!
+  comments: Comment!
+}
+
+type Comment {
+  id: String!
+  comment: String!
+  replies: [Reply!]!
+  boardComments: [BoardComment!]!
+}
+
+type BoardComment {
+  id: String!
+  comments: Comment!
 }
 
 type Query {
   getHello: String!
+  fetchLoginUser: String!
+  fetchUser(userId: String!): User!
   isValidNickname(nickname: String!): User!
+  fetchBoard(boardId: String!): Board!
+  fetchBoards: [Board!]!
 }
 
 type Mutation {
+  login(loginAuthInput: LoginAuthInput!): String!
   checkEmail(email: String!): String!
+  createUser(createUserInput: CreateUserInput!): User!
+  createBoard(createBoardInput: CreateBoardInput!): Board!
+  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
+  deleteBoard(boardId: String!): Boolean!
+}
+
+
+input LoginAuthInput {
+  email: String!
+  password: String!
+}
+
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  nickname: String!
+}
+
+input CreateBoardInput {
+  title: String!
+  boardImg: String!
+  startPoint: String!
+  endPoint: String!
+  customName: String!
+  like: Int!
+  createdAt: DateTime! = "2023-03-23T14:58:03.707Z"
+}
+
+input UpdateBoardInput {
+  title: String
+  boardImg: String
+  startPoint: String
+  endPoint: String
+  customName: String
+  like: Int
+  createdAt: DateTime = "2023-03-23T14:58:03.707Z"
 }

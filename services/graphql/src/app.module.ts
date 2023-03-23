@@ -10,27 +10,22 @@ import * as redisStore from 'cache-manager-redis-store';
 import { UserModule } from './apis/users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 
+import { AuthModule } from './apis/auth/auth.module';
+import { BoardModule } from './apis/boards/boards.module';
+import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
+
+
 @Module({
   imports: [
-    MailerModule.forRootAsync({
-      useFactory: () => ({
-        transport: {
-          service: 'Gmail',
-          host: process.env.DATABASE_HOST,
-          port: Number(process.env.DATABASE_PORT),
-          secure: false, // upgrade later with STARTTLS
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        },
-      }),
-    }),
+    AuthModule,
+    BoardModule,
     UserModule, //
+    BoardModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/scheam.gql',
+      context: ({ req, res }) => ({ req, res }),
     }),
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as 'mysql',
@@ -48,10 +43,25 @@ import { MailerModule } from '@nestjs-modules/mailer';
       url: `redis://${process.env.REDIS_DATABASE_HOST}:6379`,
       isGlobal: true,
     }),
+    MailerModule.forRootAsync({
+      useFactory: () => ({
+        transport: {
+          service: 'Gmail',
+          host: process.env.EMAIL_HOST,
+          port: Number(process.env.DATABASE_PORT),
+          secure: false, // upgrade later with STARTTLS
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        },
+      }),
+    }),
   ],
   providers: [
     AppResolver, //
     AppService,
+    JwtAccessStrategy,
   ],
 })
 export class AppModule {}
