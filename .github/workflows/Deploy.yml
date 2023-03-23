@@ -34,8 +34,9 @@ jobs:
     - name: api-gateway Update VM with new image
       run: |-
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
-        --command "docker service update --update-delay 5m --with-registry-auth --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}1 eatsme_api-gateway" \
         --command "docker image prune -a"
+        --command "docker service update --update-delay 5m --with-registry-auth --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}1 eatsme_api-gateway" \
+        
         
   food-service-deploy:
     needs: api-gateway-deploy
