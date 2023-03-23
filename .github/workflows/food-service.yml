@@ -1,4 +1,4 @@
-name: Deploy to GCP VM
+name: Deploy to GCP VM FOOD_SERVICE
 
 on:
   workflow_dispatch: 
@@ -24,7 +24,7 @@ jobs:
     - name: Build tag Docker image
       run: |-
         gcloud auth configure-docker
-        cd service/graphql
+        cd ./service/graphql
         docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} -f ./DockerFile .
     
     - name: push tag Docker image
