@@ -33,5 +33,5 @@ jobs:
     
     - name: Update VM with new image
       run: |-
-        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} --command "docker service update --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_food-service"
+        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} --command "docker service update --image --with-registry-auth ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_food-service"
         
