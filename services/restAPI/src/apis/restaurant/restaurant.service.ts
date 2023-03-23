@@ -21,7 +21,7 @@ import {
   RestaurantDocument, //
 } from './schemas/restaurant.schemas';
 
-import { Model } from 'mongoose';
+import { Model, MongooseError } from 'mongoose';
 
 // import { MongooseExceptionFilter } from 'src/commons/filter/mongoose-exception.filter';
 
@@ -164,8 +164,9 @@ export class RestaurantService {
           : '이미 지워진 collection입니다.';
       })
       .catch((err) => {
-        throw new ForbiddenException(
-          `현재 _id:${err.messageFormat}이며 정상적인 _id를 입력해주세요`,
+        throw new HttpException(
+          '잘못된 ID 형식입니다. 발급 받은 ID를 입력해주세요',
+          HttpStatus.BAD_REQUEST,
         );
       });
   }

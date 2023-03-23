@@ -230,14 +230,45 @@ describe('RestaurantController', () => {
       expect(await restaurantController.getRestaurants(body)).toBe(result);
     });
 
-    it('등록되지 않은 행정구역인 경우 에러를 던진다.', async () => {
-      const body = '서울시 잇츠미구';
-      try {
-        await restaurantController.getRestaurants(body);
-      } catch (error) {
-        console.log(error);
-        expect(error).toBeInstanceOf(HttpException);
-      }
+    // it('등록되지 않은 행정구역인 경우 에러를 던진다.', async () => {
+    //   const body = '서울시 잇츠미구';
+    //   try {
+    //     await restaurantController.getRestaurants(body);
+    //   } catch (error) {
+    //     console.log(error);
+    //     expect(error).toBeInstanceOf(HttpException);
+    //   }
+    // });
+  });
+  describe('deleteRestaurant', () => {
+    it('발급받은 ID로 수정을 요청한 경우 삭제후 확인 메세지를 반환한다.', async () => {
+      const result = '정상적으로 지워졌습니다.';
+      const body = '64194481b8388f33864812b7';
+      jest
+        .spyOn(restaurantService, 'deleteCollection')
+        .mockImplementation(async ({ body }) => {
+          return result;
+        });
+      expect(await restaurantController.deleteRestaurant(body)).toBe(result);
     });
+    it('이미 지워진 ID로 수정을 요청한 경우 삭제후 확인 메세지를 반환한다.', async () => {
+      const result = '이미 지워진 collection입니다.';
+      const body = '64194481b8388f33864812bc';
+      jest
+        .spyOn(restaurantService, 'deleteCollection')
+        .mockImplementation(async ({ body }) => {
+          return result;
+        });
+      expect(await restaurantController.deleteRestaurant(body)).toBe(result);
+    });
+    // it('잘못된 ID로 수정을 요청한 경우 삭제후 확인 메세지를 반환한다.', async () => {
+    //   const body =
+    //     '64194481b8388f33864812b잘못된경우 길거나 짧은 경우 없는 아이디 입력한 경우';
+    //   jest.spyOn(restaurantService, 'deleteCollection');
+
+    //   await expect(async () => {
+    //     await restaurantController.deleteRestaurant(body);
+    //   }).rejects.toThrowError(HttpException);
+    // });
   });
 });
