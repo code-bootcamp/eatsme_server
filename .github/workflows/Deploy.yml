@@ -35,7 +35,8 @@ jobs:
     - name: api-gateway Update VM with new image
       run: |-
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
-        --command "sudo docker image prune -a" \
+        --command "sudo su -" \
+        --command "docker image prune -a" \
         --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY}}:${{ github.sha }} eatsme_api-gateway"
         
     - name: food-service Build tag Docker image
@@ -51,6 +52,7 @@ jobs:
     - name: food-service Update VM with new image
       run: |-
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
+        --command "sudo su -" \        
         --command "sudo docker image prune -a" \
         --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE}}:${{ github.sha }} eatsme_food-service"
         
@@ -67,5 +69,6 @@ jobs:
     - name: road-service Update VM with new image
       run: |-
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} \
+        --command "sudo su -" \        
         --command "sudo docker image prune -a" \
         --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE}}:${{ github.sha }} eatsme_road-service"
