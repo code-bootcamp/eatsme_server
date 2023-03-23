@@ -9,16 +9,19 @@ import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
 import { UserModule } from './apis/users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
 import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 import { JwtRestoreAccessStrategy } from './apis/auth/strategies/jwt-restoreAccess.strategy';
+
 
 @Module({
   imports: [
     AuthModule,
     BoardModule,
     UserModule, //
+    BoardModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

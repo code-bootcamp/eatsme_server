@@ -27,6 +27,8 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/graphql": "^10.1.7",
     "@nestjs/jwt": "^10.0.2",
+
+    "@nestjs/microservices": "^9.3.10",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
@@ -35,6 +37,7 @@
     "bcrypt": "^5.1.0",
     "cache-manager": "4.0.1",
     "cache-manager-redis-store": "2.0.0",
+    "connect-redis": "^7.0.1",
     "graphql": "^16.6.0",
     "moment-timezone": "^0.5.41",
     "mysql2": "^3.1.0",
