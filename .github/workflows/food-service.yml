@@ -23,6 +23,7 @@ jobs:
     
     - name: food-service Build tag Docker image
       run: |-
+        gcloud auth configure-docker
         cd services/graphql
         docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE}}:${{ github.sha }} -f ./DockerFile .
     
