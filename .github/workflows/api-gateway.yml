@@ -33,9 +33,7 @@ jobs:
 
     - name: Update VM with new image
       run: |-
-        gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }}
-        pwd
-        cd ..
-        cd ..
-        ls
-        sudo docker service update --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_api-gateway
+        gcloud compute ssh --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }} --project=${{ secrets.GCP_PROJECT_ID }}
+        sudo docker swarm init
+        sudo docker swarm join-token manager
+        sodo docker service update --image ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} eatsme_api-gateway
