@@ -22,7 +22,7 @@ import {
   RestaurantDocument, //
 } from './schemas/restaurant.schemas';
 
-import { Model, MongooseError } from 'mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class RestaurantService {
@@ -39,11 +39,10 @@ export class RestaurantService {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const config = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko`,
+      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&key=${apiKey}&language=ko&type=restaurant`,
     };
     //타입을 지정해주면 구조분해 할당으로 받아올수 있지 않을까?
     const result = await axios(config);
-    console.log(result);
     const restaurantsInfos = result.data.results;
     await this.saveRepeat({ restaurantsInfos, section });
     const nextPageToken = result.data.next_page_token;
@@ -66,10 +65,7 @@ export class RestaurantService {
       } = el;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
-      const {
-        formatted_phone_number: phoneNumber,
-        weekday_text: openingHours,
-      } = details;
+      const { phoneNumber, openingDays } = details;
 
       if (rating >= 4.5) {
         //이미 있는지 확인하고 없는 경우에만 DB에 저장한다.
@@ -86,9 +82,10 @@ export class RestaurantService {
             userRatingsTotal,
             rating,
             phoneNumber,
-            openingHours,
+            openingDays,
             section,
           }).save();
+          console.log(postRestaurant);
         }
       }
     });
@@ -99,12 +96,17 @@ export class RestaurantService {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const placeConfig = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours,photo`,
+      url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
     };
     const result = await axios(placeConfig);
-    const { formatted_phone_number, opening_hours } = result.data.result;
-    const { weekday_text } = opening_hours;
-    return { formatted_phone_number, weekday_text };
+    const phoneNumber = result.data.result.formatted_phone_number || null;
+    const opening_hours = result.data.result.opening_hours || null;
+    return !opening_hours
+      ? { phoneNumber, openingDays: null }
+      : {
+          phoneNumber,
+          openingDays: opening_hours.weekday_text,
+        };
   }
 
   async saveNextPage({

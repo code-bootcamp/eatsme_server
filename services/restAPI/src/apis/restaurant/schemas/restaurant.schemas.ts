@@ -25,7 +25,7 @@ export class Restaurant {
   phoneNumber: string;
 
   @Prop({ type: [String] })
-  openingHours: string[];
+  openingDays: string[];
 
   @Prop({ type: String })
   rating: string;

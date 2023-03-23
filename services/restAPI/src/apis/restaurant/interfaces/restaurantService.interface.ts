@@ -17,8 +17,8 @@ export interface IRestaurantServiceSaveNextPage {
 }
 
 export interface IRestaurantServiceGetDetailsReturn {
-  formatted_phone_number: string;
-  weekday_text: string[];
+  phoneNumber: string | null;
+  openingDays: string[] | null;
 }
 export interface IRestaurantServiceDeleteCollection {
   body: string;
