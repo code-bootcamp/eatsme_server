@@ -23,7 +23,7 @@ export class Comment {
   @Field(() => [BoardComment])
   boardComments: BoardComment[];
 
-  // @OneToMany(() => Alarm, (alarm) => alarm.comments)
-  // @Field(() => [Alarm])
-  // alarms: Alarm[];
+  @OneToMany(() => Alarm, (alarm) => alarm.comments)
+  @Field(() => [Alarm])
+  alarms: Alarm[];
 }
