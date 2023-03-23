@@ -56,11 +56,11 @@ jobs:
       run: |-
         gcloud auth configure-docker
         cd services/graphql
-        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} -f ./DockerFile .
+        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}a -f ./DockerFile .
     
     - name: push tag Docker image
       run: |-
-        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
+        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}a
     
     - name: Update VM with new image
       run: |-
@@ -86,11 +86,11 @@ jobs:
       run: |-
         gcloud auth configure-docker
         cd services/restAPI
-        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }} -f ./DockerFile .
+        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}b -f ./DockerFile .
     
     - name: push tag Docker image
       run: |-
-        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}
+        docker push ${{secrets.GCP_REGION}}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY}}:${{ github.sha }}b
     
     - name: Update VM with new image
       run: |-
