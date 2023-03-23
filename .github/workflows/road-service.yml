@@ -1,4 +1,4 @@
- name: EatsMe - Deploy to GCP VM
+name: EatsMe - Deploy to GCP VM
 
 on:
   workflow_dispatch: 
@@ -8,13 +8,14 @@ on:
       
 jobs:
   road-deploy:
-    name: eatsme-deploy
+    name: road-deploy
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout
       uses: actions/checkout@v3
- - id: 'auth'
+      
+    - id: 'auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0'
       with:
