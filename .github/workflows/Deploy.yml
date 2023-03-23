@@ -31,7 +31,7 @@ jobs:
         docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE}}:${{ github.sha }} -f ./DockerFile .
         cd ..
         cd restAPI
-        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE}}:${{ github.sha }}3 -f ./DockerFile .
+        docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE}}:${{ github.sha }} -f ./DockerFile .
         
     - name: push tag Docker image
       run: |-
