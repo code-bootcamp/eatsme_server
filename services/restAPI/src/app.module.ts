@@ -7,11 +7,9 @@ import { RestaurantModule } from './apis/restaurant/restaurant.module';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
 
-
 @Module({
   imports: [
     RestaurantModule,
-
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MY_MONGODB), //
     CacheModule.register<RedisClientOptions>({
