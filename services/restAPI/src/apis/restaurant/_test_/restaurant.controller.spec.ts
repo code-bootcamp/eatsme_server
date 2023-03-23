@@ -116,15 +116,15 @@ describe('RestaurantController', () => {
   });
   //!------postRestaurants-----!//
   describe('postRestaurants', () => {
-    it('행정구역의 식당정보 저장을 요청한 경우 확인 메세지를 반환한다.', async () => {
+    it('행정구역의 식당정보 저장을 요청한 경우 ', async () => {
       const body = '서울시 중구';
       const result = '정상적으로 등록되었습니다.';
       jest
-        .spyOn(restaurantService, 'deleteSection')
+        .spyOn(restaurantService, 'postRestaurants')
         .mockImplementation(async ({ body }) => {
-          return result;
+          null;
         });
-      expect(await restaurantController.postRestaurants(body)).toBe(result);
+      expect(await restaurantController.postRestaurants(body)).toBe(undefined);
     });
   });
 });

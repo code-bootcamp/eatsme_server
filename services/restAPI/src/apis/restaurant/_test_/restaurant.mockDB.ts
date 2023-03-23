@@ -11,7 +11,7 @@ export class MockRestaurantDb {
       },
       userRatingsTotal: '1923',
       phoneNumber: '02-733-3309',
-      openingHours: [
+      openingDays: [
         '월요일: 오전 11:00 ~ 오후 9:00',
         '화요일: 오전 11:00 ~ 오후 9:00',
         '수요일: 오전 11:00 ~ 오후 9:00',
@@ -34,7 +34,7 @@ export class MockRestaurantDb {
       },
       userRatingsTotal: '30',
       phoneNumber: '02-2251-8122',
-      openingHours: [
+      openingDays: [
         '월요일: 오전 11:00 ~ 오후 10:00',
         '화요일: 오전 11:00 ~ 오후 10:00',
         '수요일: 오전 11:00 ~ 오후 10:00',
@@ -57,7 +57,7 @@ export class MockRestaurantDb {
       },
       userRatingsTotal: '102',
       phoneNumber: '050-71442-8704',
-      openingHours: [
+      openingDays: [
         '월요일: 오전 11:00 ~ 오후 10:00',
         '화요일: 오전 11:00 ~ 오후 10:00',
         '수요일: 오전 11:00 ~ 오후 10:00',
@@ -80,7 +80,7 @@ export class MockRestaurantDb {
       },
       userRatingsTotal: '79',
       phoneNumber: '02-723-2589',
-      openingHours: [
+      openingDays: [
         '월요일: 오전 9:00 ~ 오후 9:00',
         '화요일: 오전 9:00 ~ 오후 9:00',
         '수요일: 오전 9:00 ~ 오후 9:00',
@@ -104,7 +104,7 @@ export class MockRestaurantDb {
       },
       userRatingsTotal: '43',
       phoneNumber: '02-737-4222',
-      openingHours: [
+      openingDays: [
         '월요일: 오전 11:00 ~ 오후 11:00',
         '화요일: 오전 11:00 ~ 오후 11:00',
         '수요일: 오전 11:00 ~ 오후 11:00',
@@ -127,7 +127,7 @@ export class MockRestaurantDb {
       },
       userRatingsTotal: '47',
       phoneNumber: '02-732-7522',
-      openingHours: [
+      openingDays: [
         '월요일: 오전 11:00 ~ 오후 9:00',
         '화요일: 오전 11:00 ~ 오후 9:00',
         '수요일: 오전 11:00 ~ 오후 9:00',
@@ -150,7 +150,7 @@ export class MockRestaurantDb {
       },
       userRatingsTotal: '231',
       phoneNumber: '02-6744-0123',
-      openingHours: [
+      openingDays: [
         '월요일: 오전 11:30 ~ 오후 10:00',
         '화요일: 오전 11:30 ~ 오후 10:00',
         '수요일: 오전 11:30 ~ 오후 10:00',
@@ -173,7 +173,7 @@ export class MockRestaurantDb {
       },
       userRatingsTotal: '80',
       phoneNumber: '02-6952-0024',
-      openingHours: [
+      openingDays: [
         '월요일: 휴무일',
         '화요일: 오후 12:00~10:00',
         '수요일: 오후 12:00~10:00',
@@ -187,8 +187,8 @@ export class MockRestaurantDb {
     },
   ];
   details = {
-    formatted_phone_number: '02-6952-0024',
-    weekday_text: [
+    phoneNumber: '02-6952-0024',
+    openingDays: [
       '월요일: 휴무일',
       '화요일: 오후 12:00~10:00',
       '수요일: 오후 12:00~10:00',

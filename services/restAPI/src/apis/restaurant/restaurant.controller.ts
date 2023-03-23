@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  UseFilters,
-} from '@nestjs/common';
-// import { MongooseExceptionFilter } from 'src/commons/filter/mongoose-exception.filter';
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { Restaurant } from './schemas/restaurant.schemas';
 
@@ -18,7 +10,7 @@ export class RestaurantController {
   @Post('/info/road/restaurant')
   postRestaurants(
     @Body() body: string, //
-  ): Promise<string> {
+  ): Promise<void> {
     return this.restaurantService.postRestaurants({ body });
   }
 

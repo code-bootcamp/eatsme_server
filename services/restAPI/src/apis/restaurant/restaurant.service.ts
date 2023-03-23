@@ -1,11 +1,4 @@
-import {
-  ConflictException,
-  ForbiddenException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
@@ -34,7 +27,7 @@ export class RestaurantService {
   //place api 요청에대한 에러도 잡아주자.
   async postRestaurants({
     body,
-  }: IRestaurantServicePostAndGetRestaurant): Promise<string> {
+  }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
     const [section] = Object.values(body);
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const config = {
@@ -47,7 +40,6 @@ export class RestaurantService {
     await this.saveRepeat({ restaurantsInfos, section });
     const nextPageToken = result.data.next_page_token;
     await this.saveNextPage({ nextPageToken, section });
-    return '정상적으로 등록되었습니다.';
   }
 
   saveRepeat({

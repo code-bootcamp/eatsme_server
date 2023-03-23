@@ -27,16 +27,14 @@ describe('RestaurantService', () => {
   });
 
   describe('postRestaurants', () => {
-    it('행정구역의 식당정보를 요청한 경우 확인 메세지를 반환한다.', async () => {
+    it('행정구역의 식당정보를 요청한 경우 ', async () => {
       const body = '서울시 종로구';
       jest
         .spyOn(restaurantService, 'postRestaurants')
         .mockImplementation(async ({ body }) => {
-          return '정상적으로 등록되었습니다.';
+          null;
         });
-      expect(await restaurantService.postRestaurants({ body })).toBe(
-        '정상적으로 등록되었습니다.',
-      );
+      expect(await restaurantService.postRestaurants({ body })).toBe(undefined);
     });
   });
 
