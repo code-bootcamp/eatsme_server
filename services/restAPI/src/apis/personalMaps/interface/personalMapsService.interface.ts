@@ -13,8 +13,5 @@ export interface IPersonalMapsServiceCreatePersonalMap {
         lng: number;
       };
     }[];
-  };
-}
-export interface IPersonalMapsServiceCreatePersonalMapReturn {
-  restaurantInfos: RestaurantDocument[];
+  } | null;
 }

@@ -46,13 +46,13 @@ export class RestaurantService {
   }): void {
     restaurantsInfos.forEach(async (el) => {
       const {
-        formatted_address: address,
         geometry,
         place_id,
         name: restaurantName,
         rating,
         user_ratings_total: userRatingsTotal,
       } = el;
+      const address = el.formatted_address || null;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
       const { phoneNumber, openingDays } = details;

@@ -9,6 +9,7 @@ import {
 } from '../restaurant/schemas/restaurant.schemas';
 import { RestaurantService } from '../restaurant/restaurant.service';
 import { ResourceLimits } from 'worker_threads';
+import { IPersonalMapsServiceCreatePersonalMap } from './interface/personalMapsService.interface';
 @Injectable()
 export class PersonalMapsService {
   constructor(
@@ -17,20 +18,20 @@ export class PersonalMapsService {
     private readonly restaurantService: RestaurantService,
   ) {}
   apiKey = process.env.GOOGLE_MAP_API_KEY;
-  async createPersonalMap({ body }): Promise<Restaurant[]> {
-    console.log(body.startPoint);
+
+  async createPersonalMap({
+    body,
+  }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
     const restaurantInfos = Promise.all(
       body.info.map(async (el) => {
-        //같은 장소이지만 좌표가 조금 다를수 도 있지 않을까? 다른 API에서 보내주는 정보이니 재고해보자.
-        //식당이름으로 검색한다.
         const restaurantInfo = await this.restaurantModel
           .find({
             restaurantName: el.restaurantName,
-            //   location: el.location,
+            location: el.location,
           })
           .exec();
         if (restaurantInfo.length) {
-          return await restaurantInfo;
+          return await restaurantInfo[0];
         } else {
           const config = {
             method: 'get',
@@ -41,13 +42,13 @@ export class PersonalMapsService {
             return it.name === el.restaurantName;
           });
           const {
-            formatted_address: address,
             geometry,
             place_id,
             name: restaurantName,
             rating,
             user_ratings_total: userRatingsTotal,
           } = newRestaurant[0];
+          const address = newRestaurant[0].formatted_address || null;
           const { location } = geometry;
           const { phoneNumber, openingDays } =
             await this.restaurantService.getDetails(place_id);
@@ -65,6 +66,6 @@ export class PersonalMapsService {
         }
       }),
     );
-    return await restaurantInfos;
+    return restaurantInfos;
   }
 }
