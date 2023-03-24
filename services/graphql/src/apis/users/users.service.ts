@@ -54,12 +54,12 @@ export class UserService {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
     await this.isFindOneByEmail({ email });
-    await this.sendToTemplate({ email });
+    // await this.sendToTemplate({ email });
     return email;
   }
 
   //-----이메일인증번호 템플릿 전송-----
-  async sendToTemplate({ email }: IUsersSendToTemplate) {
+  async sendToTemplate({ email }: IUsersSendToTemplate): Promise<string> {
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
@@ -84,7 +84,18 @@ export class UserService {
       subject: 'EatsMe 인증 번호입니다', //이메일 제목
       html: eatsMeTemplate,
     });
-    return authNumber;
+
+    return '전송완료';
+  }
+
+  //-----인증번호 확인매치-----
+  async matchAuthNumber({ email, authNumber }) {
+    const pass = await this.cacheManager.get(email);
+
+    if (pass === authNumber) {
+      return true;
+    }
+    throw new UnprocessableEntityException('토큰이 잘못되었습니다.');
   }
 
   //-----이메일 db 유무확인-----
@@ -95,6 +106,7 @@ export class UserService {
     if (isValidEmail) {
       throw new ConflictException('이미 회원가입이 되어있는 이메일입니다.');
     }
+
     return isValidEmail;
   }
 
@@ -122,7 +134,11 @@ export class UserService {
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="width: 500px;">
                     <h1>🌟🌟EatsMe 가입을 환영합니다🌟🌟</h1>
-                    <hr />
+                    <hr /=> {
+                      return email;
+                    });
+                    expect(await userService.checkEmail({ email })).toBe(email);
+                  });>
                     <div style="color: black;">가입을 환영합니다.</div>
                 </div>
             </div>
