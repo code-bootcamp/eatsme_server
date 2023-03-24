@@ -10,7 +10,7 @@ export class Restaurant {
   section: string;
 
   @Prop({ type: String })
-  name: string;
+  restaurantName: string;
 
   @Prop({ type: String })
   address: string;
@@ -24,8 +24,8 @@ export class Restaurant {
   @Prop({ type: String })
   phoneNumber: string;
 
-  @Prop({ type: Object })
-  openingHours: object;
+  @Prop({ type: [String] })
+  openingDays: string[];
 
   @Prop({ type: String })
   rating: string;

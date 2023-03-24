@@ -1,5 +1,11 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  ConflictException,
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -11,13 +17,15 @@ import {
   IUsersSendToTemplate,
 } from './interfaces/user-service.interface';
 import * as bcrypt from 'bcrypt';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
     private readonly mailerService: MailerService,
   ) {}
 
@@ -26,8 +34,17 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
-
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
+    return user;
+  }
+
+  //-----유저email확인-----
+  async findOneByEmail({ email }: IUsersFindOneByEmail): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
+    }
     return user;
   }
 
@@ -42,7 +59,7 @@ export class UserService {
   }
 
   //-----이메일인증번호 템플릿 전송-----
-  async sendToTemplate({ email }: IUsersSendToTemplate) {
+  async sendToTemplate({ email }: IUsersSendToTemplate): Promise<string> {
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
@@ -67,7 +84,18 @@ export class UserService {
       subject: 'EatsMe 인증 번호입니다', //이메일 제목
       html: eatsMeTemplate,
     });
-    return authNumber;
+
+    return '전송완료';
+  }
+
+  //-----인증번호 확인매치-----
+  async matchAuthNumber({ email, authNumber }) {
+    const pass = await this.cacheManager.get(email);
+
+    if (pass === authNumber) {
+      return true;
+    }
+    throw new UnprocessableEntityException('토큰이 잘못되었습니다.');
   }
 
   //-----이메일 db 유무확인-----
@@ -78,34 +106,66 @@ export class UserService {
     if (isValidEmail) {
       throw new ConflictException('이미 회원가입이 되어있는 이메일입니다.');
     }
-    console.log(isValidEmail, '########################');
+
     return isValidEmail;
   }
 
-  //-----닉네임 db 유무확인-----
+  //-----닉네임 db 유무확인 && 닉네임 값 존재 확인-----
   async isFindOneByNickname({
     nickname,
   }: IUsersFindOneByNickname): Promise<User> {
     const isValidNickname = await this.userRepository.findOne({
       where: { nickname },
     });
-
+    if (!nickname) {
+      throw new ConflictException('닉네임을 제대로 입력해주세요');
+    }
     if (isValidNickname) {
       throw new ConflictException('이미 사용하고있는 닉네임입니다.');
     }
-    console.log(isValidNickname, '@@@@@@@123@@@@@@@@@@@@@@@');
     return isValidNickname;
+  }
+
+  //-----회원가입환영template-----
+  async welcomeToTemplate({ email }: IUsersSendToTemplate) {
+    const eatsMeTemplate = `
+    <html>
+        <body>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 500px;">
+                    <h1>🌟🌟EatsMe 가입을 환영합니다🌟🌟</h1>
+                    <hr /=> {
+                      return email;
+                    });
+                    expect(await userService.checkEmail({ email })).toBe(email);
+                  });>
+                    <div style="color: black;">가입을 환영합니다.</div>
+                </div>
+            </div>
+        </body>
+    </html>
+  `;
+    await this.mailerService.sendMail({
+      to: email,
+      from: process.env.EMAIL_USER,
+      subject: 'EatsMe 가입을 환영합니다.', //이메일 제목
+      html: eatsMeTemplate,
+    });
   }
 
   //-----회원가입-----
   async create({ createUserInput }: IUsersCreate): Promise<User> {
     const { email, password, nickname } = createUserInput;
 
-    await this.checkEmail({ email });
+    if (!email || !email.includes('@') || 30 <= email.length) {
+      throw new ConflictException('제대로된 이메일을 입력해주세요');
+    }
 
     await this.isFindOneByEmail({ email });
 
     await this.isFindOneByNickname({ nickname });
+
+    await this.welcomeToTemplate({ email });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -115,20 +175,4 @@ export class UserService {
       nickname,
     });
   }
-
-  // //-----유저정보변경----- //로그인코드 만든 후 다시 작업
-  // async update({
-  //   userId,
-  //   password,
-  //   userImg,
-  // }: IUpdateUserServiceInput): Promise<User> {
-  //   const user = await this.findOneByUser({ userId });
-
-  //   //이미지 후에 다시 리팩토링 필요!
-  //   return this.userRepository.save({
-  //     ...user,
-  //     password,
-  //     userImg,
-  //   });
-  // }
 }

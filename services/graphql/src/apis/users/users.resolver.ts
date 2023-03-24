@@ -1,5 +1,9 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateUserInput } from './entities/dto/create-user.input';
+
+import { UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { IContext } from 'src/commons/interfaces/context';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
+import { CreateUserInput } from './dto/create-user.input';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
@@ -8,6 +12,27 @@ export class UserResolver {
   constructor(
     private readonly userService: UserService, //
   ) {}
+
+  // -----로그인회원 조회-----
+  @UseGuards(GqlAuthGuard('access'))
+  @Query(() => String)
+  fetchLoginUser(
+    @Context() context: IContext, //
+  ): string {
+    console.log('================');
+    console.log(context.req.user);
+    console.log('================');
+    return '인가에 성공하였습니다.';
+  }
+
+  // -----회원 조회-----
+
+  @Query(() => User)
+  fetchUser(
+    @Args('userId') userId: string, //
+  ): Promise<User> {
+    return this.userService.findOneByUser({ userId });
+  }
 
   // -----이메일 인증하기-----
   @Mutation(() => String)
@@ -25,13 +50,12 @@ export class UserResolver {
     return this.userService.isFindOneByNickname({ nickname });
   }
 
-  // // -----회원가입-----
-  // @Mutation(() => User)
-  // createUser(
-  //   @Args('createUserInput') createUserInput: CreateUserInput,
-  // ): Promise<User> {
-  //   return this.userService.create({ createUserInput });
-  // }
+  @Mutation(() => User)
+  createUser(
+    @Args('createUserInput') createUserInput: CreateUserInput,
+  ): Promise<User> {
+    return this.userService.create({ createUserInput });
+  }
 
   // //-----비밀번호 인가-----  //로그인코드 만든 후 다시 작업
   // @Mutation(GqlAuthGuard('access')
@@ -45,4 +69,5 @@ export class UserResolver {
   // ): Promise<User> {
   //   return this.userService.update({ userId, password, userImg });
   // }
+
 }

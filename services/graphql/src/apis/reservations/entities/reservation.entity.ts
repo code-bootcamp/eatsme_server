@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { User } from 'src/apis/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -17,7 +17,7 @@ export class Reservation {
   @Field(() => Date)
   time: Date;
 
-  @ManyToOne(() => User, (user) => user.reservations)
-  @Field(() => User)
-  users: User;
+  // @ManyToOne(() => User, (user) => user.reservations)
+  // @Field(() => User)
+  // users: User;
 }

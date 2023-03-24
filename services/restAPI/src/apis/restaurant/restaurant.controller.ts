@@ -6,24 +6,34 @@ import { Restaurant } from './schemas/restaurant.schemas';
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  @Post('/road/restaurant')
-  postRestaurant(
+  //등록한 식당의 갯수를 반환해보자.
+  @Post('/info/road/restaurant')
+  postRestaurants(
     @Body() body: string, //
   ): Promise<void> {
-    return this.restaurantService.postRestaurant({ body });
+    return this.restaurantService.postRestaurants({ body });
   }
 
-  @Get('/road/restaurant')
-  getRestaurant(
+  //!!---------------없는경우 등록하라고 에러 던지기-----------!!//
+  @Get('/info/road/restaurant')
+  getRestaurants(
     @Body() body: string, //
   ): Promise<Restaurant[]> {
     return this.restaurantService.getRestaurants({ body });
   }
 
-  @Delete('/road/restaurant')
+  //!!---------------잘못된 양식인 경우 에러 던지기-----------!!//
+  @Delete('/info/road/restaurant')
   deleteRestaurant(
     @Body() body: string, //
   ): Promise<string> {
     return this.restaurantService.deleteCollection({ body });
+  }
+
+  @Delete('/info/road/restaurants')
+  deleteRestaurants(
+    @Body() body: string, //
+  ): Promise<string> {
+    return this.restaurantService.deleteSection({ body });
   }
 }

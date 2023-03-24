@@ -1,7 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import moment from 'moment-timezone';
 import { BoardComment } from 'src/apis/boards-comments/boards-comments.entities/boards-comments.entity';
-import { User } from 'src/apis/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,7 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
+} from 'typeorm'; 
 
 @Entity()
 @ObjectType()
@@ -22,9 +21,15 @@ export class Board {
   @Field(() => String)
   title: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamp',
+    transformer: {
+      from: (value?: Date) => value,
+      to: () => new Date(new Date().getTime() + 9 * 60 * 60 * 1000),
+    }, 
+  })
   @Field(() => Date)
-  CreateAt: Date;
+  createdAt: Date;
 
   @Column({ type: 'varchar', length: 100 })
   @Field(() => String)
@@ -46,11 +51,11 @@ export class Board {
   @Field(() => Int)
   like: number;
 
-  @ManyToOne(() => User, (user) => user.boards)
-  @Field(() => User)
-  users: User;
+  // @ManyToOne(() => User, (user) => user.boards)
+  // @Field(() => User)
+  // users: User;
 
-  @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
-  @Field(() => [BoardComment])
-  boardComments: BoardComment[];
+  // @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
+  // @Field(() => [BoardComment])
+  // boardComments: BoardComment[];
 }
