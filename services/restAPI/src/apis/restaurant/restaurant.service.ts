@@ -88,8 +88,8 @@ export class RestaurantService {
       url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${this.apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
     };
     const result = await axios(placeConfig);
-    const phoneNumber = result.data.result.formatted_phone_number || null;
-    const openingDays = result.data.result.opening_hours?.weekday_text || null;
+    const phoneNumber = result.data.result?.formatted_phone_number || null;
+    const openingDays = result.data.result?.opening_hours?.weekday_text || null;
     return { phoneNumber, openingDays };
   }
 

@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { Restaurant } from '../restaurant/schemas/restaurant.schemas';
 import {
   IPersonalMapsServiceCreatePersonalMap,
   IPersonalMapsServiceCreatePersonalMapReturn,
@@ -14,7 +15,7 @@ export class PersonalMapsController {
   @Post('/info/road/map')
   postPersonalMap(
     @Body() body: string, //
-  ): Promise<void> {
+  ): Promise<Restaurant[]> {
     return this.personalMapService.createPersonalMap({ body });
   }
 }

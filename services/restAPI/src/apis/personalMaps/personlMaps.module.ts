@@ -19,6 +19,7 @@ import { PersonalMapsService } from './personlMaps.Service';
   ],
   providers: [
     PersonalMapsService, //
+    RestaurantService,
   ],
 })
 export class PersonalMapsModule {}
