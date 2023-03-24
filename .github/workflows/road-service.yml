@@ -24,7 +24,7 @@ jobs:
     - name: Road-service Build tag Docker image
       run: |-
         gcloud auth configure-docker
-        cd services/graphql
+        cd services/restAPI
         docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE }}:${{ github.sha }} -f ./DockerFile .
       
     - name: Road-service push tag Docker image
