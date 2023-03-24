@@ -7,11 +7,11 @@ on:
       - master
       
 env:
-  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+  # GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  GCP_REGION: ${{ secrets.GCP_REGION }} # TODO: update region of the Artifact Registry 
-  GCP_ZONE: ${{ secrets.GCP_ZONE }}  # TODO: update to cluster zone
-  GCP_VM_NAME: ${{ secrets.GCP_VM_NAME }} # TODO: update to deployment name
+  GCP_REGION: ${{ secrets.GCP_REGION }} 
+  GCP_ZONE: ${{ secrets.GCP_ZONE }}  
+  GCP_VM_NAME: ${{ secrets.GCP_VM_NAME }} 
   IMAGE: ${{ secrets.GCP_API_GATEWAY }}       
       
 jobs:
@@ -27,7 +27,7 @@ jobs:
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0'
       with:
-        credentials_json: "$GCP_CREDENTIALS"
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
     - name: api-gateway Build tag Docker image
       run: |-
