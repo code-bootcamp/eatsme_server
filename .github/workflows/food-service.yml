@@ -2,9 +2,9 @@ name: EatsMe - Food-service Deploy to GCP VM
 
 on:
   workflow_dispatch: 
-  push:
+  pull_request:
     branches:
-      - master
+      - dev
       
 jobs:
   Food-service-deploy:
