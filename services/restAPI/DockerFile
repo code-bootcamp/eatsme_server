@@ -6,4 +6,4 @@ COPY ./yarn.lock /road-service/
 RUN yarn install
 
 COPY . /road-service/
-CMD yarn start
+CMD yarn start:dev

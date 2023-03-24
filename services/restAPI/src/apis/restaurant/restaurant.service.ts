@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
-import { Model } from 'mongoose';
 import {
   IRestaurantServiceDeleteCollection,
   IRestaurantServiceGetDetails,
@@ -16,28 +15,31 @@ import {
   RestaurantDocument, //
 } from './schemas/restaurant.schemas';
 
+import { Model } from 'mongoose';
+
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectModel(Restaurant.name)
-    private RestaurantModel: Model<RestaurantDocument>,
+    private readonly restaurantModel: Model<RestaurantDocument>,
   ) {}
-  async postRestaurant({
+
+  //place api 요청에대한 에러도 잡아주자.
+  async postRestaurants({
     body,
   }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
     const [section] = Object.values(body);
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const config = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&opennow`,
+      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&key=${apiKey}&language=ko&type=restaurant`,
     };
+    //타입을 지정해주면 구조분해 할당으로 받아올수 있지 않을까?
     const result = await axios(config);
-    //현재페이지의 정보를 DB에 반복적으로 저장한다.
     const restaurantsInfos = result.data.results;
-    this.saveRepeat({ restaurantsInfos, section });
-    //다음페이지의 정보를 저장한다.
+    await this.saveRepeat({ restaurantsInfos, section });
     const nextPageToken = result.data.next_page_token;
-    this.saveNextPage({ nextPageToken, section });
+    await this.saveNextPage({ nextPageToken, section });
   }
 
   saveRepeat({
@@ -49,31 +51,30 @@ export class RestaurantService {
         formatted_address: address,
         geometry,
         place_id,
-        name,
+        name: restaurantName,
         rating,
         user_ratings_total: userRatingsTotal,
       } = el;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
-      const {
-        formatted_phone_number: phoneNumber,
-        weekday_text: openingHours,
-      } = details;
+      const { phoneNumber, openingDays } = details;
 
       if (rating >= 4.5) {
         //이미 있는지 확인하고 없는 경우에만 DB에 저장한다.
-        const findRestaurant = await this.RestaurantModel.findOne({
-          name,
-        }).exec();
+        const findRestaurant = await this.restaurantModel
+          .findOne({
+            restaurantName,
+          })
+          .exec();
         if (!findRestaurant) {
-          const postRestaurant = await new this.RestaurantModel({
-            name,
+          const postRestaurant = await new this.restaurantModel({
+            restaurantName,
             address,
             location,
             userRatingsTotal,
             rating,
             phoneNumber,
-            openingHours,
+            openingDays,
             section,
           }).save();
           console.log(postRestaurant);
@@ -87,18 +88,23 @@ export class RestaurantService {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const placeConfig = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours,photo`,
+      url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
     };
     const result = await axios(placeConfig);
-    const { formatted_phone_number, opening_hours } = result.data.result;
-    const { weekday_text } = opening_hours;
-    return { formatted_phone_number, weekday_text };
+    const phoneNumber = result.data.result.formatted_phone_number || null;
+    const opening_hours = result.data.result.opening_hours || null;
+    return !opening_hours
+      ? { phoneNumber, openingDays: null }
+      : {
+          phoneNumber,
+          openingDays: opening_hours.weekday_text,
+        };
   }
 
-  saveNextPage({
+  async saveNextPage({
     nextPageToken,
     section,
-  }: IRestaurantServiceSaveNextPage): void {
+  }: IRestaurantServiceSaveNextPage): Promise<void> {
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const getNextRestaurant = ({ nextPageToken }) => {
       if (nextPageToken) {
@@ -106,7 +112,7 @@ export class RestaurantService {
           method: 'get',
           url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&pagetoken=${nextPageToken}&opennow&fields=current_opening_hours`,
         };
-        //2초정도의 지연시간이 없으면 같은 정보를 받아오므로 setTimeout으로 지연시켜주었다.
+        //2초정도의 지연시간이 없으면 같은 정보를 받아오기 때문에 setTimeout으로 지연시켜주었다.
         setTimeout(async () => {
           const result = await axios(nextConfig);
           const restaurantsInfos = result.data.results;
@@ -121,23 +127,55 @@ export class RestaurantService {
     getNextRestaurant({ nextPageToken });
   }
 
-  async deleteCollection({
-    body,
-  }: IRestaurantServiceDeleteCollection): Promise<string> {
-    const result = await this.RestaurantModel.deleteOne({
-      _id: body,
-    });
-    return result.deletedCount
-      ? '정상적으로 지워졌습니다.'
-      : '이미 지워진 collection입니다.';
-  }
-
-  getRestaurants({
+  async getRestaurants({
     body,
   }: IRestaurantServiceGetRestaurant): Promise<Restaurant[]> {
-    const [section] = Object.values(body);
-    return this.RestaurantModel.find({
-      section,
-    });
+    const result = await this.restaurantModel
+      .find({
+        section: Object.values(body)[0],
+      })
+      .exec();
+    if (!result[0]) {
+      // throw new MongoError('등록되지 않은 행정구역입니다. 등록후 조회해주세요');
+      throw new HttpException(
+        '등록되지 않은 행정구역입니다. 등록후 조회해주세요',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else {
+      return result;
+    }
+  }
+
+  deleteCollection({
+    body,
+  }: IRestaurantServiceDeleteCollection): Promise<string> {
+    return this.restaurantModel
+      .deleteOne({
+        _id: Object.values(body)[0],
+      })
+      .then((res) => {
+        console.log(res);
+        return res.deletedCount
+          ? '정상적으로 지워졌습니다.'
+          : '이미 지워진 collection입니다.';
+      })
+      .catch((err) => {
+        throw new HttpException(
+          '잘못된 ID 형식입니다. 발급 받은 ID를 입력해주세요',
+          HttpStatus.BAD_REQUEST,
+        );
+      });
+  }
+
+  deleteSection({ body }: IRestaurantServiceDeleteCollection): Promise<string> {
+    return this.restaurantModel
+      .deleteMany({
+        section: Object.values(body)[0],
+      })
+      .then((res) => {
+        return res.deletedCount
+          ? `${res.deletedCount}개의 식당 정보를 정상적으로 지웠습니다.`
+          : '이미 지워진 행정구역입니다.';
+      });
   }
 }
