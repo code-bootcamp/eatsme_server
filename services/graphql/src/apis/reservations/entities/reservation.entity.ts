@@ -17,7 +17,7 @@ export class Reservation {
   @Field(() => Date)
   time: Date;
 
-  @ManyToOne(() => User, (user) => user.reservations)
-  @Field(() => User)
-  users: User;
+  // @ManyToOne(() => User, (user) => user.reservations)
+  // @Field(() => User)
+  // users: User;
 }
