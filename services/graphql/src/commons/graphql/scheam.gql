@@ -2,6 +2,32 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type BoardComment {
+  id: String!
+  comments: Comment!
+}
+
+type Reply {
+  id: String!
+  reply: String!
+  comments: Comment!
+}
+
+type Comment {
+  id: String!
+  comment: String!
+  replies: [Reply!]!
+  boardComments: [BoardComment!]!
+  alarms: [Alarm!]!
+}
+
+type Alarm {
+  id: String!
+  isAlarm: Boolean!
+  users: User!
+  comments: Comment!
+}
+
 type Board {
   id: String!
   title: String!
@@ -33,24 +59,7 @@ type User {
   userImg: String!
   reservations: [Reservation!]!
   boards: [Board!]!
-}
-
-type Reply {
-  id: String!
-  reply: String!
-  comments: Comment!
-}
-
-type Comment {
-  id: String!
-  comment: String!
-  replies: [Reply!]!
-  boardComments: [BoardComment!]!
-}
-
-type BoardComment {
-  id: String!
-  comments: Comment!
+  alarms: [Alarm!]!
 }
 
 type Query {
@@ -71,12 +80,10 @@ type Mutation {
   deleteBoard(boardId: String!): Boolean!
 }
 
-
 input LoginAuthInput {
   email: String!
   password: String!
 }
-
 
 input CreateUserInput {
   email: String!
@@ -91,7 +98,7 @@ input CreateBoardInput {
   endPoint: String!
   customName: String!
   like: Int!
-  createdAt: DateTime! = "2023-03-23T14:58:03.707Z"
+  createdAt: DateTime! = "2023-03-24T09:14:51.499Z"
 }
 
 input UpdateBoardInput {
@@ -101,5 +108,5 @@ input UpdateBoardInput {
   endPoint: String
   customName: String
   like: Int
-  createdAt: DateTime = "2023-03-23T14:58:03.707Z"
+  createdAt: DateTime = "2023-03-24T09:14:51.499Z"
 }

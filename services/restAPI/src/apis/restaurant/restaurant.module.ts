@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PersonalMapsModule } from '../personalMaps/personlMaps.module';
 import { RestaurantController } from './restaurant.controller';
 import { RestaurantService } from './restaurant.service';
-import { Restaurant, RestaurantSchema } from './schemas/restaurant.schemas';
+import { RestaurantSchema } from './schemas/restaurant.schemas';
 
 @Module({
   imports: [
-
+    PersonalMapsModule,
     MongooseModule.forFeature([
-      { name: Restaurant.name, schema: RestaurantSchema },
+      { name: 'Restaurant', schema: RestaurantSchema },
     ]),
   ],
   controllers: [
@@ -18,6 +18,5 @@ import { Restaurant, RestaurantSchema } from './schemas/restaurant.schemas';
   providers: [
     RestaurantService, //
   ],
-
 })
 export class RestaurantModule {}

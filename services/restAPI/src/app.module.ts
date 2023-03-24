@@ -6,9 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RestaurantModule } from './apis/restaurant/restaurant.module';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
+import { PersonalMapsModule } from './apis/personalMaps/personlMaps.module';
 
 @Module({
   imports: [
+    PersonalMapsModule,
     RestaurantModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MY_MONGODB), //
