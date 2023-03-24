@@ -38,10 +38,10 @@ export class BoardsResolver {
     return this.boardsService.update({ boardId ,updateBoardInput });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => String)
   deleteBoard(
     @Args('boardId') boardId: string,
-  ): Promise<boolean> {
+  ): Promise<string> {
     return this.boardsService.delete({ boardId });
   }
 }

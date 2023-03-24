@@ -2,50 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
-  id: String!
-
-  email: String!
-  nickname: String!
-  userImg: String!
-}
-
-type Alarm {
-  id: String!
-  isAlarm: Boolean!
-  comments: Comment!
-
-}
-
-type Reply {
-  id: String!
-  reply: String!
-  comments: Comment!
-}
-
-type Comment {
-  id: String!
-  comment: String!
-  replies: [Reply!]!
-  boardComments: [BoardComment!]!
-}
-
 type BoardComment {
   id: String!
-
   boards: Board!
-  comments: Comment!
 }
 
 type Board {
   id: String!
   title: String!
-  CreateAt: DateTime!
+  createdAt: DateTime!
   boardImg: String!
   startPoint: String!
   endPoint: String!
   customName: String!
   like: Int!
+  users: User!
   boardComments: [BoardComment!]!
 }
 
@@ -54,6 +25,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type User {
+  id: String!
+  email: String!
+  nickname: String!
+  userImg: String!
+  boards: [Board!]!
+}
+
+type Comment {
+  id: String!
+  comment: String!
+}
 
 type Query {
   getHello: String!
@@ -62,6 +45,7 @@ type Query {
   isValidNickname(nickname: String!): User!
   fetchBoard(boardId: String!): Board!
   fetchBoards: [Board!]!
+  fetchComments: [Comment!]!
 }
 
 type Mutation {
@@ -72,15 +56,14 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   createBoard(createBoardInput: CreateBoardInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
-  deleteBoard(boardId: String!): Boolean!
+  deleteBoard(boardId: String!): String!
+  createComment(createCommentInput: CreateCommentInput!): Comment!
 }
-
 
 input LoginAuthInput {
   email: String!
   password: String!
 }
-
 
 input CreateUserInput {
   email: String!
@@ -95,7 +78,7 @@ input CreateBoardInput {
   endPoint: String!
   customName: String!
   like: Int!
-  createdAt: DateTime! = "2023-03-23T14:58:03.707Z"
+  createdAt: DateTime! = "2023-03-24T16:21:30.890Z"
 }
 
 input UpdateBoardInput {
@@ -105,5 +88,10 @@ input UpdateBoardInput {
   endPoint: String
   customName: String
   like: Int
-  createdAt: DateTime = "2023-03-23T14:58:03.707Z"
+  createdAt: DateTime = "2023-03-24T16:21:30.890Z"
+  boardId: String!
+}
+
+input CreateCommentInput {
+  comment: String!
 }

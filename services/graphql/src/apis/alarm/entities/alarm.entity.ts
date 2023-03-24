@@ -18,7 +18,7 @@ export class Alarm {
   // @Field(() => User)
   // users: User;
 
-  @ManyToOne(() => Comment, (comment) => comment.alarms)
-  @Field(() => Comment)
-  comments: Comment;
+  // @ManyToOne(() => Comment, (comment) => comment.alarms)
+  // @Field(() => Comment)
+  // comments: Comment;
 }

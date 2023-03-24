@@ -11,19 +11,19 @@ export class Comment {
   @Field(() => String)
   id: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100 }) // varchar는 문자열의 최대길이를 지정
   @Field(() => String)
   comment: string;
 
-  @OneToMany(() => Reply, (reply) => reply.comments)
-  @Field(() => [Reply])
-  replies: Reply[];
+  // @OneToMany(() => Reply, (reply) => reply.comments)
+  // @Field(() => [Reply])
+  // replies: Reply[];
 
-  @OneToMany(() => BoardComment, (boardComment) => boardComment.comments)
-  @Field(() => [BoardComment])
-  boardComments: BoardComment[];
+  // @OneToMany(() => BoardComment, (boardComment) => boardComment.comments)
+  // @Field(() => [BoardComment])
+  // boardComments: BoardComment[];
 
-  @OneToMany(() => Alarm, (alarm) => alarm.comments)
-  @Field(() => [Alarm])
-  alarms: Alarm[];
+  // @OneToMany(() => Alarm, (alarm) => alarm.comments)
+  // @Field(() => [Alarm])
+  // alarms: Alarm[];
 }
