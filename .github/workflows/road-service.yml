@@ -35,4 +35,4 @@ jobs:
       run: |-
         gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }}@${{ secrets.GCP_VM_NAME }} \
         --command "docker image prune -a" \
-        --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE }}:${{ github.sha }} eatsme_food-service"
+        --command "docker service update --update-delay 5m --with-registry-auth --image ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE }}:${{ github.sha }} eatsme_road-service"
