@@ -6,10 +6,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RestaurantModule } from './apis/restaurant/restaurant.module';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
+import { PersonalMapsModule } from './apis/personalMaps/personlMaps.module';
 import { ChannelModule } from './apis/\bchat bot/channel.module';
+
 
 @Module({
   imports: [
+    PersonalMapsModule,
     RestaurantModule,
     ChannelModule,
     ConfigModule.forRoot(),
