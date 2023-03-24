@@ -2,7 +2,7 @@ name: EatsMe - Deploy to GCP VM
 
 on:
   workflow_dispatch: 
-  push:
+  pull_request:
     branches:
       - master     
       
