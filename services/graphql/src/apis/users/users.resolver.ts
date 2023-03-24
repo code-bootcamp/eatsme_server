@@ -18,11 +18,12 @@ export class UserResolver {
   fetchLoginUser(
     @Context() context: IContext, //
   ): string {
-    console.log('=================');
+    console.log('================');
     console.log(context.req.user);
-    console.log('=================');
+    console.log('================');
     return '인가에 성공하였습니다.';
   }
+
   // -----회원 조회-----
 
   @Query(() => User)

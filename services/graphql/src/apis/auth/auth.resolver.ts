@@ -19,12 +19,12 @@ export class AuthResolver {
     return this.authService.login({ loginAuthInput, context });
   }
 
-  @UseGuards(GqlAuthGuard('restore'))
+  @UseGuards(GqlAuthGuard('refresh'))
   @Mutation(() => String)
-  refreshAccessToken(
+  restoreAccessToken(
     @Context() context: IContext, //
   ): string {
-    return this.authService.refreshAccessToken({ user: context.req.user });
+    return this.authService.restoreAccessToken({ user: context.req.user });
   }
 
   @UseGuards(GqlAuthGuard('access'))
@@ -32,9 +32,12 @@ export class AuthResolver {
   logout(
     @Context() context: IContext, //
   ): Promise<string> {
-    const accessToken = context.req.headers.authorization.split(' ')[1];
-    console.log(context.req.headers);
-    const restoreToken = context.req.headers.cookie.split('=')[1];
-    return this.authService.logout({ accessToken, restoreToken });
+    const accessToken = {
+      access: context.req.headers.authorization.split(' ')[1],
+    };
+    const refreshToken = {
+      refresh: context.req.headers.cookie.replace('refreshToken=', ''),
+    };
+    return this.authService.logout({ accessToken, refreshToken });
   }
 }

@@ -2,6 +2,7 @@ import {
   CACHE_MANAGER,
   Inject,
   Injectable,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UserService } from '../users/users.service';
@@ -10,13 +11,15 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken';
 import {
+  IAuthServcieIsToken,
   IAuthServiceGetAccessToken,
   IAuthServiceGetRefreshToken,
   IAuthServiceLogin,
   IAuthServiceLogout,
-  IAuthServiceRestoreToken,
+  IAuthServiceSetRefreshToken,
 } from './interfaces/auth-service.interface';
 import { Cache } from 'cache-manager';
+import { isatty } from 'tty';
 
 @Injectable()
 export class AuthService {
@@ -38,50 +41,71 @@ export class AuthService {
       );
     }
 
-    this.restoreAccessToken({ user, res: context.res });
+    this.setRefreshToken({ user, res: context.res });
+
     return this.getAccessToken({ user });
+  }
+
+  async isToken({ token }: IAuthServcieIsToken): Promise<Object> {
+    try {
+      for (let i in token) {
+        if (i === 'access') {
+          return jwt.verify(token.access, process.env.JWT_ACCESS_KEY);
+        } else return jwt.verify(token.refresh, process.env.JWT_REFRESH_KEY);
+      }
+    } catch (e) {
+      console.log(e);
+      throw new UnauthorizedException();
+    }
   }
 
   async logout({
     accessToken,
-    restoreToken,
+    refreshToken,
   }: IAuthServiceLogout): Promise<string> {
-    const isAccessToken = jwt.verify(accessToken, process.env.JWT_ACCESS_KEY);
-    const isRefreshToken = jwt.verify(
-      restoreToken,
-      process.env.JWT_RESTORE_KEY,
+    const token = [accessToken, refreshToken];
+    const result = await Promise.all(
+      token.map((el) => this.isToken({ token: el })),
     );
-    console.log(
-      isAccessToken[0]['exp'],
-      isAccessToken[0]['iat'],
-      '@@@@@@@@@@@',
-    );
-    await this.cacheManager.set(`accessToken:${accessToken}`, accessToken, {
-      ttl: isAccessToken[0]['exp'] - isAccessToken[0]['iat'],
-    });
-    await this.cacheManager.set(`refreshToken:${restoreToken}`, restoreToken, {
-      ttl: isRefreshToken[1]['exp'] - isRefreshToken[1]['iat'],
-    });
 
-    return '로그아웃이 되었습니다.';
+    const isAccessToken = await this.cacheManager.set(
+      `accessToken:${accessToken.access}`,
+      'accessToken',
+      {
+        ttl: result[0]['exp'] - result[0]['iat'],
+      },
+    );
+
+    console.log(result[1]['exp'], result[1]['iat']);
+
+    const isRefreshToken = await this.cacheManager.set(
+      `refreshToken:${refreshToken.refresh}`,
+      'refreshToken',
+      {
+        ttl: result[1]['exp'] - result[1]['iat'],
+      },
+    );
+    console.log(isAccessToken, isRefreshToken, '@@@');
+
+    return '로그아웃';
   }
 
-  restoreAccessToken({ user, res }: IAuthServiceRestoreToken): void {
-    const restoreToken = this.jwtService.sign(
+  setRefreshToken({ user, res }: IAuthServiceSetRefreshToken): void {
+    const refreshToken = this.jwtService.sign(
       { sub: user.id },
-      { secret: process.env.JWT_RESTORE_KEY, expiresIn: '2w' },
+      { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
-    res.setHeader('Set-Cookie', `restoreToken=${restoreToken};path=/`);
+    res.setHeader('Set-Cookie', `refreshToken=${refreshToken};path=/`);
   }
 
-  refreshAccessToken({ user }: IAuthServiceGetRefreshToken): string {
+  restoreAccessToken({ user }: IAuthServiceGetRefreshToken): string {
     return this.getAccessToken({ user });
   }
 
   getAccessToken({ user }: IAuthServiceGetAccessToken): string {
     return this.jwtService.sign(
       { sub: user.id },
-      { secret: process.env.JWT_ACCESS_KEY, expiresIn: '4h' },
+      { secret: process.env.JWT_ACCESS_KEY, expiresIn: '2h' },
     );
   }
 }
