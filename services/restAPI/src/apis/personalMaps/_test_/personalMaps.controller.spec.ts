@@ -1,27 +1,40 @@
-import { getModelToken } from '@nestjs/mongoose';
-import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
+import { RestaurantModule } from 'src/apis/restaurant/restaurant.module';
+import { RestaurantService } from 'src/apis/restaurant/restaurant.service';
 import {
   Restaurant,
   RestaurantDocument,
+  RestaurantSchema,
 } from 'src/apis/restaurant/schemas/restaurant.schemas';
 import { IPersonalMapsServiceCreatePersonalMap } from '../interface/personalMapsService.interface';
 import { PersonalMapsController } from '../personlMaps.Controller';
+import { PersonalMapsModule } from '../personlMaps.module';
 import { PersonalMapsService } from '../personlMaps.Service';
 import { MockPersonalMapsDb } from './personalMaps.mockDB';
 
 describe('PersonalMapsController', () => {
-  let restaurantModel: Model<RestaurantDocument>;
   let personalMapsController: PersonalMapsController;
   let personalMapsService: PersonalMapsService;
+  let restaurantModel: Model<RestaurantDocument>;
+  let restaurantService: RestaurantService;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [
+        // RestaurantModule, //
+        PersonalMapsModule,
+        MongooseModule.forFeature([
+          { name: 'Restaurant', schema: RestaurantSchema },
+        ]),
+      ],
       controllers: [
         PersonalMapsController, //
       ],
       providers: [
         PersonalMapsService,
+        RestaurantService,
         {
           provide: getModelToken('Restaurant'),
           useValue: Model<RestaurantDocument>,
@@ -33,6 +46,7 @@ describe('PersonalMapsController', () => {
     );
     personalMapsService =
       moduleRef.get<PersonalMapsService>(PersonalMapsService);
+    restaurantService = moduleRef.get<RestaurantService>(RestaurantService);
     restaurantModel = moduleRef.get<Model<RestaurantDocument>>(
       getModelToken('Restaurant'),
     );

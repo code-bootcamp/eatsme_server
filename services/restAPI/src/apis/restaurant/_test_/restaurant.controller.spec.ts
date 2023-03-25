@@ -1,7 +1,7 @@
-import { ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model, MongooseError } from 'mongoose';
+import { Model } from 'mongoose';
 import { RestaurantController } from '../restaurant.controller';
 import { RestaurantService } from '../restaurant.service';
 import { Restaurant, RestaurantDocument } from '../schemas/restaurant.schemas';

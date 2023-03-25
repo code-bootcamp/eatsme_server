@@ -1,21 +1,29 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
+import { RestaurantModule } from 'src/apis/restaurant/restaurant.module';
 import { RestaurantService } from 'src/apis/restaurant/restaurant.service';
 import {
   Restaurant,
   RestaurantDocument,
 } from 'src/apis/restaurant/schemas/restaurant.schemas';
+import { PersonalMapsModule } from '../personlMaps.module';
 import { PersonalMapsService } from '../personlMaps.Service';
 import { MockPersonalMapsDb } from './personalMaps.mockDB';
 
 describe('PersonalMapsService', () => {
   let restaurantModel: Model<RestaurantDocument>;
-  let personalMapsService: PersonalMapsService;
   let restaurantService: RestaurantService;
+  let personalMapsService: PersonalMapsService;
+
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [
+        RestaurantModule, //
+        PersonalMapsModule,
+      ],
       providers: [
+        PersonalMapsService,
         RestaurantService, //
         {
           provide: getModelToken('Restaurant'),

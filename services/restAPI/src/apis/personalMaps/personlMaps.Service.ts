@@ -8,8 +8,11 @@ import {
   RestaurantDocument,
 } from '../restaurant/schemas/restaurant.schemas';
 import { RestaurantService } from '../restaurant/restaurant.service';
-import { ResourceLimits } from 'worker_threads';
-import { IPersonalMapsServiceCreatePersonalMap } from './interface/personalMapsService.interface';
+import {
+  IPersonalMapsServiceCreatePersonalMap,
+  IPersonalMapsServiceGetPersonalMap,
+  IPersonalMapsServiceGetPersonalMapReturn,
+} from './interface/personalMapsService.interface';
 @Injectable()
 export class PersonalMapsService {
   constructor(
@@ -67,5 +70,20 @@ export class PersonalMapsService {
       }),
     );
     return restaurantInfos;
+  }
+  async getPersonalMap({
+    body,
+  }: IPersonalMapsServiceGetPersonalMap): Promise<
+    IPersonalMapsServiceGetPersonalMapReturn[]
+  > {
+    const restaurantInfo = Promise.all(
+      body.idArr.map(async (_id) => {
+        const { restaurantName, address, rating } =
+          await this.restaurantModel.findById({ _id });
+        return { restaurantName, address, rating };
+      }),
+    );
+    console.log(await restaurantInfo);
+    return restaurantInfo;
   }
 }

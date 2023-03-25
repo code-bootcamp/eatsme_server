@@ -15,3 +15,11 @@ export interface IPersonalMapsServiceCreatePersonalMap {
     }[];
   } | null;
 }
+export interface IPersonalMapsServiceGetPersonalMap {
+  body: { idArr: string[] };
+}
+export interface IPersonalMapsServiceGetPersonalMapReturn {
+  restaurantName: string;
+  address: string;
+  rating: string;
+}

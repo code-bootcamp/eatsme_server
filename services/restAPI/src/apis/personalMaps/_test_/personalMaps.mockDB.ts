@@ -70,9 +70,9 @@ export class MockPersonalMapsDb {
       __v: 0,
     },
     {
-      _id: '641d3c37f0af05bacfac0037',
       section: '서울시 구로구',
       restaurantName: '전라도밥상',
+      address: null,
       location: {
         lat: 37.4823711,
         lng: 126.8972692,
@@ -89,6 +89,7 @@ export class MockPersonalMapsDb {
         '일요일: 오전 11:30 ~ 오후 9:30',
       ],
       rating: '3.9',
+      _id: '641d5f4077c1fa339f1703ea',
       __v: 0,
     },
   ];
