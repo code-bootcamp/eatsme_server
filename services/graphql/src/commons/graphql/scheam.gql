@@ -2,6 +2,29 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: String!
+  email: String!
+  nickname: String!
+  userImg: String!
+}
+
+type Board {
+  id: String!
+  title: String!
+  createdAt: DateTime!
+  boardImg: String!
+  startPoint: String!
+  endPoint: String!
+  customName: String!
+  like: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type BoardComment {
   id: String!
   comments: Comment!
@@ -24,42 +47,7 @@ type Comment {
 type Alarm {
   id: String!
   isAlarm: Boolean!
-  users: User!
   comments: Comment!
-}
-
-type Board {
-  id: String!
-  title: String!
-  createdAt: DateTime!
-  boardImg: String!
-  startPoint: String!
-  endPoint: String!
-  customName: String!
-  like: Int!
-  users: User!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type Reservation {
-  id: String!
-  table: Int!
-  time: DateTime!
-  users: User!
-}
-
-type User {
-  id: String!
-  email: String!
-  nickname: String!
-  userImg: String!
-  reservations: [Reservation!]!
-  boards: [Board!]!
-  alarms: [Alarm!]!
 }
 
 type Query {
@@ -73,6 +61,8 @@ type Query {
 
 type Mutation {
   login(loginAuthInput: LoginAuthInput!): String!
+  restoreAccessToken: String!
+  logout: String!
   checkEmail(email: String!): String!
   createUser(createUserInput: CreateUserInput!): User!
   createBoard(createBoardInput: CreateBoardInput!): Board!

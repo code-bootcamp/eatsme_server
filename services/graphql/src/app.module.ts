@@ -12,8 +12,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
-import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 
+import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
+import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
 
 @Module({
   imports: [
@@ -22,10 +23,17 @@ import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
     UserModule, //
     BoardModule,
     ConfigModule.forRoot(),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: 'src/commons/graphql/scheam.gql',
-      context: ({ req, res }) => ({ req, res }),
+      useFactory: () => ({
+        autoSchemaFile: true,
+        context: ({ req, res }) => ({ req, res }),
+        cors: {
+          origin: process.env.ORIGIN,
+          credentials: true,
+        },
+        uploads: false,
+      }),
     }),
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as 'mysql',
@@ -59,9 +67,10 @@ import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
     }),
   ],
   providers: [
+    JwtAccessStrategy,
     AppResolver, //
     AppService,
-    JwtAccessStrategy,
+    JwtRefreshStrategy,
   ],
 })
 export class AppModule {}
