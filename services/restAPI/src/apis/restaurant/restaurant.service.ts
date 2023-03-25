@@ -32,7 +32,6 @@ export class RestaurantService {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&key=${this.apiKey}&language=ko&type=restaurant`,
     };
-    //타입을 지정해주면 구조분해 할당으로 받아올수 있지 않을까?
     const result = await axios(config);
     const restaurantsInfos = result.data.results;
     await this.saveRepeat({ restaurantsInfos, section });
@@ -45,6 +44,13 @@ export class RestaurantService {
     section, //
   }): void {
     restaurantsInfos.forEach(async (el) => {
+      // console.log(el?.photos[0]?.photo_reference, '####');
+      // const config = {
+      //   method: 'get',
+      //   url: `https://maps.googleapis.com/maps/api/place/photo/?maxwidth=300&photo_reference=${el?.photos[0]?.photo_reference}&key=${this.apiKey}`,
+      // };
+      // const result = await axios(config);
+
       const {
         geometry,
         place_id,
@@ -75,7 +81,7 @@ export class RestaurantService {
             openingDays,
             section,
           }).save();
-          console.log(postRestaurant);
+          // console.log(postRestaurant);
         }
       }
     });
@@ -144,7 +150,6 @@ export class RestaurantService {
         _id: Object.values(body)[0],
       })
       .then((res) => {
-        console.log(res);
         return res.deletedCount
           ? '정상적으로 지워졌습니다.'
           : '이미 지워진 collection입니다.';
