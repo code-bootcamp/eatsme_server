@@ -12,7 +12,8 @@ import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
 import { FilesModule } from './apis/files/files.module';
 
-// import { JwtKakaoStrategy } from './apis/auth/strategies/jwt-social-kakao.strategy';
+
+
 
 @Module({
   imports: [
@@ -22,10 +23,17 @@ import { FilesModule } from './apis/files/files.module';
     FilesModule,
     UserModule, //
     ConfigModule.forRoot(),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: 'src/commons/graphql/scheam.gql',
-      context: ({ req, res }) => ({ req, res }),
+      useFactory: () => ({
+        autoSchemaFile: true,
+        context: ({ req, res }) => ({ req, res }),
+        cors: {
+          origin: process.env.ORIGIN,
+          credentials: true,
+        },
+        uploads: false,
+      }),
     }),
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as 'mysql',
