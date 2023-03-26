@@ -11,7 +11,13 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
 import { FilesModule } from './apis/files/files.module';
+
 import { ReservationModule } from './apis/reservations/reservation.module';
+
+
+
+
+
 
 @Module({
   imports: [
@@ -22,10 +28,17 @@ import { ReservationModule } from './apis/reservations/reservation.module';
     ReservationModule,
     UserModule,
     ConfigModule.forRoot(),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: 'src/commons/graphql/scheam.gql',
-      context: ({ req, res }) => ({ req, res }),
+      useFactory: () => ({
+        autoSchemaFile: true,
+        context: ({ req, res }) => ({ req, res }),
+        cors: {
+          origin: process.env.ORIGIN,
+          credentials: true,
+        },
+        uploads: false,
+      }),
     }),
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as 'mysql',
