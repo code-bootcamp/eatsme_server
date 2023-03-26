@@ -1,5 +1,6 @@
 import { Args, Mutation, Query, Resolver  } from "@nestjs/graphql";
 import { BoardsService } from "./boards.service";
+import { CreateBoardMapInput } from "./dto/create-bard-map.input";
 import { CreateBoardInput } from "./dto/create-board.input";
 import { UpdateBoardInput } from "./dto/update-board.input";
 import { Board } from "./entities/board.entity";
@@ -13,35 +14,37 @@ export class BoardsResolver {
 
   @Query(() => Board)
   fetchBoard(
-    @Args('boardId') boardId: string, //
+    @Args('boardId') boardId: string, 
   ): Promise<Board> {
     return this.boardsService.findOne({ boardId });
   }
 
   @Query(() => [Board])
-  fetchBoards(): Promise<Board[]> {
+  fetchBoards(
+  ): Promise<Board[]> {
    return this.boardsService.findAll();
   }
 
   @Mutation(() => Board)
   createBoard(
+    @Args('userId') userId: string,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
+    // @Args('createBoardMapInput') createBoardMapInput: CreateBoardMapInput[],
   ): Promise<Board> {
-    return this.boardsService.create({ createBoardInput }) 
+    return this.boardsService.create({ userId, createBoardInput }) 
   }
 
   @Mutation(() => Board)
   updateBoard(
-    @Args('boardId') boardId: string,
     @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
   ): Promise<Board> {
-    return this.boardsService.update({ boardId ,updateBoardInput });
+    return this.boardsService.update({ updateBoardInput });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => String)
   deleteBoard(
     @Args('boardId') boardId: string,
-  ): Promise<boolean> {
+  ): Promise<string> {
     return this.boardsService.delete({ boardId });
   }
 }

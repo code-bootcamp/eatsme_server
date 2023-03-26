@@ -13,7 +13,7 @@ export class Reply {
   @Field(() => String)
   reply: string;
 
-  @ManyToOne(() => Comment, (comment) => comment.replies)
-  @Field(() => Comment)
-  comments: Comment;
+  // @ManyToOne(() => Comment, (comment) => comment.replies)
+  // @Field(() => Comment)
+  // comments: Comment;
 }
