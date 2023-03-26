@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 // import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
 // import { Board } from 'src/apis/boards/entities/board.entity';
-// // import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
+import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -21,15 +21,14 @@ export class User {
 
   @Column({ type: 'varchar', length: 20 })
   @Field(() => String)
-  nickname: string;
-
+  @OneToMany(() => Reservation, (reservation) => reservation.users)
   @Column({ type: 'varchar', length: 100, nullable: true })
   @Field(() => String)
   userImg: string;
 
-  // @OneToMany(() => Reservation, (reservation) => reservation.users)
-  // @Field(() => [Reservation])
-  // reservations: Reservation[];
+  @OneToMany(() => Reservation, (reservation) => reservation.users)
+  @Field(() => [Reservation])
+  reservations: Reservation[];
 
   // @OneToMany(() => Board, (board) => board.users)
   // @Field(() => [Board])
