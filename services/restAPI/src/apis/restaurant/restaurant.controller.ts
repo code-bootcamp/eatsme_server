@@ -14,7 +14,6 @@ export class RestaurantController {
     return this.restaurantService.postRestaurants({ body });
   }
 
-  //!!---------------없는경우 등록하라고 에러 던지기-----------!!//
   @Get('/info/road/restaurant')
   getRestaurants(
     @Body() body: string, //
@@ -22,7 +21,6 @@ export class RestaurantController {
     return this.restaurantService.getRestaurants({ body });
   }
 
-  //!!---------------잘못된 양식인 경우 에러 던지기-----------!!//
   @Delete('/info/road/restaurant')
   deleteRestaurant(
     @Body() body: string, //

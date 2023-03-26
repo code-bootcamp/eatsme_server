@@ -88,7 +88,7 @@ input CreateBoardInput {
   endPoint: String!
   customName: String!
   like: Int!
-  createdAt: DateTime! = "2023-03-24T15:08:49.554Z"
+  createdAt: DateTime! = "2023-03-25T15:43:52.656Z"
 }
 
 input UpdateBoardInput {
@@ -98,5 +98,5 @@ input UpdateBoardInput {
   endPoint: String
   customName: String
   like: Int
-  createdAt: DateTime = "2023-03-24T15:08:49.554Z"
+  createdAt: DateTime = "2023-03-25T15:43:52.656Z"
 }

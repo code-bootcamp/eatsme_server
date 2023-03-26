@@ -15,7 +15,7 @@ export class Restaurant {
   address: string;
 
   @Prop({ type: Object })
-  location: object;
+  location: { lat: number; lng: number };
 
   @Prop({ type: String })
   userRatingsTotal: string;

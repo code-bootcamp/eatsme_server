@@ -13,8 +13,13 @@ export interface IPersonalMapsServiceCreatePersonalMap {
         lng: number;
       };
     }[];
-  };
+  } | null;
 }
-export interface IPersonalMapsServiceCreatePersonalMapReturn {
-  restaurantInfos: RestaurantDocument[];
+export interface IPersonalMapsServiceGetPersonalMap {
+  body: { idArr: string[] };
+}
+export interface IPersonalMapsServiceGetPersonalMapReturn {
+  restaurantName: string;
+  address: string;
+  rating: string;
 }

@@ -32,7 +32,6 @@ export class RestaurantService {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&key=${this.apiKey}&language=ko&type=restaurant`,
     };
-    //타입을 지정해주면 구조분해 할당으로 받아올수 있지 않을까?
     const result = await axios(config);
     const restaurantsInfos = result.data.results;
     await this.saveRepeat({ restaurantsInfos, section });
@@ -45,14 +44,21 @@ export class RestaurantService {
     section, //
   }): void {
     restaurantsInfos.forEach(async (el) => {
+      // console.log(el?.photos[0]?.photo_reference, '####');
+      // const config = {
+      //   method: 'get',
+      //   url: `https://maps.googleapis.com/maps/api/place/photo/?maxwidth=300&photo_reference=${el?.photos[0]?.photo_reference}&key=${this.apiKey}`,
+      // };
+      // const result = await axios(config);
+
       const {
-        formatted_address: address,
         geometry,
         place_id,
         name: restaurantName,
         rating,
         user_ratings_total: userRatingsTotal,
       } = el;
+      const address = el.formatted_address || null;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
       const { phoneNumber, openingDays } = details;
@@ -75,7 +81,7 @@ export class RestaurantService {
             openingDays,
             section,
           }).save();
-          console.log(postRestaurant);
+          // console.log(postRestaurant);
         }
       }
     });
@@ -88,8 +94,8 @@ export class RestaurantService {
       url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${this.apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
     };
     const result = await axios(placeConfig);
-    const phoneNumber = result.data.result.formatted_phone_number || null;
-    const openingDays = result.data.result.opening_hours?.weekday_text || null;
+    const phoneNumber = result.data.result?.formatted_phone_number || null;
+    const openingDays = result.data.result?.opening_hours?.weekday_text || null;
     return { phoneNumber, openingDays };
   }
 
@@ -144,7 +150,6 @@ export class RestaurantService {
         _id: Object.values(body)[0],
       })
       .then((res) => {
-        console.log(res);
         return res.deletedCount
           ? '정상적으로 지워졌습니다.'
           : '이미 지워진 collection입니다.';
