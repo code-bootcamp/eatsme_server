@@ -1,3 +1,4 @@
+import { CreateBoardMapInput } from "../dto/create-bard-map.input";
 import { CreateBoardInput } from "../dto/create-board.input";
 import { UpdateBoardInput } from "../dto/update-board.input";
 
@@ -6,22 +7,23 @@ export interface IBoardsServiceFindOne {
 }
 
 export interface IBoardsServiceNullCheckTitle {
- title: string;
+ course: string;
 
 }
 
 export interface IBoardsServiceNullCheckList {
-  title: string,
+  course: string,
   startPoint: string,
   endPoint: string,
 }
 
 export interface IBoardsServiceCreate {
+//  createBoardMapInput: CreateBoardMapInput[],
  createBoardInput: CreateBoardInput;
+ userId: string;
 }
 
 export interface IBoardsServiceUpdate {
- boardId: string;
  updateBoardInput: UpdateBoardInput;
 }
 

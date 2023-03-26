@@ -19,7 +19,7 @@ export class Board {
 
   @Column({ type: 'varchar', length: 20 })
   @Field(() => String)
-  title: string;
+  course: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -49,9 +49,9 @@ export class Board {
 
   @ManyToOne(() => User, (user) => user.boards)
   @Field(() => User)
-  users: User;
+  user: User;
 
-  @OneToMany(() => Comment, (comments) => comments.board, { onDelete: 'CASCADE' } ) //{ cascade: true }는 부모엔티티에서 작업하는게 자식엔티티에도 영향을 주는것을 의미함(예시: 수정 삭제) 
-  @Field(() => Comment)
+  @OneToMany(() => Comment, (comments) => comments.board, { onDelete: 'CASCADE' } ) //{ onDelete: 'CASCADE' }는 부모엔티티에서 작업하는게 자식엔티티에도 영향을 주는것을 의미함(예시: 수정 삭제) 
+  @Field(() => [Comment])
   comments: Comment[];
 }

@@ -3,7 +3,7 @@ import { Field, InputType, Int } from "@nestjs/graphql";
 @InputType()
 export class CreateBoardInput {
  @Field(() => String)
- title: string;
+ course: string;
 
  @Field(() => String)
  boardImg: string;
@@ -20,6 +20,6 @@ export class CreateBoardInput {
  @Field(() => Date)
  createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
 
- // @Field(() => String)
- // userId: string;
+ @Field(() => String)
+ userId: string;
 }
