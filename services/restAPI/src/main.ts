@@ -2,11 +2,9 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { HttpExceptionFilter } from './commons/filter/http-exception.filter';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './commons/filter/All-exception.filter';
-import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -14,7 +12,6 @@ async function bootstrap() {
     origin: process.env.ORIGIN,
     credentials: true,
   });
-  app.use(helmet.referrerPolicy({ policy: 'strict-origin-when-cross-origin' }));
   await app.listen(7100, () => {
     console.log('=================');
     console.log('🐶🐶🐶 restAPI 백엔드 서버 오픈 🐶🐶🐶');
