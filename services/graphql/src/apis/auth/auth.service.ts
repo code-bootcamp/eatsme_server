@@ -113,7 +113,6 @@ export class AuthService {
   }
 
   async socialLogin({ req, res }: IAuthServiceSocialLogin) {
-    console.log(req, res);
     let user = await this.usersService.isFindOneByEmail({
       email: req.user.email,
     });
@@ -123,8 +122,7 @@ export class AuthService {
         createUserInput: req.user,
       });
     }
-    // console.log(user);
     this.setRefreshToken({ user, res });
-    res.redirect('http://local:5500/seb11_team03_server/index.html');
+    res.redirect('http://127.0.0.1:5500/seb11_team03_server/index.html');
   }
 }

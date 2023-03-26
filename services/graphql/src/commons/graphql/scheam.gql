@@ -106,9 +106,7 @@ input CreateBoardInput {
   customName: String!
   like: Int!
 
-  createdAt: DateTime! = "2023-03-25T17:37:56.357Z"
-
-  createdAt: DateTime! = "2023-03-24T15:08:49.554Z"
+  createdAt: DateTime! = "2023-03-26T14:26:06.496Z"
 
 }
 
@@ -120,7 +118,8 @@ input UpdateBoardInput {
   customName: String
   like: Int
 
-  createdAt: DateTime = "2023-03-25T17:37:56.357Z"
+  createdAt: DateTime = "2023-03-26T14:26:06.496Z"
+
 }
 
 """The `Upload` scalar type represents a file upload."""

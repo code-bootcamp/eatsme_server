@@ -10,8 +10,8 @@ export class AuthController {
     private readonly authService: AuthService, //
   ) {}
 
-  @Get('/login/:social')
   @UseGuards(DynamicAuthGuard)
+  @Get('/graphql/login/:social')
   loginOAuth(
     @Req() req: Request & IOAuthUser, //
     @Res() res: Response,
