@@ -18,6 +18,8 @@ type Board {
   endPoint: String!
   customName: String!
   like: Int!
+
+
 }
 
 """
@@ -28,7 +30,13 @@ scalar DateTime
 type BoardComment {
   id: String!
   comments: Comment!
+
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Reply {
   id: String!
@@ -40,7 +48,10 @@ type Comment {
   id: String!
   comment: String!
   replies: [Reply!]!
+
+
   boardComments: [BoardComment!]!
+
   alarms: [Alarm!]!
 }
 
@@ -51,7 +62,6 @@ type Alarm {
 }
 
 type Query {
-  getHello: String!
   fetchLoginUser: String!
   fetchUser(userId: String!): User!
   isValidNickname(nickname: String!): User!
@@ -65,9 +75,11 @@ type Mutation {
   logout: String!
   checkEmail(email: String!): String!
   createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
   createBoard(createBoardInput: CreateBoardInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
   deleteBoard(boardId: String!): Boolean!
+  uploadFile(file: Upload!): String!
 }
 
 input LoginAuthInput {
@@ -81,6 +93,11 @@ input CreateUserInput {
   nickname: String!
 }
 
+input UpdateUserInput {
+  password: String
+  userImg: String
+}
+
 input CreateBoardInput {
   title: String!
   boardImg: String!
@@ -88,7 +105,11 @@ input CreateBoardInput {
   endPoint: String!
   customName: String!
   like: Int!
+
+  createdAt: DateTime! = "2023-03-25T17:37:56.357Z"
+
   createdAt: DateTime! = "2023-03-24T15:08:49.554Z"
+
 }
 
 input UpdateBoardInput {
@@ -98,5 +119,13 @@ input UpdateBoardInput {
   endPoint: String
   customName: String
   like: Int
+
+  createdAt: DateTime = "2023-03-25T17:37:56.357Z"
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
   createdAt: DateTime = "2023-03-24T15:08:49.554Z"
 }
+

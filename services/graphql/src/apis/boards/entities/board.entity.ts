@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { BoardComment } from 'src/apis/boards-comments/boards-comments.entities/boards-comments.entity';
 import { User } from '../../users/entities/user.entity';
 import {
   Column,
@@ -8,7 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm'; 
+} from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -26,7 +25,7 @@ export class Board {
     transformer: {
       from: (value?: Date) => value,
       to: () => new Date(new Date().getTime() + 9 * 60 * 60 * 1000),
-    }, 
+    },
   })
   @Field(() => Date)
   createdAt: Date;
@@ -54,8 +53,4 @@ export class Board {
   // @ManyToOne(() => User, (user) => user.boards)
   // @Field(() => User)
   // users: User;
-
-  // @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
-  // @Field(() => [BoardComment])
-  // boardComments: BoardComment[];
 }

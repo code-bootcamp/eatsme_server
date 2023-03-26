@@ -1,9 +1,9 @@
-
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/commons/interfaces/context';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
 import { CreateUserInput } from './dto/create-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
@@ -54,20 +54,17 @@ export class UserResolver {
   createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
-    return this.userService.create({ createUserInput });
+    return this.userService.createUser({ createUserInput });
   }
 
-  // //-----비밀번호 인가-----  //로그인코드 만든 후 다시 작업
-  // @Mutation(GqlAuthGuard('access')
-
-  // //-----비밀번호변경 및 이미지 변경-----  //로그인코드 만든 후 다시 작업
-  // @Mutation(() => User)
-  // updateUser(
-  //   @Args('userId') userId: string,
-  //   @Args('password') password: string,
-  //   @Args('userImg') userImg: string,
-  // ): Promise<User> {
-  //   return this.userService.update({ userId, password, userImg });
-  // }
-
+  //-----비밀번호 변경 or 이미지 변경-----  //로그인코드 만든 후 다시 작업
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => User)
+  updateUser(
+    @Context() context: IContext,
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ): Promise<User> {
+    const userId = context.req.user.id;
+    return this.userService.updateUser({ userId, updateUserInput });
+  }
 }

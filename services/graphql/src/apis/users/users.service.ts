@@ -15,6 +15,7 @@ import {
   IUsersFindOneByEmail,
   IUsersFindOneByNickname,
   IUsersSendToTemplate,
+  IUsersUpdate,
 } from './interfaces/user-service.interface';
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
@@ -154,7 +155,7 @@ export class UserService {
   }
 
   //-----회원가입-----
-  async create({ createUserInput }: IUsersCreate): Promise<User> {
+  async createUser({ createUserInput }: IUsersCreate): Promise<User> {
     const { email, password, nickname } = createUserInput;
 
     if (!email || !email.includes('@') || 30 <= email.length) {
@@ -174,5 +175,23 @@ export class UserService {
       password: hashedPassword,
       nickname,
     });
+  }
+
+  //이미지 추가하는 로직 추가해야합니다!
+  async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
+    const user = await this.findOneByUser({ userId });
+    if (updateUserInput.password) {
+      const hashpw = await bcrypt.hash(updateUserInput.password, 10);
+      return this.userRepository.save({
+        ...user,
+        ...updateUserInput,
+        password: hashpw,
+      });
+    } else {
+      return this.userRepository.save({
+        ...user,
+        ...updateUserInput,
+      });
+    }
   }
 }
