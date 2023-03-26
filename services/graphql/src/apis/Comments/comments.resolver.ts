@@ -11,14 +11,17 @@ export class CommentsResolver {
  ) {}
 
  @Query(() => [Comment])
- fetchComments(): Promise<Comment[]> {
-  return this.commentsService.findAll();
+ fetchComments(
+  @Args('boardId') boardId: string)
+  : Promise<Comment[]> {
+  return this.commentsService.findAll(boardId);
  }
 
  @Mutation(() => Comment)
  createComment(
+  @Args('boardId') boardId: string,
   @Args('createCommentInput') createCommentInput: CreateCommentInput,
  ): Promise<Comment> {
-   return this.commentsService.create({ createCommentInput })
+   return this.commentsService.create({  boardId, createCommentInput })
  }
 }

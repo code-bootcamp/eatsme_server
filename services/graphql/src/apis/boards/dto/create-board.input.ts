@@ -14,9 +14,6 @@ export class CreateBoardInput {
  @Field(() => String)
  endPoint: string;
 
- @Field(() => String)
- customName: string;
-
  @Field(() => Int)
  like: number;
  
@@ -25,7 +22,4 @@ export class CreateBoardInput {
 
  // @Field(() => String)
  // userId: string;
-
- // @Field(() => String)
- // commentsId: string;
 }

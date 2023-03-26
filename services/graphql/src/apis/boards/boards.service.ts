@@ -1,6 +1,7 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { Comment } from "../Comments/entities/comment.entity";
 import { Board } from "./entities/board.entity";
 import { 
   IBoardsServiceCreate, 
@@ -16,17 +17,29 @@ export class BoardsService {
  constructor(
   @InjectRepository(Board)
   private readonly boardsRepository: Repository<Board>,
+
+  @InjectRepository(Comment)
+    private readonly commentRepository: Repository<Comment>,
  ) {}
  
  //한개의 게시물 정보조회
  findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
-  return this.boardsRepository.findOne({ where: { id: boardId } });
+  return this.boardsRepository.findOne({ 
+    where: { 
+      id: boardId
+    },
+    relations: ['comments']
+  });
 }
 
 
  //전체 게시물 정보조회
- findAll(): Promise<Board[]> {
-  return this.boardsRepository.find()
+ async findAll(): Promise<Board[]> {
+  const board = await this.boardsRepository.find({
+    relations: ['comments']
+  })
+  console.log(board)
+  return board
  }
 
  //지역 선택검증
@@ -41,11 +54,11 @@ export class BoardsService {
 
  //게시물 작성하기
   async create({ createBoardInput }: IBoardsServiceCreate): Promise<Board> {
-    const {  title, startPoint, endPoint } = createBoardInput;
+    const {  title, startPoint, endPoint} = createBoardInput;
     await this.checkList({ title, startPoint, endPoint })
 
     return this.boardsRepository.save({
-      ...createBoardInput
+      ...createBoardInput,
    });
  }
 
@@ -55,6 +68,9 @@ export class BoardsService {
   updateBoardInput,
   }: IBoardsServiceUpdate): Promise<Board> {
     const board = await this.findOne({ boardId });
+    if(updateBoardInput.boardId !== board.id) {
+      throw new NotFoundException('게시판 아이디가 일치하지않습니다')
+    }
     const { title, startPoint, endPoint } = updateBoardInput;
     await this.checkList({ title, startPoint, endPoint  });
 
@@ -65,8 +81,9 @@ export class BoardsService {
   }
 
   //게시물 삭제하기
-  async delete({ boardId }: IBoardsServiceDelete): Promise<boolean> {
+  async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
     const board = await this.boardsRepository.delete(boardId);
-    return board.affected ? true : false;
+    console.log(board)
+    return board.affected ? '데이터삭제' : '데이터없음';
   }
 }

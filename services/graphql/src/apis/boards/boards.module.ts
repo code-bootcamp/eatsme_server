@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { BoardsResolver } from "./boards.resolvor";
+import { Comment } from "../Comments/entities/comment.entity";
+import { BoardsResolver } from "./boards.resolver";
 import { BoardsService } from "./boards.service";
 import { Board } from "./entities/board.entity";
 
@@ -8,6 +9,7 @@ import { Board } from "./entities/board.entity";
   imports: [
     TypeOrmModule.forFeature([ 
       Board, 
+      Comment,
     ])
   ],
   providers: [

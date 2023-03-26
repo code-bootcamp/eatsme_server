@@ -2,9 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type BoardComment {
+type Comment {
   id: String!
-  boards: Board!
+  comment: String!
+  board: Board!
 }
 
 type Board {
@@ -14,10 +15,9 @@ type Board {
   boardImg: String!
   startPoint: String!
   endPoint: String!
-  customName: String!
   like: Int!
   users: User!
-  boardComments: [BoardComment!]!
+  comments: Comment!
 }
 
 """
@@ -33,11 +33,6 @@ type User {
   boards: [Board!]!
 }
 
-type Comment {
-  id: String!
-  comment: String!
-}
-
 type Query {
   getHello: String!
   fetchLoginUser: String!
@@ -45,7 +40,7 @@ type Query {
   isValidNickname(nickname: String!): User!
   fetchBoard(boardId: String!): Board!
   fetchBoards: [Board!]!
-  fetchComments: [Comment!]!
+  fetchComments(boardId: String!): [Comment!]!
 }
 
 type Mutation {
@@ -57,7 +52,7 @@ type Mutation {
   createBoard(createBoardInput: CreateBoardInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
   deleteBoard(boardId: String!): String!
-  createComment(createCommentInput: CreateCommentInput!): Comment!
+  createComment(boardId: String!, createCommentInput: CreateCommentInput!): Comment!
 }
 
 input LoginAuthInput {
@@ -76,9 +71,8 @@ input CreateBoardInput {
   boardImg: String!
   startPoint: String!
   endPoint: String!
-  customName: String!
   like: Int!
-  createdAt: DateTime! = "2023-03-24T16:21:30.890Z"
+  createdAt: DateTime! = "2023-03-26T11:49:50.305Z"
 }
 
 input UpdateBoardInput {
@@ -86,12 +80,12 @@ input UpdateBoardInput {
   boardImg: String
   startPoint: String
   endPoint: String
-  customName: String
   like: Int
-  createdAt: DateTime = "2023-03-24T16:21:30.890Z"
+  createdAt: DateTime = "2023-03-26T11:49:50.305Z"
   boardId: String!
 }
 
 input CreateCommentInput {
   comment: String!
+  boardId: String!
 }
