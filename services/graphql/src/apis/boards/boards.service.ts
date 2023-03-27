@@ -1,5 +1,4 @@
 import {
-  HttpException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -7,12 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
+import { FetchBoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
 import {
   IBoardsServiceCreate,
   IBoardsServiceDelete,
   IBoardsServiceFetchBoard,
-  IBoardsServiceFetchBoardReturn,
   IBoardsServiceFindArea,
   IBoardsServiceFindOne,
   IBoardsServiceFindSection,
@@ -22,7 +21,6 @@ import {
 
 @Injectable()
 export class BoardsService {
-
   constructor(
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
@@ -31,7 +29,7 @@ export class BoardsService {
   //한개의 게시물 정보조회
   async fetchBoard({
     fetchBoardInput,
-  }: IBoardsServiceFetchBoard): Promise<IBoardsServiceFetchBoardReturn> {
+  }: IBoardsServiceFetchBoard): Promise<FetchBoardReturn> {
     const { boardId, restaurantIds } = fetchBoardInput;
     const board = await this.findOne({ boardId });
     const restaurantInfo = await axios.get(
@@ -40,6 +38,7 @@ export class BoardsService {
         data: restaurantIds,
       },
     );
+
     const personalBoard = { ...board, data: restaurantInfo.data };
     return personalBoard;
   }
@@ -51,7 +50,7 @@ export class BoardsService {
   //시,도별 게시물 정보조회
   async findArea({
     area,
-  }: IBoardsServiceFindArea): Promise<IBoardsServiceFetchBoardReturn[]> {
+  }: IBoardsServiceFindArea): Promise<FetchBoardReturn[]> {
     const BoardInfo = await this.boardsRepository.find({ where: { area } });
     const personalBoards = await Promise.all(
       BoardInfo.map(async (el) => {
@@ -64,13 +63,14 @@ export class BoardsService {
         return { ...el, data: restaurantInfo.data };
       }),
     );
+    console.log(personalBoards, '$$$$$$');
     return personalBoards;
   }
 
   //행정구역별 게시물 조회
   async findByStartPoint({
     fetchBoardsBySectionInput,
-  }: IBoardsServiceFindSection): Promise<IBoardsServiceFetchBoardReturn[]> {
+  }: IBoardsServiceFindSection): Promise<FetchBoardReturn[]> {
     const BoardInfo = await this.boardsRepository.find({
       where: { ...fetchBoardsBySectionInput },
     });
@@ -129,7 +129,6 @@ export class BoardsService {
     }
     await this.checkList({ title, startPoint, endPoint });
 
-
     return this.boardsRepository.save({
       ...board,
       ...updateBoardInput,
@@ -139,7 +138,7 @@ export class BoardsService {
   //게시물 삭제하기
   async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
     const board = await this.boardsRepository.delete(boardId);
-    console.log(board)
+    console.log(board);
     return board.affected ? '데이터삭제' : '데이터없음';
   }
 }
