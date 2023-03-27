@@ -57,6 +57,7 @@ type Query {
   isValidNickname(nickname: String!): User!
   fetchBoard(boardId: String!): Board!
   fetchBoards: [Board!]!
+  fetchComments(boardId: String!): [Comment!]!
 }
 
 type Mutation {
@@ -65,9 +66,11 @@ type Mutation {
   logout: String!
   checkEmail(email: String!): String!
   createUser(createUserInput: CreateUserInput!): User!
-  createBoard(createBoardInput: CreateBoardInput!): Board!
-  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
-  deleteBoard(boardId: String!): Boolean!
+  createBoard(userId: String!, createBoardInput: CreateBoardInput!): Board!
+  updateBoard(updateBoardInput: UpdateBoardInput!): Board!
+  deleteBoard(boardId: String!): String!
+  createComment(boardId: String!, createCommentInput: CreateCommentInput!): Comment!
+  updateComment(updateCommentInput: UpdateCommentInput!): Comment!
 }
 
 input LoginAuthInput {
@@ -82,21 +85,34 @@ input CreateUserInput {
 }
 
 input CreateBoardInput {
-  title: String!
+  course: String!
   boardImg: String!
   startPoint: String!
   endPoint: String!
-  customName: String!
   like: Int!
-  createdAt: DateTime! = "2023-03-25T15:43:52.656Z"
+  createdAt: DateTime! = "2023-03-27T14:43:16.425Z"
+  userId: String!
 }
 
 input UpdateBoardInput {
-  title: String
+  course: String
   boardImg: String
   startPoint: String
   endPoint: String
-  customName: String
   like: Int
+  createdAt: DateTime = "2023-03-27T14:43:16.425Z"
+  userId: String
+  boardId: String!
+}
+
+input CreateCommentInput {
+  comment: String!
+  boardId: String!
+}
+
+input UpdateCommentInput {
+  comment: String
+  boardId: String
+  commentId: String!
   createdAt: DateTime = "2023-03-25T15:43:52.656Z"
 }

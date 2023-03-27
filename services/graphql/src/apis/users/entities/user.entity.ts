@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
-// import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
-// import { Board } from 'src/apis/boards/entities/board.entity';
-// // import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
+import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
+import { Board } from 'src/apis/boards/entities/board.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserReservationRestaurantrestaurant } from '../interfaces/user-reservationRestaurant.inferface';
 
@@ -36,11 +35,11 @@ export class User {
   @Field(() => [UserReservationRestaurantrestaurant])
   restaurant: UserReservationRestaurantrestaurant[];
 
-  //     @OneToMany(() => Board, (board) => board.users)
-  //     @Field(() => [Board])
-  //     boards: Board[];
+  @OneToMany(() => Board, (boards) => boards.user)
+  @Field(() => [Board])
+  boards: Board[];
 
-  //   @OneToMany(() => Alarm, (alarm) => alarm.users)
-  //   @Field(() => [Alarm])
-  //   alarms: Alarm[];
+  @OneToMany(() => Alarm, (alarm) => alarm.users)
+  @Field(() => [Alarm])
+  alarms: Alarm[];
 }

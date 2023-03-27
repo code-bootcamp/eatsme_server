@@ -36,21 +36,24 @@ export class RestaurantService {
   async postRestaurants({
     body,
   }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
-    const [section] = Object.values(body);
+    const location = Object.values(body).join(' ');
+    const { area, section } = body;
     const config = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&key=${this.apiKey}&language=ko&type=restaurant`,
+      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${location}&key=${this.apiKey}&language=ko&type=restaurant`,
     };
     const result = await axios(config);
     const restaurantsInfos = result.data.results;
-    await this.saveRepeat({ restaurantsInfos, section });
+    console.log(restaurantsInfos);
+    await this.saveRepeat({ restaurantsInfos, section, area });
     const nextPageToken = result.data.next_page_token;
-    await this.saveNextPage({ nextPageToken, section });
+    await this.saveNextPage({ nextPageToken, section, area });
   }
 
   saveRepeat({
     restaurantsInfos,
     section, //
+    area,
   }): void {
     restaurantsInfos.forEach(async (el) => {
       // console.log(el?.photos[0]?.photo_reference, '####');
@@ -89,8 +92,9 @@ export class RestaurantService {
             phoneNumber,
             openingDays,
             section,
+            area,
           }).save();
-          // console.log(postRestaurant);
+          console.log(postRestaurant);
         }
       }
     });
@@ -111,6 +115,7 @@ export class RestaurantService {
   async saveNextPage({
     nextPageToken,
     section,
+    area,
   }: IRestaurantServiceSaveNextPage): Promise<void> {
     const getNextRestaurant = ({ nextPageToken }) => {
       if (nextPageToken) {
@@ -122,7 +127,7 @@ export class RestaurantService {
         setTimeout(async () => {
           const result = await axios(nextConfig);
           const restaurantsInfos = result.data.results;
-          await this.saveRepeat({ restaurantsInfos, section });
+          await this.saveRepeat({ restaurantsInfos, section, area });
           const nextPageToken = result.data.next_page_token;
           if (nextPageToken) {
             return getNextRestaurant({ nextPageToken });

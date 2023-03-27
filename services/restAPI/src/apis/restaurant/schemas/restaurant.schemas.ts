@@ -10,6 +10,9 @@ export class Restaurant {
   _id: string;
 
   @Prop({ type: String, required: true })
+  area: string;
+
+  @Prop({ type: String, required: true })
   section: string;
 
   @Prop({ type: String })
