@@ -11,7 +11,7 @@ import { Board } from './entities/board.entity';
 export class BoardsResolver {
   constructor(private readonly boardsService: BoardsService) {}
 
-  @Query(() => Board)
+  @Query(() => FetchBoardReturn)
   fetchBoard(
 
     @Args('fetchBoardInput') fetchBoardInput: FetchBoardInput, //

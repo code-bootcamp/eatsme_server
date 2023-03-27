@@ -16,10 +16,12 @@ import { BoardModule } from './apis/boards/boards.module';
 import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
 import { CommentModule } from './apis/Comments/comments.module';
+import { AlarmModule } from './apis/alarm/alarms.module';
 
 @Module({
   imports: [
     AuthModule,
+    AlarmModule,
     BoardModule,
     CommentModule,
     UserModule,

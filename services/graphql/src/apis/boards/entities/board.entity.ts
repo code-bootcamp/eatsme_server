@@ -49,7 +49,7 @@ export class Board {
 
   @Column({ default: 0 })
   @Field(() => Int)
-  like: number;
+  like!: number;
 
   @Column({ type: 'simple-array', nullable: true })
   @Field(() => [String])

@@ -15,13 +15,10 @@ import { Board } from './entities/board.entity';
 import {
   IBoardsServiceCreate,
   IBoardsServiceDelete,
-
+  IBoardsServiceFetchBoard,
+  IBoardsServiceFindArea,
   IBoardsServiceFindOne,
-  // IBoardsServiceFetchBoard,
-  // IBoardsServiceFetchBoardReturn,
-  // IBoardsServiceFindArea,
-  // IBoardsServiceFindOne,
-  // IBoardsServiceFindSection,
+  IBoardsServiceFindSection,
   IBoardsServiceNullCheckList,
   IBoardsServiceUpdate,
 } from './interfaces/board-service.interface';
@@ -32,16 +29,13 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
 
-    // @InjectRepository(Comment)
-    // private readonly commentsRepository: Repository<Comment>,
-
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
 
-
-
-  async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
+  findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
+    return this.boardsRepository.findOne({ where: { id: boardId } });
+  }
 
   //한개의 게시물 정보조회
   async fetchBoard({
@@ -59,20 +53,6 @@ export class BoardsService {
     const personalBoard = { ...board, data: restaurantInfo.data };
     return personalBoard;
   }
-
-
-    return await this.boardsRepository.findOne({ 
-    where: { 
-      id: boardId
-    },
-    relations: [ 
-      'user',
-      'comments'
-    ] // 테이블간의 관계? 현재 board라는 부모안에 comments라는 자식의 관계를 의미
-  })
-  }
-
-
   //시,도별 게시물 정보조회
   async findArea({
     area,
@@ -92,7 +72,6 @@ export class BoardsService {
     console.log(personalBoards, '$$$$$$');
     return personalBoards;
   }
-
   //행정구역별 게시물 조회
   async findByStartPoint({
     fetchBoardsBySectionInput,
@@ -113,8 +92,6 @@ export class BoardsService {
     );
     return personalBoards;
   }
-
-
   //지역 선택검증
   async checkList({
     title,
@@ -128,7 +105,6 @@ export class BoardsService {
       throw new UnprocessableEntityException('제목을 제대로 입력해주세요');
     }
   }
-
   //게시물 작성하기
   async create({ createBoardInput }: IBoardsServiceCreate): Promise<Board> {
     const restaurantInfo = await axios.post(
@@ -146,7 +122,6 @@ export class BoardsService {
       restaurantIds,
     });
   }
-
   //게시물 업데이트하기
   async update({ updateBoardInput }: IBoardsServiceUpdate): Promise<Board> {
     const { boardId, title, startPoint, endPoint } = updateBoardInput;
@@ -161,7 +136,6 @@ export class BoardsService {
       ...updateBoardInput,
     });
   }
-
   //게시물 삭제하기
   async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
     const board = await this.boardsRepository.delete(boardId);
