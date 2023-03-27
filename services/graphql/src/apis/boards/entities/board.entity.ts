@@ -34,23 +34,41 @@ export class Board {
   @Field(() => String)
   boardImg: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 10 })
+  @Field(() => String)
+  area: string;
+
+  @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
   startPoint: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
   endPoint: string;
 
-  @Column({ type: 'varchar', length: 20 })
-  @Field(() => String)
-  customName: string;
-
   @Column({ default: 0 })
   @Field(() => Int)
-  like: number;
+  like!: number;
 
+<<<<<<< HEAD
   // @ManyToOne(() => User, (user) => user.boards)
   // @Field(() => User)
   // users: User;
+=======
+  @Column({ type: 'simple-array', nullable: true })
+  @Field(() => [String])
+  restaurantIds: string[];
+
+  @ManyToOne(() => User, (user) => user.boards)
+  @Field(() => User)
+  user: User;
+
+
+  @OneToMany(() => Comment, (comments) => comments.board, {
+    onDelete: 'CASCADE',
+  }) //{ onDelete: 'CASCADE' }는 부모엔티티에서 작업하는게 자식엔티티에도 영향을 주는것을 의미함(예시: 수정 삭제)
+
+  @Field(() => [Comment])
+  comments: Comment[];
+>>>>>>> dev
 }

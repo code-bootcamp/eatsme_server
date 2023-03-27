@@ -12,21 +12,18 @@ import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
 import { FilesModule } from './apis/files/files.module';
 
+import { AlarmModule } from './apis/alarm/alarms.module';
 import { ReservationModule } from './apis/reservations/reservation.module';
-
-
-
-
-
 
 @Module({
   imports: [
     AuthModule,
+    AlarmModule,
     BoardModule,
     BoardModule,
     FilesModule,
-    ReservationModule,
     UserModule,
+    ReservationModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,

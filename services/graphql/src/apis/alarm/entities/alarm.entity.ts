@@ -14,9 +14,9 @@ export class Alarm {
   @Field(() => Boolean)
   isAlarm: boolean;
 
-  // @ManyToOne(() => User, (user) => user.alarms)
-  // @Field(() => User)
-  // users: User;
+  @ManyToOne(() => User, (user) => user.alarms)
+  @Field(() => User)
+  users: User;
 
   @ManyToOne(() => Comment, (comment) => comment.alarms)
   @Field(() => Comment)

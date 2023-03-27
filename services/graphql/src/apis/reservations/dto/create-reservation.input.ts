@@ -5,6 +5,15 @@ export class CreateReservationInput {
   @Field(() => Int)
   table: number;
 
-  @Field(() => Date)
-  time: Date;
+  @Field(() => String)
+  time: string;
+
+  @Field(() => String)
+  division: string;
+
+  @Field(() => String)
+  restaurantId: string;
+
+  @Field(() => Int)
+  reservation_time: number;
 }

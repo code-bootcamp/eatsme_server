@@ -19,6 +19,7 @@ import {
 } from './interfaces/user-service.interface';
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
+import axios from 'axios';
 
 @Injectable()
 export class UserService {
@@ -34,9 +35,20 @@ export class UserService {
   async findOneByUser({ userId }: IUserFindOneByUser): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
+      relations: ['reservations'],
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
-    return user;
+
+    const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
+    const reservationRestaurant = await axios.get(
+      'http://road-service:7100/info/road/find/restaurant',
+      { data: restaurantIdArr },
+    );
+
+    return {
+      ...user,
+      restaurant: reservationRestaurant.data,
+    };
   }
 
   //-----유저email확인-----
@@ -79,7 +91,7 @@ export class UserService {
         </body>
     </html>
   `;
-    await this.mailerService.sendMail({
+    this.mailerService.sendMail({
       to: email,
       from: process.env.EMAIL_USER,
       subject: 'EatsMe 인증 번호입니다', //이메일 제목
@@ -146,7 +158,7 @@ export class UserService {
         </body>
     </html>
   `;
-    await this.mailerService.sendMail({
+    this.mailerService.sendMail({
       to: email,
       from: process.env.EMAIL_USER,
       subject: 'EatsMe 가입을 환영합니다.', //이메일 제목
