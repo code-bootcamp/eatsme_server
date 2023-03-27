@@ -6,22 +6,15 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
-
-import { User } from '../users/entities/user.entity';
-
 import { FetchBoardReturn } from './dto/fetch-board.object';
-
 import { Board } from './entities/board.entity';
 import {
   IBoardsServiceCreate,
   IBoardsServiceDelete,
-
+  IBoardsServiceFetchBoard,
+  IBoardsServiceFindArea,
   IBoardsServiceFindOne,
-  // IBoardsServiceFetchBoard,
-  // IBoardsServiceFetchBoardReturn,
-  // IBoardsServiceFindArea,
-  // IBoardsServiceFindOne,
-  // IBoardsServiceFindSection,
+  IBoardsServiceFindSection,
   IBoardsServiceNullCheckList,
   IBoardsServiceUpdate,
 } from './interfaces/board-service.interface';
@@ -31,17 +24,7 @@ export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
-
-    // @InjectRepository(Comment)
-    // private readonly commentsRepository: Repository<Comment>,
-
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
   ) {}
-
-
-
-  async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
 
   //한개의 게시물 정보조회
   async fetchBoard({
@@ -60,18 +43,9 @@ export class BoardsService {
     return personalBoard;
   }
 
-
-    return await this.boardsRepository.findOne({ 
-    where: { 
-      id: boardId
-    },
-    relations: [ 
-      'user',
-      'comments'
-    ] // 테이블간의 관계? 현재 board라는 부모안에 comments라는 자식의 관계를 의미
-  })
+  findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
+    return this.boardsRepository.findOne({ where: { id: boardId } });
   }
-
 
   //시,도별 게시물 정보조회
   async findArea({
@@ -113,7 +87,6 @@ export class BoardsService {
     );
     return personalBoards;
   }
-
 
   //지역 선택검증
   async checkList({

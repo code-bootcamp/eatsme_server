@@ -11,12 +11,12 @@ export class ReplysResolver {
   private readonly replysService: ReplysService,
  ) {}
 
- @Query(() => Reply)
- fetchReply(
-  @Args('replyId') replyId: string,
- ): Promise<Reply> {
-  return this.replysService.findOne({ replyId })
- }
+  @Query(() => Reply)
+  fetchReply(
+   @Args('replyId') replyId: string,
+  ): Promise<Reply> {
+   return this.replysService.findOne({ replyId })
+  }
 
  @Query(() => [Reply])
  fetchReplys(
@@ -26,9 +26,10 @@ export class ReplysResolver {
 
  @Mutation(() => Reply)
  createReply(
+  @Args('commentId') commentId: string,
   @Args('createReplyInput') createReplyInput: CreateReplyInput,
  ): Promise<Reply> {
-   return this.replysService.create({ createReplyInput })
+   return this.replysService.create({ commentId, createReplyInput })
  }
 
  @Mutation(() => Reply)
