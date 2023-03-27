@@ -1,10 +1,23 @@
+import { Request } from 'express';
 import { Restaurant } from '../schemas/restaurant.schemas';
 
 export interface IRestaurantServicePostAndGetRestaurant {
   body: string;
 }
 export interface IRestaurantServiceGetRestaurant {
+  req: Request;
+}
+
+export interface IRestaurantServiceFindOneRestaurant {
+  restaurant_id: string;
+}
+
+export interface IRestaurantServiceGetRestaurants {
   body: string;
+}
+
+export interface IRestaurantServiceUserGetRestaurants {
+  req: Request;
 }
 
 export interface IRestaurantServiceGetDetails {

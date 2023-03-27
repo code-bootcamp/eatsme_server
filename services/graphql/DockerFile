@@ -6,4 +6,4 @@ COPY ./yarn.lock /food-service/
 RUN yarn install 
 
 COPY . /food-service/
-CMD yarn start
+CMD yarn start:dev

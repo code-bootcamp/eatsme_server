@@ -15,6 +15,7 @@ import { BoardModule } from './apis/boards/boards.module';
 
 import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
+import { reservationModule } from './apis/reservations/reservation.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy'
     BoardModule,
     UserModule, //
     BoardModule,
+    reservationModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
