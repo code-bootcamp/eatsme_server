@@ -17,3 +17,7 @@ export interface ICommentServiceNullList {
 export interface ICommentsServiceFindOne {
  commentId: string;
 }
+
+export interface ICommentsServiceDelete {
+ commentId: string;
+}

@@ -2,12 +2,14 @@ import { BadRequestException, Injectable, NotFoundException, UnprocessableEntity
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Board } from "../boards/entities/board.entity";
+import { Reply } from "../replies/entities/reply.entity";
 import { Comment } from "./entities/comment.entity";
 import { 
   ICommentServiceNullList, 
   ICommentsServiceCreate, 
   ICommentsServiceUpdate, 
-  ICommentsServiceFindOne 
+  ICommentsServiceFindOne, 
+  ICommentsServiceDelete
 } from "./interfaces/comment-service.interface";
 
 @Injectable()
@@ -18,6 +20,9 @@ export class CommentsService {
 
   @InjectRepository(Board)
   private readonly boardsRepository: Repository<Board>,
+
+  @InjectRepository(Reply)
+  private readonly replysRepository: Repository<Reply>,
  ) {}
 
  async findOne({ commentId }: ICommentsServiceFindOne): Promise<Comment> {
@@ -25,7 +30,11 @@ export class CommentsService {
   where: { 
     id: commentId
   },
-  relations: ['board']
+  relations: [
+    'board',
+    'board.user',
+    'replies'
+  ]
   })
   console.log(board)
   return board
@@ -40,6 +49,8 @@ export class CommentsService {
     },
     relations: [
       'board',
+      'board.user',
+      'replies'
     ]
   })
  }
@@ -84,5 +95,10 @@ export class CommentsService {
   return this.commentsRepository.save({
     ...updateCommentInput
   })
+ }
+
+ async delete({ commentId }: ICommentsServiceDelete): Promise<string> {
+  const reply = await this.commentsRepository.delete(commentId);
+  return reply.affected ? '데이터삭제' : '데이터없음';
  }
 } 

@@ -7,15 +7,17 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 import { Board } from './entities/board.entity';
 import {
   IBoardsServiceCreate,
   IBoardsServiceDelete,
-  IBoardsServiceFetchBoard,
-  IBoardsServiceFetchBoardReturn,
-  IBoardsServiceFindArea,
   IBoardsServiceFindOne,
-  IBoardsServiceFindSection,
+  // IBoardsServiceFetchBoard,
+  // IBoardsServiceFetchBoardReturn,
+  // IBoardsServiceFindArea,
+  // IBoardsServiceFindOne,
+  // IBoardsServiceFindSection,
   IBoardsServiceNullCheckList,
   IBoardsServiceUpdate,
 } from './interfaces/board-service.interface';
@@ -26,67 +28,97 @@ export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
+
+    // @InjectRepository(Comment)
+    // private readonly commentsRepository: Repository<Comment>,
+
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
   ) {}
 
+   //한개의 게시물 정보조회
+  async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
+
+    return await this.boardsRepository.findOne({ 
+    where: { 
+      id: boardId
+    },
+    relations: [ 
+      'user',
+      'comments'
+    ] // 테이블간의 관계? 현재 board라는 부모안에 comments라는 자식의 관계를 의미
+  })
+  }
+
+   //전체 게시물 정보조회
+  async findAll(): Promise<Board[]> {
+    return this.boardsRepository.find({
+      relations: [ 
+        'user',
+        'comments'
+      ]
+    })
+  }
+
   //한개의 게시물 정보조회
-  async fetchBoard({
-    fetchBoardInput,
-  }: IBoardsServiceFetchBoard): Promise<IBoardsServiceFetchBoardReturn> {
-    const { boardId, restaurantIds } = fetchBoardInput;
-    const board = await this.findOne({ boardId });
-    const restaurantInfo = await axios.get(
-      'http://road-service:7100/info/road/map',
-      {
-        data: restaurantIds,
-      },
-    );
-    const personalBoard = { ...board, data: restaurantInfo.data };
-    return personalBoard;
-  }
+  // async fetchBoard({
+  //   fetchBoardInput,
+  // }: IBoardsServiceFetchBoard): Promise<IBoardsServiceFetchBoardReturn> {
+  //   const { boardId, restaurantIds } = fetchBoardInput;
+  //   const board = await this.findOne({ boardId });
+  //   const restaurantInfo = await axios.get(
+  //     'http://road-service:7100/info/road/map',
+  //     {
+  //       data: restaurantIds,
+  //     },
+  //   );
+  //   const personalBoard = { ...board, data: restaurantInfo.data };
+  //   return personalBoard;
+  // }
 
-  findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
-    return this.boardsRepository.findOne({ where: { id: boardId } });
-  }
+  // findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
+  //   return this.boardsRepository.findOne({ where: { id: boardId } });
+  // }
 
-  //시,도별 게시물 정보조회
-  async findArea({
-    area,
-  }: IBoardsServiceFindArea): Promise<IBoardsServiceFetchBoardReturn[]> {
-    const BoardInfo = await this.boardsRepository.find({ where: { area } });
-    const personalBoards = await Promise.all(
-      BoardInfo.map(async (el) => {
-        const restaurantInfo = await axios.get(
-          'http://road-service:7100/info/road/map',
-          {
-            data: el.restaurantIds,
-          },
-        );
-        return { ...el, data: restaurantInfo.data };
-      }),
-    );
-    return personalBoards;
-  }
+  // //시,도별 게시물 정보조회
+  // async findArea({
+  //   area,
+  // }: IBoardsServiceFindArea): Promise<IBoardsServiceFetchBoardReturn[]> {
+  //   const BoardInfo = await this.boardsRepository.find({ where: { area } });
+  //   const personalBoards = await Promise.all(
+  //     BoardInfo.map(async (el) => {
+  //       const restaurantInfo = await axios.get(
+  //         'http://road-service:7100/info/road/map',
+  //         {
+  //           data: el.restaurantIds,
+  //         },
+  //       );
+  //       return { ...el, data: restaurantInfo.data };
+  //     }),
+  //   );
+  //   return personalBoards;
+  // }
 
-  //행정구역별 게시물 조회
-  async findByStartPoint({
-    fetchBoardsBySectionInput,
-  }: IBoardsServiceFindSection): Promise<IBoardsServiceFetchBoardReturn[]> {
-    const BoardInfo = await this.boardsRepository.find({
-      where: { ...fetchBoardsBySectionInput },
-    });
-    const personalBoards = await Promise.all(
-      BoardInfo.map(async (el) => {
-        const restaurantInfo = await axios.get(
-          'http://road-service:7100/info/road/map',
-          {
-            data: el.restaurantIds,
-          },
-        );
-        return { ...el, data: restaurantInfo.data };
-      }),
-    );
-    return personalBoards;
-  }
+  // //행정구역별 게시물 조회
+  // async findByStartPoint({
+  //   fetchBoardsBySectionInput,
+  // }: IBoardsServiceFindSection): Promise<IBoardsServiceFetchBoardReturn[]> {
+  //   const BoardInfo = await this.boardsRepository.find({
+  //     where: { ...fetchBoardsBySectionInput },
+  //   });
+  //   const personalBoards = await Promise.all(
+  //     BoardInfo.map(async (el) => {
+  //       const restaurantInfo = await axios.get(
+  //         'http://road-service:7100/info/road/map',
+  //         {
+  //           data: el.restaurantIds,
+  //         },
+  //       );
+  //       return { ...el, data: restaurantInfo.data };
+  //     }),
+  //   );
+  //   return personalBoards;
+  // }
 
   //지역 선택검증
   async checkList({

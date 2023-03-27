@@ -2,39 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-<<<<<<< HEAD
-type Comment {
-  id: String!
-  comment: String!
-  board: Board!
-}
-
-type Board {
-  id: String!
-  course: String!
-  createdAt: DateTime!
-  boardImg: String!
-  startPoint: String!
-  endPoint: String!
-  like: Int!
-  user: User!
-  comments: [Comment!]!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type User {
-  id: String!
-  email: String!
-  nickname: String!
-  userImg: String!
-  boards: [Board!]!
-}
-
-=======
 type User {
   id: String!
   email: String!
@@ -83,7 +50,6 @@ type Alarm {
   comments: Comment!
 }
 
->>>>>>> dev
 type Query {
   getHello: String!
   fetchLoginUser: String!
@@ -124,12 +90,8 @@ input CreateBoardInput {
   startPoint: String!
   endPoint: String!
   like: Int!
-<<<<<<< HEAD
   createdAt: DateTime! = "2023-03-27T14:43:16.425Z"
   userId: String!
-=======
-  createdAt: DateTime! = "2023-03-25T15:43:52.656Z"
->>>>>>> dev
 }
 
 input UpdateBoardInput {
@@ -138,7 +100,6 @@ input UpdateBoardInput {
   startPoint: String
   endPoint: String
   like: Int
-<<<<<<< HEAD
   createdAt: DateTime = "2023-03-27T14:43:16.425Z"
   userId: String
   boardId: String!
@@ -153,7 +114,5 @@ input UpdateCommentInput {
   comment: String
   boardId: String
   commentId: String!
-=======
   createdAt: DateTime = "2023-03-25T15:43:52.656Z"
->>>>>>> dev
 }

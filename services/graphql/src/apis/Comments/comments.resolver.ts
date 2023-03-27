@@ -32,4 +32,11 @@ export class CommentsResolver {
  ): Promise<Comment> {
   return this.commentsService.update({ updateCommentInput })
  }
+
+ @Mutation(() => String)
+ deleteReply(
+  @Args('commentId') commentId: string,
+ ): Promise<string> {
+  return this.commentsService.delete({ commentId })
+ }
 }

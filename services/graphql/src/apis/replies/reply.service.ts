@@ -31,7 +31,7 @@ export class ReplysService {
    });
   }
 
- findAll(): Promise<Reply[]> {
+  findAll(): Promise<Reply[]> {
   return this.replysRepository.find({
    relations: [
     'comments',
@@ -51,8 +51,8 @@ export class ReplysService {
  }
 
   //대댓글 생성
-  async create({ commentId, createReplyInput }: IReplysServiceCreate): Promise<Reply> {
-   const { reply } = createReplyInput;
+  async create({ createReplyInput }: IReplysServiceCreate): Promise<Reply> {
+   const { reply, commentId } = createReplyInput;
    const comment = await this.commentsRepository.findOne({ 
      where: { 
        id: commentId 
