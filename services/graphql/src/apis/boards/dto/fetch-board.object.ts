@@ -1,6 +1,4 @@
-import { Field, Int, ObjectType, PartialType } from '@nestjs/graphql';
-import { Board } from '../entities/board.entity';
-import { RestaurantBoardInfo } from './fetch-board-restaurantInfo.object';
+import { Field, Float, Int, ObjectType, PartialType } from '@nestjs/graphql';
 
 @ObjectType()
 export class FetchBoardReturn {
@@ -30,4 +28,31 @@ export class FetchBoardReturn {
 
   @Field(() => [RestaurantBoardInfo])
   data: RestaurantBoardInfo[];
+}
+
+@ObjectType()
+class LocationObject {
+  @Field(() => Float)
+  lat: number;
+
+  @Field(() => Float)
+  lng: number;
+}
+
+@ObjectType()
+class RestaurantBoardInfo {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  restaurantName: string;
+
+  @Field(() => String, { nullable: true })
+  address: string;
+
+  @Field(() => String)
+  rating: string;
+
+  @Field(() => LocationObject)
+  location: LocationObject;
 }

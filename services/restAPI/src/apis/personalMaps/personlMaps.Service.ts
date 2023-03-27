@@ -92,10 +92,12 @@ export class PersonalMapsService {
             HttpStatus.BAD_REQUEST,
           );
         }
-        const { restaurantName, address, rating, _id: id } = result;
-        return { restaurantName, address, rating, id };
+
+        const { restaurantName, address, rating, _id: id, location } = result;
+        return { restaurantName, address, rating, id, location };
       }),
     );
+
     return restaurantInfo;
   }
 }

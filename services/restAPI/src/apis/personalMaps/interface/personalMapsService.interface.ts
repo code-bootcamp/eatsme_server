@@ -24,4 +24,8 @@ export interface IPersonalMapsServiceGetPersonalMapReturn {
   restaurantName: string;
   address: string;
   rating: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
 }
