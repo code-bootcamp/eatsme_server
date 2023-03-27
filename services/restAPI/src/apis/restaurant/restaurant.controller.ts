@@ -9,8 +9,9 @@ export class RestaurantController {
   //등록한 식당의 갯수를 반환해보자.
   @Post('/info/road/restaurant')
   postRestaurants(
-    @Body() body: string, //
+    @Body() body: { area: string; section: string }, //
   ): Promise<void> {
+    console.log(body);
     return this.restaurantService.postRestaurants({ body });
   }
 

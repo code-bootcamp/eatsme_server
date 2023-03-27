@@ -1,10 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { randomUUID } from 'crypto';
 import { HydratedDocument } from 'mongoose';
 
 export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema()
 export class Restaurant {
+  @Prop({ type: String, default: randomUUID })
+  _id: string;
+
+  @Prop({ type: String, required: true })
+  area: string;
+
   @Prop({ type: String, required: true })
   section: string;
 

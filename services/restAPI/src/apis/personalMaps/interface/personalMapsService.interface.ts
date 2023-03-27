@@ -1,7 +1,9 @@
+import { Type } from '@nestjs/common';
 import { RestaurantDocument } from 'src/apis/restaurant/schemas/restaurant.schemas';
 
 export interface IPersonalMapsServiceCreatePersonalMap {
   body: {
+    area: string;
     course: string;
     startPoint: string;
     endPoint: string;
@@ -16,7 +18,7 @@ export interface IPersonalMapsServiceCreatePersonalMap {
   } | null;
 }
 export interface IPersonalMapsServiceGetPersonalMap {
-  body: { idArr: string[] };
+  body: string[];
 }
 export interface IPersonalMapsServiceGetPersonalMapReturn {
   restaurantName: string;
