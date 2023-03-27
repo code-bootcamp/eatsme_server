@@ -50,8 +50,8 @@ export class CreateBoardInput {
   @Field(() => String)
   userId: string;
 
-  @Field(() => String)
-  commentsId: string;
+  // @Field(() => String)
+  // commentsId: string;
 
   @Field(() => [InfoInput])
   info: InfoInput[];
