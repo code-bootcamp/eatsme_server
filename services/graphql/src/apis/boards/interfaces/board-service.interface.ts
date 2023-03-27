@@ -1,4 +1,3 @@
-import { Field } from '@nestjs/graphql';
 import { CreateBoardInput } from '../dto/create-board.input';
 import { FetchBoardsBySectionInput } from '../dto/fetch-board-secton.input';
 import { FetchBoardInput } from '../dto/fetch-board.input';
@@ -6,23 +5,6 @@ import { UpdateBoardInput } from '../dto/update-board.input';
 
 export interface IBoardsServiceFetchBoard {
   fetchBoardInput: FetchBoardInput;
-}
-
-export interface IBoardsServiceFetchBoardReturn {
-  id: string;
-  title: string;
-  createdAt: Date;
-  boardImg: string;
-  startPoint: string;
-  endPoint: string;
-  customName: string;
-  like: number;
-  restaurantIds: string[];
-  data: {
-    restaurantName: string; //
-    address: string;
-    rating: string;
-  }[];
 }
 
 export interface IBoardsServiceFindOne {

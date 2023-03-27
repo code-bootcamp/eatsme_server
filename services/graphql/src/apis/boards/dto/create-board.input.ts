@@ -1,5 +1,25 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { InfoInput } from './create-board-map-info.input';
+import { Field, Float, InputType, Int } from '@nestjs/graphql';
+
+@InputType()
+class LocationInput {
+  @Field(() => Float)
+  lat: number;
+
+  @Field(() => Float)
+  lng: number;
+}
+
+@InputType()
+class InfoInput {
+  @Field(() => String)
+  restaurantName: string;
+
+  @Field(() => String)
+  recommend: string;
+
+  @Field(() => LocationInput)
+  location: LocationInput;
+}
 
 @InputType()
 export class CreateBoardInput {
