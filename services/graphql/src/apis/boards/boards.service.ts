@@ -22,6 +22,7 @@ import {
 
 @Injectable()
 export class BoardsService {
+
   constructor(
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
@@ -128,6 +129,7 @@ export class BoardsService {
     }
     await this.checkList({ title, startPoint, endPoint });
 
+
     return this.boardsRepository.save({
       ...board,
       ...updateBoardInput,
@@ -135,8 +137,9 @@ export class BoardsService {
   }
 
   //게시물 삭제하기
-  async delete({ boardId }: IBoardsServiceDelete): Promise<boolean> {
+  async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
     const board = await this.boardsRepository.delete(boardId);
-    return board.affected ? true : false;
+    console.log(board)
+    return board.affected ? '데이터삭제' : '데이터없음';
   }
 }

@@ -38,7 +38,9 @@ export class BoardsResolver {
 
   @Mutation(() => Board)
   createBoard(
+    @Args('userId') userId: string,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
+    // @Args('createBoardMapInput') createBoardMapInput: CreateBoardMapInput[],
   ): Promise<Board> {
     return this.boardsService.create(
       JSON.parse(JSON.stringify({ createBoardInput })),
@@ -52,8 +54,8 @@ export class BoardsResolver {
     return this.boardsService.update({ updateBoardInput });
   }
 
-  @Mutation(() => Boolean)
-  deleteBoard(@Args('boardId') boardId: string): Promise<boolean> {
+  @Mutation(() => String)
+  deleteBoard(@Args('boardId') boardId: string): Promise<string> {
     return this.boardsService.delete({ boardId });
   }
 }

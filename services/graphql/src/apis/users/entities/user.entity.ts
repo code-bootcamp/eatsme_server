@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 // import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
-// import { Board } from 'src/apis/boards/entities/board.entity';
+import { Board } from 'src/apis/boards/entities/board.entity';
 // // import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -31,9 +31,9 @@ export class User {
   // @Field(() => [Reservation])
   // reservations: Reservation[];
 
-  //   @OneToMany(() => Board, (board) => board.users)
-  //   @Field(() => [Board])
-  //   boards: Board[];
+  @OneToMany(() => Board, (boards) => boards.user)
+  @Field(() => [Board])
+  boards: Board[];
 
   // @OneToMany(() => Alarm, (alarm) => alarm.users)
   // @Field(() => [Alarm])

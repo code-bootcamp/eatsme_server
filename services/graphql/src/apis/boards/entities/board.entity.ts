@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { BoardComment } from 'src/apis/boards-comments/boards-comments.entities/boards-comments.entity';
 import { User } from '../../users/entities/user.entity';
 import {
   Column,
@@ -8,7 +7,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
+} from 'typeorm'; 
+import { Comment } from 'src/apis/Comments/entities/comment.entity';
 
 @Entity()
 @ObjectType()
@@ -19,7 +19,7 @@ export class Board {
 
   @Column({ type: 'varchar', length: 20 })
   @Field(() => String)
-  title: string;
+  course: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -46,10 +46,6 @@ export class Board {
   @Field(() => String)
   endPoint: string;
 
-  @Column({ type: 'varchar', length: 20 })
-  @Field(() => String)
-  customName: string;
-
   @Column({ default: 0 })
   @Field(() => Int)
   like: number;
@@ -62,7 +58,7 @@ export class Board {
   // @Field(() => User)
   // users: User;
 
-  // @OneToMany(() => BoardComment, (boardComment) => boardComment.boards)
-  // @Field(() => [BoardComment])
-  // boardComments: BoardComment[];
+  @OneToMany(() => Comment, (comments) => comments.board, { onDelete: 'CASCADE' } ) //{ onDelete: 'CASCADE' }는 부모엔티티에서 작업하는게 자식엔티티에도 영향을 주는것을 의미함(예시: 수정 삭제) 
+  @Field(() => [Comment])
+  comments: Comment[];
 }

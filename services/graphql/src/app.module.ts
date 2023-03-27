@@ -15,12 +15,14 @@ import { BoardModule } from './apis/boards/boards.module';
 
 import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
+import { CommentModule } from './apis/Comments/comments.module';
 
 @Module({
   imports: [
     AuthModule,
     BoardModule,
-    UserModule, //
+    CommentModule,
+    UserModule,
     BoardModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
