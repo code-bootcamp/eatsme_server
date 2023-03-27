@@ -25,7 +25,6 @@ export class PersonalMapsService {
   async createPersonalMap({
     body,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
-    console.log(body.area);
     const restaurantInfos = Promise.all(
       body.info.map(async (el) => {
         const restaurantInfo = await this.restaurantModel
@@ -46,7 +45,6 @@ export class PersonalMapsService {
           const newRestaurant = result.data.results.filter((it) => {
             return it.name === el.restaurantName;
           });
-          console.log(newRestaurant);
           const {
             geometry,
             place_id,

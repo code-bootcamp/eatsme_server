@@ -1,9 +1,12 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { IContext } from 'src/commons/interfaces/context';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
 import { BoardsService } from './boards.service';
 import { CreateBoardInput } from './dto/create-board.input';
 import { FetchBoardsBySectionInput } from './dto/fetch-board-secton.input';
 import { FetchBoardInput } from './dto/fetch-board.input';
-import { FetchBoardReturn } from './dto/fetch-board.object';
+import { BoardReturn } from './dto/fetch-board.object';
 import { UpdateBoardInput } from './dto/update-board.input';
 import { Board } from './entities/board.entity';
 
@@ -11,75 +14,58 @@ import { Board } from './entities/board.entity';
 export class BoardsResolver {
   constructor(private readonly boardsService: BoardsService) {}
 
-  @Query(() => Board)
+  @Query(() => BoardReturn)
   fetchBoard(
-
     @Args('fetchBoardInput') fetchBoardInput: FetchBoardInput, //
-  ): Promise<FetchBoardReturn> {
+  ): Promise<BoardReturn> {
     return this.boardsService.fetchBoard({ fetchBoardInput });
   }
 
-  @Query(() => [FetchBoardReturn])
+  @Query(() => [BoardReturn])
   fetchBoardsByArea(
     @Args('area') area: string, //
-  ): Promise<FetchBoardReturn[]> {
+  ): Promise<BoardReturn[]> {
     return this.boardsService.findArea({ area });
-
   }
-  // @Query(() => FetchBoardReturn)
-  // fetchBoard(
-  //   @Args('fetchBoardInput') fetchBoardInput: FetchBoardInput, //
-  // ): Promise<IBoardsServiceFetchBoardReturn> {
-  //   return this.boardsService.fetchBoard({ fetchBoardInput });
-  // }
 
-
-  // @Query(() => [FetchBoardReturn])
-  // fetchBoardsByArea(
-  //   @Args('area') area: string, //
-  // ): Promise<IBoardsServiceFetchBoardReturn[]> {
-  //   return this.boardsService.findArea({ area });
-  // }
-
-  // @Query(() => [FetchBoardReturn])
-  // fetchBoardsBySection(
-  //   @Args('fetchBoardsWithSectionInput')
-  //   fetchBoardsBySectionInput: FetchBoardsBySectionInput,
-  // ): Promise<IBoardsServiceFetchBoardReturn[]> {
-  //   return this.boardsService.findByStartPoint(
-  //     JSON.parse(JSON.stringify({ fetchBoardsBySectionInput })),
-  //   );
-  // }
-
-  @Query(() => [FetchBoardReturn])
+  @Query(() => [BoardReturn])
   fetchBoardsBySection(
     @Args('fetchBoardsWithSectionInput')
     fetchBoardsBySectionInput: FetchBoardsBySectionInput,
-  ): Promise<FetchBoardReturn[]> {
+  ): Promise<BoardReturn[]> {
     return this.boardsService.findByStartPoint(
       JSON.parse(JSON.stringify({ fetchBoardsBySectionInput })),
     );
   }
 
-
-  @Mutation(() => Board)
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => BoardReturn)
   createBoard(
+    @Context() context: IContext,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
-  ): Promise<Board> {
+  ): Promise<BoardReturn> {
     return this.boardsService.create(
       JSON.parse(JSON.stringify({ createBoardInput })),
     );
   }
 
-  @Mutation(() => Board)
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => BoardReturn)
   updateBoard(
     @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
-  ): Promise<Board> {
-    return this.boardsService.update({ updateBoardInput });
+    @Context() context: IContext,
+  ): Promise<BoardReturn> {
+    return this.boardsService.update(
+      JSON.parse(JSON.stringify({ updateBoardInput })),
+    );
   }
 
+  @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => String)
-  deleteBoard(@Args('boardId') boardId: string): Promise<string> {
+  deleteBoard(
+    @Args('boardId') boardId: string,
+    @Context() context: IContext,
+  ): Promise<string> {
     return this.boardsService.delete({ boardId });
   }
 }
