@@ -11,8 +11,9 @@ import { Board } from './entities/board.entity';
 export class BoardsResolver {
   constructor(private readonly boardsService: BoardsService) {}
 
-  @Query(() => FetchBoardReturn)
+  @Query(() => Board)
   fetchBoard(
+
     @Args('fetchBoardInput') fetchBoardInput: FetchBoardInput, //
   ): Promise<FetchBoardReturn> {
     return this.boardsService.fetchBoard({ fetchBoardInput });
@@ -23,7 +24,32 @@ export class BoardsResolver {
     @Args('area') area: string, //
   ): Promise<FetchBoardReturn[]> {
     return this.boardsService.findArea({ area });
+
   }
+  // @Query(() => FetchBoardReturn)
+  // fetchBoard(
+  //   @Args('fetchBoardInput') fetchBoardInput: FetchBoardInput, //
+  // ): Promise<IBoardsServiceFetchBoardReturn> {
+  //   return this.boardsService.fetchBoard({ fetchBoardInput });
+  // }
+
+
+  // @Query(() => [FetchBoardReturn])
+  // fetchBoardsByArea(
+  //   @Args('area') area: string, //
+  // ): Promise<IBoardsServiceFetchBoardReturn[]> {
+  //   return this.boardsService.findArea({ area });
+  // }
+
+  // @Query(() => [FetchBoardReturn])
+  // fetchBoardsBySection(
+  //   @Args('fetchBoardsWithSectionInput')
+  //   fetchBoardsBySectionInput: FetchBoardsBySectionInput,
+  // ): Promise<IBoardsServiceFetchBoardReturn[]> {
+  //   return this.boardsService.findByStartPoint(
+  //     JSON.parse(JSON.stringify({ fetchBoardsBySectionInput })),
+  //   );
+  // }
 
   @Query(() => [FetchBoardReturn])
   fetchBoardsBySection(
@@ -34,6 +60,7 @@ export class BoardsResolver {
       JSON.parse(JSON.stringify({ fetchBoardsBySectionInput })),
     );
   }
+
 
   @Mutation(() => Board)
   createBoard(

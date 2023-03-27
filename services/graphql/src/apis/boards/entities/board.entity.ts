@@ -55,13 +55,15 @@ export class Board {
   @Field(() => [String])
   restaurantIds: string[];
 
-  // @ManyToOne(() => User, (user) => user.boards)
-  // @Field(() => User)
-  // users: User;
+  @ManyToOne(() => User, (user) => user.boards)
+  @Field(() => User)
+  user: User;
+
 
   @OneToMany(() => Comment, (comments) => comments.board, {
     onDelete: 'CASCADE',
   }) //{ onDelete: 'CASCADE' }는 부모엔티티에서 작업하는게 자식엔티티에도 영향을 주는것을 의미함(예시: 수정 삭제)
+
   @Field(() => [Comment])
   comments: Comment[];
 }
