@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { CreateBoardInput } from '../dto/create-board.input';
+import { FetchBoardsBySectionInput } from '../dto/fetch-board-secton.input';
 import { FetchBoardInput } from '../dto/fetch-board.input';
 import { UpdateBoardInput } from '../dto/update-board.input';
 
@@ -26,6 +27,14 @@ export interface IBoardsServiceFetchBoardReturn {
 
 export interface IBoardsServiceFindOne {
   boardId: string;
+}
+
+export interface IBoardsServiceFindArea {
+  area: string;
+}
+
+export interface IBoardsServiceFindSection {
+  fetchBoardsBySectionInput: FetchBoardsBySectionInput;
 }
 
 export interface IBoardsServiceNullCheckTitle {

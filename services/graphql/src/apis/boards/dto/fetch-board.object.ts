@@ -4,8 +4,9 @@ import { RestaurantBoardInfo } from './fetch-board-restaurantInfo.object';
 
 @ObjectType()
 export class FetchBoardReturn {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   id: string;
+
   @Field(() => String)
   title: string;
 

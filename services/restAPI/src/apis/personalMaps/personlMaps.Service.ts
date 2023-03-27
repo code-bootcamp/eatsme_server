@@ -25,6 +25,7 @@ export class PersonalMapsService {
   async createPersonalMap({
     body,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
+    console.log(body.area);
     const restaurantInfos = Promise.all(
       body.info.map(async (el) => {
         const restaurantInfo = await this.restaurantModel
@@ -33,6 +34,7 @@ export class PersonalMapsService {
             location: el.location,
           })
           .exec();
+
         if (restaurantInfo.length) {
           return await restaurantInfo[0];
         } else {
@@ -44,6 +46,7 @@ export class PersonalMapsService {
           const newRestaurant = result.data.results.filter((it) => {
             return it.name === el.restaurantName;
           });
+          console.log(newRestaurant);
           const {
             geometry,
             place_id,
@@ -64,6 +67,7 @@ export class PersonalMapsService {
             phoneNumber,
             openingDays,
             section: body.startPoint,
+            area: body.area,
           }).save();
           return postRestaurant;
         }
@@ -78,7 +82,7 @@ export class PersonalMapsService {
     IPersonalMapsServiceGetPersonalMapReturn[]
   > {
     //없을경우 에러던져줘야 한다.
-    const restaurantInfo = Promise.all(
+    const restaurantInfo = await Promise.all(
       body.map(async (_id) => {
         //없는 경우 null을 반환한다. 이때 에러를 던져 준다.
         const result = await this.restaurantModel.findById({ _id });

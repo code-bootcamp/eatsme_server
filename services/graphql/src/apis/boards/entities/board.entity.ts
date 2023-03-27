@@ -35,11 +35,14 @@ export class Board {
   @Field(() => String)
   boardImg: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 10 })
+  @Field(() => String)
+  area: string;
+  @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
   startPoint: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
   endPoint: string;
 

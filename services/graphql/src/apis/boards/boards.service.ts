@@ -13,7 +13,9 @@ import {
   IBoardsServiceDelete,
   IBoardsServiceFetchBoard,
   IBoardsServiceFetchBoardReturn,
+  IBoardsServiceFindArea,
   IBoardsServiceFindOne,
+  IBoardsServiceFindSection,
   IBoardsServiceNullCheckList,
   IBoardsServiceUpdate,
 } from './interfaces/board-service.interface';
@@ -25,6 +27,7 @@ export class BoardsService {
     private readonly boardsRepository: Repository<Board>,
   ) {}
 
+  //한개의 게시물 정보조회
   async fetchBoard({
     fetchBoardInput,
   }: IBoardsServiceFetchBoard): Promise<IBoardsServiceFetchBoardReturn> {
@@ -39,14 +42,49 @@ export class BoardsService {
     const personalBoard = { ...board, data: restaurantInfo.data };
     return personalBoard;
   }
-  //한개의 게시물 정보조회
+
   findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
     return this.boardsRepository.findOne({ where: { id: boardId } });
   }
 
-  //전체 게시물 정보조회
-  findAll(): Promise<Board[]> {
-    return this.boardsRepository.find();
+  //시,도별 게시물 정보조회
+  async findArea({
+    area,
+  }: IBoardsServiceFindArea): Promise<IBoardsServiceFetchBoardReturn[]> {
+    const BoardInfo = await this.boardsRepository.find({ where: { area } });
+    const personalBoards = await Promise.all(
+      BoardInfo.map(async (el) => {
+        const restaurantInfo = await axios.get(
+          'http://road-service:7100/info/road/map',
+          {
+            data: el.restaurantIds,
+          },
+        );
+        return { ...el, data: restaurantInfo.data };
+      }),
+    );
+    return personalBoards;
+  }
+
+  //행정구역별 게시물 조회
+  async findByStartPoint({
+    fetchBoardsBySectionInput,
+  }: IBoardsServiceFindSection): Promise<IBoardsServiceFetchBoardReturn[]> {
+    const BoardInfo = await this.boardsRepository.find({
+      where: { ...fetchBoardsBySectionInput },
+    });
+    const personalBoards = await Promise.all(
+      BoardInfo.map(async (el) => {
+        const restaurantInfo = await axios.get(
+          'http://road-service:7100/info/road/map',
+          {
+            data: el.restaurantIds,
+          },
+        );
+        return { ...el, data: restaurantInfo.data };
+      }),
+    );
+    return personalBoards;
   }
 
   //지역 선택검증
@@ -74,7 +112,6 @@ export class BoardsService {
     const restaurantIds = restaurantInfo.data.map((el) => el._id);
 
     const { title, startPoint, endPoint } = createBoardInput;
-
     await this.checkList({ title, startPoint, endPoint });
     return this.boardsRepository.save({
       ...createBoardInput,
