@@ -27,7 +27,6 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
 
-
     @InjectRepository(Comment)
     private readonly commentsRepository: Repository<Comment>,
 
@@ -181,7 +180,6 @@ export class BoardsService {
     return board.affected ? '데이터삭제' : '데이터없음';
   }
 
-
   // async toggleLike(boardId: string, isLike: boolean): Promise<Board> {
   //   const board = await this.findOne({ boardId });
   //   if (isLike) {
@@ -194,4 +192,3 @@ export class BoardsService {
   //   return this.boardsRepository.save(board);
   // }
 }
-
