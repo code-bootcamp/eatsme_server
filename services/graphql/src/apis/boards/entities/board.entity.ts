@@ -8,7 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm'; 
+} from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -26,7 +26,7 @@ export class Board {
     transformer: {
       from: (value?: Date) => value,
       to: () => new Date(new Date().getTime() + 9 * 60 * 60 * 1000),
-    }, 
+    },
   })
   @Field(() => Date)
   createdAt: Date;
@@ -50,6 +50,10 @@ export class Board {
   @Column({ default: 0 })
   @Field(() => Int)
   like: number;
+
+  @Column({ type: 'simple-array', nullable: true })
+  @Field(() => [String])
+  restaurantIds: string[];
 
   // @ManyToOne(() => User, (user) => user.boards)
   // @Field(() => User)
