@@ -1,25 +1,38 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { InfoInput } from './create-board-map-info.input';
 
 @InputType()
 export class CreateBoardInput {
- @Field(() => String)
- course: string;
+  @Field(() => String)
+  title: string;
 
- @Field(() => String)
- boardImg: string;
+  @Field(() => String)
+  boardImg: string;
 
- @Field(() => String)
- startPoint: string;
+  @Field(() => String)
+  area: string;
 
- @Field(() => String)
- endPoint: string;
+  @Field(() => String)
+  startPoint: string;
 
- @Field(() => Int)
- like: number;
- 
- @Field(() => Date)
- createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
+  @Field(() => String)
+  endPoint: string;
 
- @Field(() => String)
- userId: string;
+  @Field(() => String)
+  customName: string;
+
+  @Field(() => Int)
+  like: number;
+
+  @Field(() => Date)
+  createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
+
+  @Field(() => String)
+  userId: string;
+
+  @Field(() => String)
+  commentsId: string;
+
+  @Field(() => [InfoInput])
+  info: InfoInput[];
 }

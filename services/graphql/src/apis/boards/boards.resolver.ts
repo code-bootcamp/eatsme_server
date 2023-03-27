@@ -1,28 +1,39 @@
-import { Args, Mutation, Query, Resolver  } from "@nestjs/graphql";
-import { BoardsService } from "./boards.service";
-import { CreateBoardMapInput } from "./dto/create-bard-map.input";
-import { CreateBoardInput } from "./dto/create-board.input";
-import { UpdateBoardInput } from "./dto/update-board.input";
-import { Board } from "./entities/board.entity";
-
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { BoardsService } from './boards.service';
+import { CreateBoardInput } from './dto/create-board.input';
+import { FetchBoardsBySectionInput } from './dto/fetch-board-secton.input';
+import { FetchBoardInput } from './dto/fetch-board.input';
+import { FetchBoardReturn } from './dto/fetch-board.object';
+import { UpdateBoardInput } from './dto/update-board.input';
+import { Board } from './entities/board.entity';
+import { IBoardsServiceFetchBoardReturn } from './interfaces/board-service.interface';
 
 @Resolver()
 export class BoardsResolver {
-  constructor(
-    private readonly boardsService: BoardsService,
-  ) {}
+  constructor(private readonly boardsService: BoardsService) {}
 
-  @Query(() => Board)
+  @Query(() => FetchBoardReturn)
   fetchBoard(
-    @Args('boardId') boardId: string, 
-  ): Promise<Board> {
-    return this.boardsService.findOne({ boardId });
+    @Args('fetchBoardInput') fetchBoardInput: FetchBoardInput, //
+  ): Promise<IBoardsServiceFetchBoardReturn> {
+    return this.boardsService.fetchBoard({ fetchBoardInput });
   }
 
-  @Query(() => [Board])
-  fetchBoards(
-  ): Promise<Board[]> {
-   return this.boardsService.findAll();
+  @Query(() => [FetchBoardReturn])
+  fetchBoardsByArea(
+    @Args('area') area: string, //
+  ): Promise<IBoardsServiceFetchBoardReturn[]> {
+    return this.boardsService.findArea({ area });
+  }
+
+  @Query(() => [FetchBoardReturn])
+  fetchBoardsBySection(
+    @Args('fetchBoardsWithSectionInput')
+    fetchBoardsBySectionInput: FetchBoardsBySectionInput,
+  ): Promise<IBoardsServiceFetchBoardReturn[]> {
+    return this.boardsService.findByStartPoint(
+      JSON.parse(JSON.stringify({ fetchBoardsBySectionInput })),
+    );
   }
 
   @Mutation(() => Board)
@@ -31,7 +42,9 @@ export class BoardsResolver {
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
     // @Args('createBoardMapInput') createBoardMapInput: CreateBoardMapInput[],
   ): Promise<Board> {
-    return this.boardsService.create({ userId, createBoardInput }) 
+    return this.boardsService.create(
+      JSON.parse(JSON.stringify({ createBoardInput })),
+    );
   }
 
   @Mutation(() => Board)
@@ -42,9 +55,7 @@ export class BoardsResolver {
   }
 
   @Mutation(() => String)
-  deleteBoard(
-    @Args('boardId') boardId: string,
-  ): Promise<string> {
+  deleteBoard(@Args('boardId') boardId: string): Promise<string> {
     return this.boardsService.delete({ boardId });
   }
 }

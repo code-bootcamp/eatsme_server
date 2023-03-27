@@ -1,11 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { randomUUID } from 'crypto';
 import { HydratedDocument } from 'mongoose';
 
 export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema()
 export class Restaurant {
-  //section정보가 없을 경우 db에 저장하지 못하게 만들었다.
+  @Prop({ type: String, default: randomUUID })
+  _id: string;
+
+  @Prop({ type: String, required: true })
+  area: string;
+
   @Prop({ type: String, required: true })
   section: string;
 
@@ -16,7 +22,7 @@ export class Restaurant {
   address: string;
 
   @Prop({ type: Object })
-  location: object;
+  location: { lat: number; lng: number };
 
   @Prop({ type: String })
   userRatingsTotal: string;

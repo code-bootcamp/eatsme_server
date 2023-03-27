@@ -20,45 +20,51 @@ import { Model } from 'mongoose';
 @Injectable()
 export class RestaurantService {
   constructor(
-    @InjectModel(Restaurant.name)
+    @InjectModel('Restaurant')
     private readonly restaurantModel: Model<RestaurantDocument>,
   ) {}
-
-  //place api 요청에대한 에러도 잡아주자.
+  apiKey = process.env.GOOGLE_MAP_API_KEY;
   async postRestaurants({
     body,
   }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
-    const [section] = Object.values(body);
-    const apiKey = process.env.GOOGLE_MAP_API_KEY;
+    const location = Object.values(body).join(' ');
+    const { area, section } = body;
     const config = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&key=${apiKey}&language=ko&type=restaurant`,
+      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${location}&key=${this.apiKey}&language=ko&type=restaurant`,
     };
-    //타입을 지정해주면 구조분해 할당으로 받아올수 있지 않을까?
     const result = await axios(config);
     const restaurantsInfos = result.data.results;
-    await this.saveRepeat({ restaurantsInfos, section });
+    console.log(restaurantsInfos);
+    await this.saveRepeat({ restaurantsInfos, section, area });
     const nextPageToken = result.data.next_page_token;
-    await this.saveNextPage({ nextPageToken, section });
+    await this.saveNextPage({ nextPageToken, section, area });
   }
 
   saveRepeat({
     restaurantsInfos,
     section, //
+    area,
   }): void {
     restaurantsInfos.forEach(async (el) => {
+      // console.log(el?.photos[0]?.photo_reference, '####');
+      // const config = {
+      //   method: 'get',
+      //   url: `https://maps.googleapis.com/maps/api/place/photo/?maxwidth=300&photo_reference=${el?.photos[0]?.photo_reference}&key=${this.apiKey}`,
+      // };
+      // const result = await axios(config);
+
       const {
-        formatted_address: address,
         geometry,
         place_id,
         name: restaurantName,
         rating,
         user_ratings_total: userRatingsTotal,
       } = el;
+      const address = el.formatted_address || null;
       const { location } = geometry;
       const details = await this.getDetails(place_id);
       const { phoneNumber, openingDays } = details;
-
       if (rating >= 4.5) {
         //이미 있는지 확인하고 없는 경우에만 DB에 저장한다.
         const findRestaurant = await this.restaurantModel
@@ -66,6 +72,7 @@ export class RestaurantService {
             restaurantName,
           })
           .exec();
+
         if (!findRestaurant) {
           const postRestaurant = await new this.restaurantModel({
             restaurantName,
@@ -76,6 +83,7 @@ export class RestaurantService {
             phoneNumber,
             openingDays,
             section,
+            area,
           }).save();
           console.log(postRestaurant);
         }
@@ -85,38 +93,32 @@ export class RestaurantService {
   async getDetails(
     place_id: IRestaurantServiceGetDetails,
   ): Promise<IRestaurantServiceGetDetailsReturn> {
-    const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const placeConfig = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
+      url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${this.apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
     };
     const result = await axios(placeConfig);
-    const phoneNumber = result.data.result.formatted_phone_number || null;
-    const opening_hours = result.data.result.opening_hours || null;
-    return !opening_hours
-      ? { phoneNumber, openingDays: null }
-      : {
-          phoneNumber,
-          openingDays: opening_hours.weekday_text,
-        };
+    const phoneNumber = result.data.result?.formatted_phone_number || null;
+    const openingDays = result.data.result?.opening_hours?.weekday_text || null;
+    return { phoneNumber, openingDays };
   }
 
   async saveNextPage({
     nextPageToken,
     section,
+    area,
   }: IRestaurantServiceSaveNextPage): Promise<void> {
-    const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const getNextRestaurant = ({ nextPageToken }) => {
       if (nextPageToken) {
         const nextConfig = {
           method: 'get',
-          url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${apiKey}&language=ko&pagetoken=${nextPageToken}&opennow&fields=current_opening_hours`,
+          url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${section}&type=restaurant&key=${this.apiKey}&language=ko&pagetoken=${nextPageToken}&opennow&fields=current_opening_hours`,
         };
         //2초정도의 지연시간이 없으면 같은 정보를 받아오기 때문에 setTimeout으로 지연시켜주었다.
         setTimeout(async () => {
           const result = await axios(nextConfig);
           const restaurantsInfos = result.data.results;
-          await this.saveRepeat({ restaurantsInfos, section });
+          await this.saveRepeat({ restaurantsInfos, section, area });
           const nextPageToken = result.data.next_page_token;
           if (nextPageToken) {
             return getNextRestaurant({ nextPageToken });
@@ -141,9 +143,8 @@ export class RestaurantService {
         '등록되지 않은 행정구역입니다. 등록후 조회해주세요',
         HttpStatus.BAD_REQUEST,
       );
-    } else {
-      return result;
     }
+    return result;
   }
 
   deleteCollection({
@@ -154,7 +155,6 @@ export class RestaurantService {
         _id: Object.values(body)[0],
       })
       .then((res) => {
-        console.log(res);
         return res.deletedCount
           ? '정상적으로 지워졌습니다.'
           : '이미 지워진 collection입니다.';

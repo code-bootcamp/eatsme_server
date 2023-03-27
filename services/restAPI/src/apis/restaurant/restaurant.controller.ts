@@ -9,12 +9,12 @@ export class RestaurantController {
   //등록한 식당의 갯수를 반환해보자.
   @Post('/info/road/restaurant')
   postRestaurants(
-    @Body() body: string, //
+    @Body() body: { area: string; section: string }, //
   ): Promise<void> {
+    console.log(body);
     return this.restaurantService.postRestaurants({ body });
   }
 
-  //!!---------------없는경우 등록하라고 에러 던지기-----------!!//
   @Get('/info/road/restaurant')
   getRestaurants(
     @Body() body: string, //
@@ -22,7 +22,6 @@ export class RestaurantController {
     return this.restaurantService.getRestaurants({ body });
   }
 
-  //!!---------------잘못된 양식인 경우 에러 던지기-----------!!//
   @Delete('/info/road/restaurant')
   deleteRestaurant(
     @Body() body: string, //
