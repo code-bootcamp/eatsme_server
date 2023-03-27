@@ -73,7 +73,7 @@ input CreateBoardInput {
   startPoint: String!
   endPoint: String!
   like: Int!
-  createdAt: DateTime! = "2023-03-26T17:09:28.714Z"
+  createdAt: DateTime! = "2023-03-27T14:43:16.425Z"
   userId: String!
 }
 
@@ -83,7 +83,7 @@ input UpdateBoardInput {
   startPoint: String
   endPoint: String
   like: Int
-  createdAt: DateTime = "2023-03-26T17:09:28.714Z"
+  createdAt: DateTime = "2023-03-27T14:43:16.425Z"
   userId: String
   boardId: String!
 }
