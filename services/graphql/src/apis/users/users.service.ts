@@ -167,7 +167,7 @@ export class UserService {
   }
 
   //-----회원가입-----
-  async create({ createUserInput }: IUsersCreate): Promise<User> {
+  async createUser({ createUserInput }: IUsersCreate): Promise<User> {
     const { email, password, nickname } = createUserInput;
 
     if (!email || !email.includes('@') || 30 <= email.length) {
@@ -189,6 +189,7 @@ export class UserService {
     });
   }
 
+  //이미지 추가하는 로직 추가해야합니다!
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
     const user = await this.findOneByUser({ userId });
     if (updateUserInput.password) {

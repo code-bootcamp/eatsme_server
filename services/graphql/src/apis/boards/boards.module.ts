@@ -18,5 +18,6 @@ import { Board } from "./entities/board.entity";
     BoardsResolver,
     BoardsService,
   ],
+  providers: [BoardsResolver, BoardsService],
 })
 export class BoardModule {}

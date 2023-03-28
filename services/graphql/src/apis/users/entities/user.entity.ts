@@ -22,8 +22,7 @@ export class User {
 
   @Column({ type: 'varchar', length: 20 })
   @Field(() => String)
-  nickname: string;
-
+  @OneToMany(() => Reservation, (reservation) => reservation.users)
   @Column({ type: 'varchar', length: 100, nullable: true })
   @Field(() => String)
   userImg: string;

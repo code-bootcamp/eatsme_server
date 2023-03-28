@@ -1,6 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
-import { Board } from 'src/apis/boards/entities/board.entity';
 import { Reply } from 'src/apis/replies/entities/reply.entity';
 import {
   Column,

@@ -8,7 +8,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Comment } from 'src/apis/Comments/entities/comment.entity';
 
 @Entity()
 @ObjectType()
@@ -51,6 +50,11 @@ export class Board {
   @Field(() => Int)
   like!: number;
 
+<<<<<<< HEAD
+  // @ManyToOne(() => User, (user) => user.boards)
+  // @Field(() => User)
+  // users: User;
+=======
   @Column({ type: 'simple-array', nullable: true })
   @Field(() => [String])
   restaurantIds: string[];
@@ -66,4 +70,5 @@ export class Board {
 
   @Field(() => [Comment])
   comments: Comment[];
+>>>>>>> dev
 }

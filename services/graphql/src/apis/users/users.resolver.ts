@@ -27,12 +27,10 @@ export class UserResolver {
 
   // -----회원 조회-----
 
-  @UseGuards(GqlAuthGuard('access'))
   @Query(() => User)
   fetchUser(
-    @Context() context: IContext, //
+    @Args('userId') userId: string, //
   ): Promise<User> {
-    const userId = context.req.user.id;
     return this.userService.findOneByUser({ userId });
   }
 
@@ -56,9 +54,10 @@ export class UserResolver {
   createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
-    return this.userService.create({ createUserInput });
+    return this.userService.createUser({ createUserInput });
   }
 
+  //-----비밀번호 변경 or 이미지 변경-----  //로그인코드 만든 후 다시 작업
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => User)
   updateUser(
