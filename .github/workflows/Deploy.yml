@@ -1,4 +1,4 @@
-name: EatsMe - Deploy to GCP VM
+name: EatsMe - gateway Deploy to GCP VM
 
 on:
     workflow_dispatch:
