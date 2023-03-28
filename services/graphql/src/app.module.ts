@@ -1,8 +1,7 @@
 import { CacheModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { AppResolver } from './app.resolver';
-import { AppService } from './app.service';
+import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisClientOptions } from 'redis';
@@ -74,8 +73,7 @@ import { AlarmModule } from './apis/alarm/alarms.module';
   ],
   providers: [
     JwtAccessStrategy,
-    AppResolver, //
-    AppService,
+    AppController, //
     JwtRefreshStrategy,
   ],
 })

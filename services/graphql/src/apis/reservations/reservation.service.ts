@@ -1,12 +1,7 @@
-import {
-  Delete,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
-import e from 'express';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserService } from '../users/users.service';
 import { Reservation } from './entities/reservation.entity';
 import {
@@ -27,25 +22,26 @@ export class ReservationsService {
     createReservationInput, //
     userId,
   }: IReservationsCreate): Promise<Reservation> {
+    const { restaurantId, time, table, reservation_time } =
+      createReservationInput;
     const user = await this.usersService.findOneByUser({ userId });
 
     const isReservation = user.reservations.filter((el) => {
       if (
-        el.restaurant_id === createReservationInput.restaurantId &&
-        el.time === createReservationInput.time &&
-        el.reservation_time === createReservationInput.reservation_time
+        el.restaurant_id === restaurantId &&
+        el.time === time &&
+        el.reservation_time === reservation_time
       )
         return el;
     });
 
-    if (isReservation.length > 0)
+    if (isReservation.length)
       throw new UnprocessableEntityException('이미 예약한 내역이 있습니다.');
 
     const restaurants = await axios.get(
       'http://road-service:7100/info/road/get/restaurant',
       { data: { ...createReservationInput } },
     );
-    const { table, time, reservation_time } = createReservationInput;
     const { _id } = restaurants.data.restaurantInfo;
     return this.reservationsRepository.save({
       table,
@@ -66,7 +62,7 @@ export class ReservationsService {
     const deleteRestaurant = user.reservations.filter(
       (el) => el.restaurant_id === restaurant_id,
     );
-    if (deleteRestaurant.length === 0)
+    if (!deleteRestaurant.length)
       throw new UnprocessableEntityException('예약정보가 없습니다.');
 
     const result = await axios.delete(
