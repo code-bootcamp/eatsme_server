@@ -1,23 +1,22 @@
-import { CreateCommentInput } from "../dto/create-comment.input";
-import { UpdateCommentInput } from "../dto/update-comment.input";
+import { CreateCommentInput } from '../dto/create-comment.input';
+import { UpdateCommentInput } from '../dto/update-comment.input';
 
 export interface ICommentsServiceCreate {
- boardId: string;
- createCommentInput: CreateCommentInput;
+  createCommentInput: CreateCommentInput;
 }
 
 export interface ICommentsServiceUpdate {
- updateCommentInput: UpdateCommentInput;
+  updateCommentInput: UpdateCommentInput;
 }
 
 export interface ICommentServiceNullList {
- comment: string;
+  comment: string;
 }
 
 export interface ICommentsServiceFindOne {
- commentId: string;
+  commentId: string;
 }
 
 export interface ICommentsServiceDelete {
- commentId: string;
+  commentId: string;
 }

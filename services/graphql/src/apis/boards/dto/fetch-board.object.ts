@@ -1,4 +1,5 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { Comment } from 'src/apis/Comments/entities/comment.entity';
 
 @ObjectType()
 export class BoardReturn {
@@ -28,6 +29,9 @@ export class BoardReturn {
 
   @Field(() => [RestaurantBoardInfo])
   info: RestaurantBoardInfo[];
+
+  @Field(() => [Comment])
+  comments: Comment[];
 }
 
 @ObjectType()

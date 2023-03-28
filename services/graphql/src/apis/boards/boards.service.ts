@@ -39,8 +39,11 @@ export class BoardsService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
-    return this.boardsRepository.findOne({ where: { id: boardId } });
+  async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
+    return await this.boardsRepository.findOne({
+      where: { id: boardId }, //
+      relations: ['comments', 'comments.replies'],
+    });
   }
 
   //내가 작성한 게시물 정보조회

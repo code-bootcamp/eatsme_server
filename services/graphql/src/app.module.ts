@@ -18,6 +18,7 @@ import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy'
 import { CommentModule } from './apis/Comments/comments.module';
 import { AlarmModule } from './apis/alarm/alarms.module';
 import { ToggleLikeModule } from './apis/toggleLike/toggleLike.module';
+import { ReplysModule } from './apis/replies/reply.module';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { ToggleLikeModule } from './apis/toggleLike/toggleLike.module';
     BoardModule,
     CommentModule,
     UserModule,
-    BoardModule,
+    ReplysModule,
     ToggleLikeModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
