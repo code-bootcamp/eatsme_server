@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
 import { Comment } from '../Comments/entities/comment.entity';
+import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
@@ -17,6 +18,7 @@ import {
   IBoardsServiceFindArea,
   IBoardsServiceFindOne,
   IBoardsServiceFindSection,
+  IBoardsServiceMyFetchBoard,
   IBoardsServiceNullCheckList,
   IBoardsServiceUpdate,
 } from './interfaces/board-service.interface';
@@ -27,6 +29,9 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
 
+    @InjectRepository(ToggleLike)
+    private readonly toggleLikeRepository: Repository<ToggleLike>,
+    
     @InjectRepository(Comment)
     private readonly commentsRepository: Repository<Comment>,
 
@@ -34,23 +39,59 @@ export class BoardsService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
-    return this.boardsRepository.findOne({ where: { id: boardId } });
+  async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
+    return await this.boardsRepository.findOne({
+      where: { id: boardId }, //
+      relations: ['comments', 'comments.replies'],
+    });
+  }
+
+  //내가 작성한 게시물 정보조회
+  async fetchMyBoard({
+    userId,
+  }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[]> {
+    const myBoards = await this.boardsRepository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
+    const fetchMyBoards = await Promise.all(
+      myBoards.map(async (el) => {
+        return await this.fetchBoard({ boardId: el.id });
+      }),
+    );
+    return fetchMyBoards;
+  }
+
+  async fetchMyLikeBoard({
+    userId,
+  }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[]> {
+    const ToggleLikeIds = await this.toggleLikeRepository.find({
+      where: {
+        userId,
+      },
+    });
+    const fetchMyLikeBoard = await Promise.all(
+      ToggleLikeIds.map(async (el) => {
+        return await this.fetchBoard({ boardId: el.boardId });
+      }),
+    );
+    return fetchMyLikeBoard;
   }
 
   //한개의 게시물 정보조회
   async fetchBoard({
-    fetchBoardInput,
+    boardId,
   }: IBoardsServiceFetchBoard): Promise<BoardReturn> {
-    const { boardId, restaurantIds } = fetchBoardInput;
     const board = await this.findOne({ boardId });
     const restaurantInfo = await axios.get(
       'http://road-service:7100/info/road/map',
       {
-        data: restaurantIds,
+        data: board.restaurantIds,
       },
     );
-
     const personalBoard = { ...board, info: restaurantInfo.data };
     return personalBoard;
   }
@@ -106,6 +147,7 @@ export class BoardsService {
   //게시물 작성하기
   async create({
     createBoardInput,
+    userId,
   }: IBoardsServiceCreate): Promise<BoardReturn> {
     const restaurantInfo = await axios.post(
       'http://road-service:7100/info/road/map',
@@ -126,14 +168,18 @@ export class BoardsService {
       } = el;
       return sendInfo;
     });
+
     const { title, startPoint, endPoint } = createBoardInput;
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
     await this.checkList({ title, startPoint, endPoint });
     const boardInfo = await this.boardsRepository.save({
       ...createBoardInput,
       restaurantIds,
+      user,
     });
     const personalBoards = { ...boardInfo, info: restaurantMainInfos };
-
     return personalBoards;
   }
   //게시물 업데이트하기
@@ -170,25 +216,13 @@ export class BoardsService {
       restaurantIds,
     });
     const personalBoards = { ...boardInfo, info: restaurantMainInfos };
-
     return personalBoards;
   }
   //게시물 삭제하기
   async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
     const board = await this.boardsRepository.delete(boardId);
-    console.log(board);
     return board.affected ? '데이터삭제' : '데이터없음';
   }
 
-  // async toggleLike(boardId: string, isLike: boolean): Promise<Board> {
-  //   const board = await this.findOne({ boardId });
-  //   if (isLike) {
-  //     board.like += 1; // 좋아요 수를 1 증가시킴
-  //   } else {
-  //     if (board.like > 0) {
-  //       board.like -= 1; // 좋아요 수를 1 감소시킴
-  //     }
-  //   }
-  //   return this.boardsRepository.save(board);
-  // }
+
 }

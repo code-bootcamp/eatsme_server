@@ -17,6 +17,8 @@ import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy'
 import { reservationModule } from './apis/reservations/reservation.module';
 import { CommentModule } from './apis/Comments/comments.module';
 import { AlarmModule } from './apis/alarm/alarms.module';
+import { ToggleLikeModule } from './apis/toggleLike/toggleLike.module';
+import { ReplysModule } from './apis/replies/reply.module';
 
 @Module({
   imports: [
@@ -25,8 +27,10 @@ import { AlarmModule } from './apis/alarm/alarms.module';
     BoardModule,
     CommentModule,
     UserModule,
-    BoardModule,
+    ReplysModule,
+    ToggleLikeModule,
     reservationModule,
+
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,

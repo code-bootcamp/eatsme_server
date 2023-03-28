@@ -18,7 +18,7 @@ export class PersonalMapsController {
 
   @Get('/info/road/map')
   getPersonalMap(
-    @Body() body, //
+    @Body() body: string[], //
   ): Promise<IPersonalMapsServiceGetPersonalMapReturn[]> {
     return this.personalMapService.getPersonalMap({ body });
   }
