@@ -27,11 +27,9 @@ jobs:
                   gcloud auth configure-docker
                   cd services/restAPI
                   docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE }}:${{ github.sha }} -f ./DockerFile.prod .
-
             - name: Road-service push tag Docker image
               run: |-
                   docker push ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ROAD_SERVICE }}:${{ github.sha }}
-
             - name: Road-service Update VM with new image
               run: |-
                   gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }}@${{ secrets.GCP_VM_NAME }} \
