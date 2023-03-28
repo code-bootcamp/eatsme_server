@@ -1,5 +1,4 @@
-import { Field, Float, Int, ObjectType, PartialType } from '@nestjs/graphql';
-import { info } from 'console';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class BoardReturn {

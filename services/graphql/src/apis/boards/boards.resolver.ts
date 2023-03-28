@@ -7,6 +7,7 @@ import { CreateBoardInput } from './dto/create-board.input';
 import { FetchBoardsBySectionInput } from './dto/fetch-board-secton.input';
 import { FetchBoardInput } from './dto/fetch-board.input';
 import { BoardReturn } from './dto/fetch-board.object';
+import { ToggleLikeInput } from '../toggleLike/dto/toggle-Like.input';
 import { UpdateBoardInput } from './dto/update-board.input';
 import { Board } from './entities/board.entity';
 
@@ -14,12 +15,29 @@ import { Board } from './entities/board.entity';
 export class BoardsResolver {
   constructor(private readonly boardsService: BoardsService) {}
 
-
   @Query(() => BoardReturn)
   fetchBoard(
-    @Args('fetchBoardInput') fetchBoardInput: FetchBoardInput, //
+    @Args('boardId') boardId: string, //
   ): Promise<BoardReturn> {
-    return this.boardsService.fetchBoard({ fetchBoardInput });
+    return this.boardsService.fetchBoard({ boardId });
+  }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Query(() => [BoardReturn])
+  fetchMyBoard(
+    @Context() context: IContext, //
+  ): Promise<BoardReturn[]> {
+    const { id: userId } = context.req.user;
+    return this.boardsService.fetchMyBoard({ userId });
+  }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Query(() => [BoardReturn])
+  fetchMyLikeBoard(
+    @Context() context: IContext, //
+  ): Promise<BoardReturn[]> {
+    const { id: userId } = context.req.user;
+    return this.boardsService.fetchMyLikeBoard({ userId });
   }
 
   @Query(() => [BoardReturn])
@@ -45,8 +63,9 @@ export class BoardsResolver {
     @Context() context: IContext,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
   ): Promise<BoardReturn> {
+    const { id: userId } = context.req.user;
     return this.boardsService.create(
-      JSON.parse(JSON.stringify({ createBoardInput })),
+      JSON.parse(JSON.stringify({ createBoardInput, userId })),
     );
   }
 
