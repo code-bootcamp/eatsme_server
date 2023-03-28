@@ -7,12 +7,16 @@ import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
 import { PersonalMapsModule } from './apis/personalMaps/personlMaps.module';
 import { ChannelModule } from './apis/\bchat bot/channel.module';
+import { TimeTableModule } from './apis/timeTable/timeTable.module';
+import { RemainTableMoudle } from './apis/remaintable/remainTable.module';
 
 @Module({
   imports: [
     PersonalMapsModule,
     RestaurantModule,
     ChannelModule,
+    TimeTableModule,
+    RemainTableMoudle,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MY_MONGODB), //
     CacheModule.register<RedisClientOptions>({

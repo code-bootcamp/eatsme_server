@@ -4,11 +4,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
 import {
   IRestaurantServiceDeleteCollection,
+  IRestaurantServiceFindOneRestaurant,
   IRestaurantServiceGetDetails,
   IRestaurantServiceGetDetailsReturn,
   IRestaurantServiceGetRestaurant,
+  IRestaurantServiceGetRestaurants,
   IRestaurantServicePostAndGetRestaurant,
   IRestaurantServiceSaveNextPage,
+  IRestaurantServiceUserGetRestaurants,
 } from './interfaces/restaurantService.interface';
 import {
   Restaurant,
@@ -16,12 +19,18 @@ import {
 } from './schemas/restaurant.schemas';
 
 import { Model } from 'mongoose';
+import { TimeTalbesService } from '../timeTable/timeTable.service';
+import { RemainTablesService } from '../remaintable/remainTable.service';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectModel('Restaurant')
     private readonly restaurantModel: Model<RestaurantDocument>,
+
+    private readonly remainTalblesServcie: RemainTablesService, //
+
+    private readonly timeTablesServcie: TimeTalbesService,
   ) {}
   apiKey = process.env.GOOGLE_MAP_API_KEY;
   async postRestaurants({
@@ -131,19 +140,79 @@ export class RestaurantService {
 
   async getRestaurants({
     body,
-  }: IRestaurantServiceGetRestaurant): Promise<Restaurant[]> {
+  }: IRestaurantServiceGetRestaurants): Promise<Restaurant[]> {
     const result = await this.restaurantModel
       .find({
         section: Object.values(body)[0],
       })
       .exec();
     if (!result[0]) {
-      // throw new MongoError('등록되지 않은 행정구역입니다. 등록후 조회해주세요');
       throw new HttpException(
         '등록되지 않은 행정구역입니다. 등록후 조회해주세요',
         HttpStatus.BAD_REQUEST,
       );
     }
+    return result;
+  }
+
+  async UsergetRestaurants({
+    req,
+  }: IRestaurantServiceUserGetRestaurants): Promise<Restaurant[]> {
+    const restaurantIdArr = req.body;
+    const result = await this.restaurantModel
+      .find({ _id: { $in: restaurantIdArr } })
+      .exec();
+    if (!result) {
+      throw new HttpException(
+        '등록되지 않은 행정구역입니다. 등록후 조회해주세요',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return result;
+  }
+
+  async findOneRestaurant({
+    restaurant_id, //
+  }: IRestaurantServiceFindOneRestaurant): Promise<Restaurant> {
+    const isRestaurant = await this.restaurantModel
+      .findOne({
+        _id: restaurant_id,
+      })
+      .exec();
+
+    if (!isRestaurant) {
+      throw new HttpException(
+        '등록되지 않은 행정구역입니다. 등록후 조회해주세요',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return isRestaurant;
+  }
+
+  async getRestaurant({
+    req,
+  }: IRestaurantServiceGetRestaurant): Promise<object> {
+    const { restaurantId, reservation_time, table } = req.body;
+
+    const restaurantInfo = await this.findOneRestaurant({
+      restaurant_id: restaurantId,
+    });
+    const isRemainTable = await this.remainTalblesServcie.findOne({
+      createReamintalbeInput: {
+        reservation_time,
+        restaurant: restaurantInfo,
+      },
+    });
+
+    await this.remainTalblesServcie.remainTable({
+      _id: isRemainTable._id,
+      table,
+    });
+    const reservationTime = await this.timeTablesServcie.findOne({
+      _id: reservation_time,
+    });
+
+    const result = { restaurantInfo, ...reservationTime };
     return result;
   }
 

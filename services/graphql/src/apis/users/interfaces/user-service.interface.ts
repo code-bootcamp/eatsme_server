@@ -1,4 +1,5 @@
 import { CreateUserInput } from '../dto/create-user.input';
+import { UpdateUserInput } from '../dto/update-user.input';
 
 export interface IUserFindOneByUser {
   userId: string;
@@ -26,6 +27,11 @@ export interface IUsersFindOneByNickname {
 
 export interface IUsersCreate {
   createUserInput: CreateUserInput;
+}
+
+export interface IUsersUpdate {
+  updateUserInput: UpdateUserInput;
+  userId: string;
 }
 
 export interface IUpdateUserServiceInput {

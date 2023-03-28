@@ -1,8 +1,7 @@
 import { CacheModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { AppResolver } from './app.resolver';
-import { AppService } from './app.service';
+import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisClientOptions } from 'redis';
@@ -15,6 +14,7 @@ import { BoardModule } from './apis/boards/boards.module';
 
 import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
+import { reservationModule } from './apis/reservations/reservation.module';
 import { CommentModule } from './apis/Comments/comments.module';
 import { AlarmModule } from './apis/alarm/alarms.module';
 import { ToggleLikeModule } from './apis/toggleLike/toggleLike.module';
@@ -29,6 +29,8 @@ import { ReplysModule } from './apis/replies/reply.module';
     UserModule,
     ReplysModule,
     ToggleLikeModule,
+    reservationModule,
+
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -73,10 +75,11 @@ import { ReplysModule } from './apis/replies/reply.module';
       }),
     }),
   ],
+  controllers: [
+    AppController, //
+  ],
   providers: [
-    JwtAccessStrategy,
-    AppResolver, //
-    AppService,
+    JwtAccessStrategy, //
     JwtRefreshStrategy,
   ],
 })

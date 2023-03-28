@@ -31,7 +31,7 @@ export class BoardsService {
 
     @InjectRepository(ToggleLike)
     private readonly toggleLikeRepository: Repository<ToggleLike>,
-
+    
     @InjectRepository(Comment)
     private readonly commentsRepository: Repository<Comment>,
 
@@ -223,4 +223,6 @@ export class BoardsService {
     const board = await this.boardsRepository.delete(boardId);
     return board.affected ? '데이터삭제' : '데이터없음';
   }
+
+
 }
