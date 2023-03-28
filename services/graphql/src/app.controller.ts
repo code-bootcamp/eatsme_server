@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  @Get('/graphql')
+  @Get('/')
   getHello(): string {
     return '하이';
   }

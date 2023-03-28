@@ -71,9 +71,11 @@ import { AlarmModule } from './apis/alarm/alarms.module';
       }),
     }),
   ],
-  providers: [
-    JwtAccessStrategy,
+  controllers: [
     AppController, //
+  ],
+  providers: [
+    JwtAccessStrategy, //
     JwtRefreshStrategy,
   ],
 })
