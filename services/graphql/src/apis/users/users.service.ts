@@ -33,6 +33,7 @@ export class UserService {
   async findOneByUser({ userId }: IUserFindOneByUser): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
+      relations: ['alarms']
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     return user;

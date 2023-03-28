@@ -1,3 +1,4 @@
+import { User } from 'src/apis/users/entities/user.entity';
 import { CreateBoardInput } from '../dto/create-board.input';
 import { FetchBoardsBySectionInput } from '../dto/fetch-board-secton.input';
 import { FetchBoardInput } from '../dto/fetch-board.input';
@@ -31,6 +32,7 @@ export interface IBoardsServiceNullCheckList {
 
 export interface IBoardsServiceCreate {
   createBoardInput: CreateBoardInput;
+  userId: User['id']
 }
 
 export interface IBoardsServiceUpdate {

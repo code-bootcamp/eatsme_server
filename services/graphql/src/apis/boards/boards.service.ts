@@ -6,8 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
-import { Comment } from '../Comments/entities/comment.entity';
-import { User } from '../users/entities/user.entity';
+import { UserService } from '../users/users.service';
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
 import {
@@ -27,12 +26,8 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
 
+    private readonly usersService: UserService,
 
-    @InjectRepository(Comment)
-    private readonly commentsRepository: Repository<Comment>,
-
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
   ) {}
 
   findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
@@ -106,8 +101,11 @@ export class BoardsService {
   }
   //게시물 작성하기
   async create({
+    userId,
     createBoardInput,
-  }: IBoardsServiceCreate): Promise<BoardReturn> {
+  }: IBoardsServiceCreate): Promise<BoardReturn> {    
+    const { title, startPoint, endPoint } = createBoardInput
+
     const restaurantInfo = await axios.post(
       'http://road-service:7100/info/road/map',
       {
@@ -127,14 +125,14 @@ export class BoardsService {
       } = el;
       return sendInfo;
     });
-    const { title, startPoint, endPoint } = createBoardInput;
+
     await this.checkList({ title, startPoint, endPoint });
     const boardInfo = await this.boardsRepository.save({
       ...createBoardInput,
       restaurantIds,
+      userId
     });
     const personalBoards = { ...boardInfo, info: restaurantMainInfos };
-
     return personalBoards;
   }
   //게시물 업데이트하기
@@ -177,7 +175,6 @@ export class BoardsService {
   //게시물 삭제하기
   async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
     const board = await this.boardsRepository.delete(boardId);
-    console.log(board);
     return board.affected ? '데이터삭제' : '데이터없음';
   }
 

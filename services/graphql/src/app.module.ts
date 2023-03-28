@@ -17,6 +17,7 @@ import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
 import { CommentModule } from './apis/Comments/comments.module';
 import { AlarmModule } from './apis/alarm/alarms.module';
+import { ReplysModule } from './apis/replies/reply.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AlarmModule } from './apis/alarm/alarms.module';
     AlarmModule,
     BoardModule,
     CommentModule,
+    ReplysModule,
     UserModule,
     BoardModule,
     ConfigModule.forRoot(),

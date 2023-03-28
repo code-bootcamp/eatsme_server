@@ -41,17 +41,14 @@ export class CreateBoardInput {
   @Field(() => String)
   customName: string;
 
-  @Field(() => Int)
-  like: number;
+  // @Field(() => Int)
+  // like: number;
 
   @Field(() => Date)
   createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
 
   @Field(() => String)
-  userId: string;
-
-  // @Field(() => String)
-  // commentsId: string;
+  userId?: string;
 
   @Field(() => [InfoInput])
   info: InfoInput[];

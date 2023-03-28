@@ -40,9 +40,7 @@ export class AuthService {
         '비밀번호가 틀렸습니다. 다시 시도해주세요.',
       );
     }
-
     this.setRefreshToken({ user, res: context.res });
-
     return this.getAccessToken({ user });
   }
 
