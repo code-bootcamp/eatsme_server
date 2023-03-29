@@ -70,16 +70,16 @@ export class BoardsResolver {
     );
   }
 
-  @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => BoardReturn)
-  updateBoard(
-    @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
-    @Context() context: IContext,
-  ): Promise<BoardReturn> {
-    return this.boardsService.update(
-      JSON.parse(JSON.stringify({ updateBoardInput })),
-    );
-  }
+  // @UseGuards(GqlAuthGuard('access'))
+  // @Mutation(() => BoardReturn)
+  // updateBoard(
+  //   @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
+  //   @Context() context: IContext,
+  // ): Promise<void> {
+  //   return this.boardsService.update(
+  //     JSON.parse(JSON.stringify({ updateBoardInput })),
+  //   );
+  // }
 
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => String)

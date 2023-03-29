@@ -24,9 +24,6 @@ export class BoardReturn {
   @Field(() => Int, { nullable: true })
   like: number;
 
-  @Field(() => [String], { nullable: true })
-  restaurantIds: string[];
-
   @Field(() => [RestaurantBoardInfo], { nullable: true })
   personalMapData: RestaurantBoardInfo[];
 
@@ -46,7 +43,7 @@ class LocationObject {
 @ObjectType()
 class RestaurantBoardInfo {
   @Field(() => String, { nullable: true })
-  _id: string;
+  restaurantId: string;
 
   @Field(() => String, { nullable: true })
   restaurantName: string;

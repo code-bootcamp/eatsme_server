@@ -214,6 +214,7 @@ export class BoardsService {
           recommend,
           imgUrl,
         } = sum;
+
         const personalMapData = await this.personalDataRepository.save({
           restaurantId,
           restaurantName,
@@ -231,57 +232,58 @@ export class BoardsService {
     return { ...board, personalMapData: restaurantMainInfos };
   }
   //게시물 업데이트하기
-  async update({
-    updateBoardInput,
-  }: IBoardsServiceUpdate): Promise<BoardReturn> {
-    const { info, ...boardInfo } = updateBoardInput;
-    const { boardId } = boardInfo;
-    const board = await this.findOne({ boardId });
-    if (!board) {
-      throw new NotFoundException('게시판 아이디가 일치하지않습니다'); //어떤 에러인지 찾아보고 적합한지 확인하기
-    }
-    const restaurantInfo = await axios.post(
-      'http://road-service:7100/info/road/map',
-      {
-        info,
-      },
-    );
-    const restaurantMainInfos = await Promise.all(
-      restaurantInfo.data.map(async (el, i) => {
-        const sum = { ...el, ...info[i] };
-        const {
-          _id: restaurantId,
-          restaurantName,
-          address,
-          location,
-          rating,
-          recommend,
-          imgUrl,
-        } = sum;
-        //찾은후 저장하면 된다. boardId하고 restaurantId로 찾으면 되지 않을까?
-        const oldPersonalMapData = await this.personalDataRepository.findOne({
-          where: {
-            restaurantId,
-            recommend,
-            imgUrl,
-          },
-        });
+  // async update({ updateBoardInput }: IBoardsServiceUpdate): Promise<void> {
+  //   const { info, ...boardInfo } = updateBoardInput;
+  //   const { boardId } = boardInfo;
+  //   const board = await this.findOne({ boardId });
 
-        const newPersonalMapData = await this.personalDataRepository.save({
-          ...oldPersonalMapData,
-          restaurantId,
-          recommend,
-          imgUrl,
-          board,
-        });
-        const { board: newBoard, ...restaurantInfo } = newPersonalMapData;
-        return restaurantInfo;
-      }),
-    );
-    //식당 정보를 한번더 조회해줘야 한다.
-    console.log({ ...board, personalMapData: restaurantMainInfos });
-    return { ...board, personalMapData: restaurantMainInfos };
-  }
+  //   if (!board) {
+  //     throw new NotFoundException('등록되지 않은 게시판입니다.');
+  //   }
+
+  //   //업데이트,등록,삭제를 한번에 해줘야 하는 과정이다.
+  //   //입력된 info와 board의 personalMapdata를 비교한다.
+  //   //personalMapData를 뱐환후 비교한다.
+  //   const restaurantIds = JSON.parse(JSON.stringify(board.personalMapData)).map(
+  //     (el) => {
+  //       return el.restaurantId;
+  //     },
+  //   );
+  //   const oldRestaurantInfo = await axios.get(
+  //     'http://road-service:7100/info/road/map',
+  //     {
+  //       data: restaurantIds,
+  //     },
+  //   );
+
+  //   const newRestaurantInfo = await axios.post(
+  //     'http://road-service:7100/info/road/map',
+  //     {
+  //       info,
+  //     },
+  //   );
+
+  //   info.map((el, id) => {
+  //     oldRestaurantInfo.data.forEach((it, idx) => {
+  //       //식당이름이 같은 경우를 기준으로 업데이트한다.
+  //       if (el.restaurantName === it.restaurantName) {
+  //         //기존의 정보와 입력한 정보가 업데이트가 된경우 배열에서 없앤다.
+  //         console.log(el, it);
+  //         // this.personalDataRepository.save();
+  //         info.splice(id, 1, null);
+  //         oldRestaurantInfo.data.splice(idx, 1);
+  //       }
+  //       //같은경우가 없는 경우
+  //     });
+  //   });
+
+  //   console.log('$$$$$$$');
+  //   //다시한번더 순회하면서 null이 아니면 저장한다.
+  //   console.log(info);
+  //   //남아있으면 삭제한다.
+  //   console.log(oldRestaurantInfo.data);
+  // }
+
   //게시물 삭제하기
   async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
     const board = await this.boardsRepository.delete(boardId);

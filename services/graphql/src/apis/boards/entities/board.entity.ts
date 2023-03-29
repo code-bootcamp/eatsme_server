@@ -52,10 +52,6 @@ export class Board {
   @Field(() => Int)
   like!: number;
 
-  @Column({ type: 'simple-array', nullable: true })
-  @Field(() => [String])
-  restaurantIds: string[];
-
   @ManyToOne(() => User, (user) => user.boards)
   @Field(() => User)
   user: User;
