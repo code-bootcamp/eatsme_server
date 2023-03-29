@@ -26,6 +26,7 @@ import { ReplysModule } from './apis/replies/reply.module';
     AlarmModule,
     BoardModule,
     CommentModule,
+    ReplysModule,
     UserModule,
     ReplysModule,
     ToggleLikeModule,

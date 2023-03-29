@@ -6,8 +6,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Alarm } from '../alarm/entities/alarm.entity';
 import { Board } from '../boards/entities/board.entity';
 import { Reply } from '../replies/entities/reply.entity';
+import { User } from '../users/entities/user.entity';
 import { Comment } from './entities/comment.entity';
 import {
   ICommentServiceNullList,
@@ -26,8 +28,11 @@ export class CommentsService {
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
 
-    @InjectRepository(Reply)
-    private readonly replysRepository: Repository<Reply>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+
+    @InjectRepository(Alarm)
+    private readonly alarmsRepository: Repository<Alarm>,
   ) {}
 
   async findOne({ commentId }: ICommentsServiceFindOne): Promise<Comment> {
@@ -35,7 +40,7 @@ export class CommentsService {
       where: {
         id: commentId,
       },
-      relations: ['board'],
+      relations: ['board.user','replies'],
     });
     return comment;
   }
@@ -50,19 +55,35 @@ export class CommentsService {
   }
 
   async create({
-    createCommentInput,
+    userId, createCommentInput,
   }: ICommentsServiceCreate): Promise<Comment> {
     const { comment, boardId } = createCommentInput;
+    const user = await this.usersRepository.findOne({
+      where: {
+        id: userId, 
+      },
+    });
     const board = await this.boardsRepository.findOne({
       where: {
         id: boardId, //id필드가 boardId 변수와 일치하는 board객체를 찾을때 사용하는 필터
       },
+      relations: ['user']
     });
     await this.nullCheck({ comment });
-    return await this.commentsRepository.save({
+    const newComment = await this.commentsRepository.save({
       ...createCommentInput,
       board,
+      user,
     });
+    const newAlarm =  this.alarmsRepository.create({
+      isAlarm: true,
+      users: board.user,
+      comments: newComment,
+      commentUserId: newComment.user.id,
+      commentUserName: newComment.user.nickname,
+    });
+     this.alarmsRepository.save(newAlarm);
+    return newComment
   }
 
   async update({
@@ -74,10 +95,20 @@ export class CommentsService {
       throw new NotFoundException('댓글 아이디가 일치하지않습니다');
     }
     await this.nullCheck({ comment });
-    return this.commentsRepository.save({
+    const updateComment = await this.commentsRepository.save({
       ...comments,
       comment,
     });
+
+    const updateAlarm = await this.alarmsRepository.create({
+      isAlarm: true,
+      users: comments.board.user,
+      comments: updateComment,
+      commentUserId: updateComment.user.id,
+      commentUserName: updateComment.user.nickname,
+    });
+    await this.alarmsRepository.save(updateAlarm);
+    return updateComment
   }
 
   async delete({ commentId }: ICommentsServiceDelete): Promise<string> {

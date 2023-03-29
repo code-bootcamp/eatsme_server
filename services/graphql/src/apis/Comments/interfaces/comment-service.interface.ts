@@ -3,6 +3,7 @@ import { UpdateCommentInput } from '../dto/update-comment.input';
 
 export interface ICommentsServiceCreate {
   createCommentInput: CreateCommentInput;
+  userId?: string;
 }
 
 export interface ICommentsServiceUpdate {

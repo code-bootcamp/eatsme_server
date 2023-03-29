@@ -22,8 +22,9 @@ export class ReplysResolver {
     @Args('createReplyInput') createReplyInput: CreateReplyInput,
     @Context() context: IContext, //
   ): Promise<Reply> {
+    const userId = context.req.user.id
     return this.replysService.create(
-      JSON.parse(JSON.stringify({ createReplyInput })),
+      JSON.parse(JSON.stringify({ createReplyInput, userId })),
     );
   }
 

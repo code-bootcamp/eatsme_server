@@ -11,6 +11,7 @@ import { Comment } from '../Comments/entities/comment.entity';
 import { PersonalMapData } from '../personalData/entities/personalData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
+import { Comment } from '../Comments/entities/comment.entity';
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
 import {
@@ -47,7 +48,8 @@ export class BoardsService {
   async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
     return this.boardsRepository.findOne({
       where: { id: boardId }, //
-      relations: ['comments', 'comments.replies', 'personalMapData', 'user'],
+      relations: ['comments.replies','comments','personalMapData', 'user'],
+
     });
   }
 
@@ -178,8 +180,8 @@ export class BoardsService {
   }
   //게시물 작성하기
   async create({
-    createBoardInput,
     userId,
+    createBoardInput,
   }: IBoardsServiceCreate): Promise<BoardReturn> {
     //제목,행정구역이 유효한지 검증
 

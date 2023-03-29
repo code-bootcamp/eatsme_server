@@ -17,7 +17,8 @@ export class CommentsResolver {
     @Args('createCommentInput') createCommentInput: CreateCommentInput,
     @Context() context: IContext,
   ): Promise<Comment> {
-    return this.commentsService.create({ createCommentInput });
+    const userId = context.req.user.id
+    return this.commentsService.create({ createCommentInput, userId });
   }
 
   @UseGuards(GqlAuthGuard('access'))
@@ -33,7 +34,7 @@ export class CommentsResolver {
 
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => String)
-  deleteReply(
+  deleteComment(
     @Args('commentId') commentId: string,
     @Context() context: IContext,
   ): Promise<string> {

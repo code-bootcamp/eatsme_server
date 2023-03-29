@@ -1,3 +1,4 @@
+import { User } from 'src/apis/users/entities/user.entity';
 import { CreateBoardInput } from '../dto/create-board.input';
 import { FetchBoardsBySectionInput } from '../dto/fetch-board-secton.input';
 import { FetchBoardInput } from '../dto/fetch-board.input';

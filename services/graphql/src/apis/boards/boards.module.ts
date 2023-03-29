@@ -4,6 +4,7 @@ import { Comment } from '../Comments/entities/comment.entity';
 import { PersonalMapData } from '../personalData/entities/personalData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
+import { UserService } from '../users/users.service';
 import { BoardsResolver } from './boards.resolver';
 import { BoardsService } from './boards.service';
 import { Board } from './entities/board.entity';
@@ -21,6 +22,7 @@ import { Board } from './entities/board.entity';
   providers: [
     BoardsResolver, //
     BoardsService,
+    UserService,
   ],
 })
 export class BoardModule {}

@@ -12,6 +12,7 @@ export interface IReplyServiceNullList {
 
 export interface IReplysServiceCreate {
   createReplyInput: CreateReplyInput;
+  userId?: string;
 }
 
 export interface IReplysServiceUpdate {

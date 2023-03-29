@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Alarm } from '../alarm/entities/alarm.entity';
 import { JwtAccessStrategy } from '../auth/strategies/jwt-access.strategy';
 import { User } from './entities/user.entity';
 import { UserResolver } from './users.resolver';

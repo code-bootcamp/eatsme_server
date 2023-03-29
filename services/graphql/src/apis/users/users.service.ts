@@ -35,10 +35,9 @@ export class UserService {
   async findOneByUser({ userId }: IUserFindOneByUser): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['reservations'],
+      relations: ['reservations', 'alarms', 'boards.comments.replies']
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
-
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
     const reservationRestaurant = await axios.get(
       'http://road-service:7100/info/road/find/restaurant',
