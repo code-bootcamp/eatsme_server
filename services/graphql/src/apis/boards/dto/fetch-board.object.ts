@@ -6,57 +6,60 @@ export class BoardReturn {
   @Field(() => String, { nullable: true })
   id: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   title: string;
 
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   createdAt: Date;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   boardImg: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   startPoint: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   endPoint: string;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   like: number;
 
-  @Field(() => [String])
-  restaurantIds: string[];
+  @Field(() => [RestaurantBoardInfo], { nullable: true })
+  personalMapData: RestaurantBoardInfo[];
 
-  @Field(() => [RestaurantBoardInfo])
-  info: RestaurantBoardInfo[];
-
-  @Field(() => [Comment])
+  @Field(() => [Comment], { nullable: true })
   comments: Comment[];
 }
 
 @ObjectType()
 class LocationObject {
-  @Field(() => Float)
+  @Field(() => Float, { nullable: true })
   lat: number;
 
-  @Field(() => Float)
+  @Field(() => Float, { nullable: true })
   lng: number;
 }
 
 @ObjectType()
 class RestaurantBoardInfo {
   @Field(() => String, { nullable: true })
-  _id: string;
+  restaurantId: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   restaurantName: string;
 
   @Field(() => String, { nullable: true })
   address: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  imgUrl: string;
+
+  @Field(() => String, { nullable: true })
+  recommend: string;
+
+  @Field(() => String, { nullable: true })
   rating: string;
 
-  @Field(() => LocationObject)
+  @Field(() => LocationObject, { nullable: true })
   location: LocationObject;
 }

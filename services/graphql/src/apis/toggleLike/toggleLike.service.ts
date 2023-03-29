@@ -22,8 +22,12 @@ export class ToggleLikeService {
     const { isLike, boardId } = toggleLikeInput;
 
     if (isLike) {
-      const result = await this.toggleLikeRepository.save({ boardId, userId });
-      return '찜목록에 추가되었습니다.';
+      const isValid = await this.toggleLikeRepository.find({
+        where: { boardId, userId },
+      });
+      if (isValid.length) return '이미 찜목록에 추가 되었습니다.';
+      const isRegister = this.toggleLikeRepository.save({ boardId, userId });
+      if (isRegister) return '찜목록에 추가되었습니다.';
     } else {
       const isDelete = await this.toggleLikeRepository.delete({
         boardId,

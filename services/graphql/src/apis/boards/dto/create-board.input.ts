@@ -17,6 +17,9 @@ class InfoInput {
   @Field(() => String)
   recommend: string;
 
+  @Field(() => String)
+  imgUrl: string;
+
   @Field(() => LocationInput)
   location: LocationInput;
 }

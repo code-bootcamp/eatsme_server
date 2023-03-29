@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Comment } from 'src/apis/Comments/entities/comment.entity';
+import { PersonalMapData } from 'src/apis/personalData/entities/personalData.entity';
 
 @Entity()
 @ObjectType()
@@ -51,10 +52,6 @@ export class Board {
   @Field(() => Int)
   like: number;
 
-  @Column({ type: 'simple-array', nullable: true })
-  @Field(() => [String])
-  restaurantIds: string[];
-
   @ManyToOne(() => User, (user) => user.boards)
   @Field(() => User)
   user: User;
@@ -64,4 +61,8 @@ export class Board {
   }) //{ onDelete: 'CASCADE' }는 부모엔티티에서 작업하는게 자식엔티티에도 영향을 주는것을 의미함(예시: 수정 삭제)
   @Field(() => [Comment])
   comments: Comment[];
+
+  @OneToMany(() => PersonalMapData, (personalMapData) => personalMapData.board)
+  @Field(() => PersonalMapData)
+  personalMapData: PersonalMapData;
 }
