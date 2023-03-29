@@ -26,16 +26,17 @@ export class BoardsResolver {
   @Query(() => [BoardReturn])
   fetchMyBoard(
     @Context() context: IContext, //
-  ): Promise<BoardReturn[]> {
+  ): Promise<BoardReturn[] | string> {
     const { id: userId } = context.req.user;
     return this.boardsService.fetchMyBoard({ userId });
   }
 
   @UseGuards(GqlAuthGuard('access'))
   @Query(() => [BoardReturn])
+  //String을 같이 넣을 순 없을까?
   fetchMyLikeBoard(
     @Context() context: IContext, //
-  ): Promise<BoardReturn[]> {
+  ): Promise<BoardReturn[] | string> {
     const { id: userId } = context.req.user;
     return this.boardsService.fetchMyLikeBoard({ userId });
   }
@@ -69,16 +70,16 @@ export class BoardsResolver {
     );
   }
 
-  @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => BoardReturn)
-  updateBoard(
-    @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
-    @Context() context: IContext,
-  ): Promise<BoardReturn> {
-    return this.boardsService.update(
-      JSON.parse(JSON.stringify({ updateBoardInput })),
-    );
-  }
+  // @UseGuards(GqlAuthGuard('access'))
+  // @Mutation(() => BoardReturn)
+  // updateBoard(
+  //   @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
+  //   @Context() context: IContext,
+  // ): Promise<void> {
+  //   return this.boardsService.update(
+  //     JSON.parse(JSON.stringify({ updateBoardInput })),
+  //   );
+  // }
 
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => String)
