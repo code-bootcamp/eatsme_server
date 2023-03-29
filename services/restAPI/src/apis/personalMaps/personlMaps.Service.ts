@@ -25,6 +25,7 @@ export class PersonalMapsService {
   async createPersonalMap({
     body,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
+    console.log('---식당 정보 등록---');
     const restaurantInfos = Promise.all(
       body.info.map(async (el) => {
         const restaurantInfo = await this.restaurantModel

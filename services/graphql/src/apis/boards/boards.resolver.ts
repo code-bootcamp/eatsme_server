@@ -26,16 +26,17 @@ export class BoardsResolver {
   @Query(() => [BoardReturn])
   fetchMyBoard(
     @Context() context: IContext, //
-  ): Promise<BoardReturn[]> {
+  ): Promise<BoardReturn[] | string> {
     const { id: userId } = context.req.user;
     return this.boardsService.fetchMyBoard({ userId });
   }
 
   @UseGuards(GqlAuthGuard('access'))
   @Query(() => [BoardReturn])
+  //String을 같이 넣을 순 없을까?
   fetchMyLikeBoard(
     @Context() context: IContext, //
-  ): Promise<BoardReturn[]> {
+  ): Promise<BoardReturn[] | string> {
     const { id: userId } = context.req.user;
     return this.boardsService.fetchMyLikeBoard({ userId });
   }
