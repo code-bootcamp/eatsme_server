@@ -1,9 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Restaurant } from '../restaurant/schemas/restaurant.schemas';
-import {
-  IPersonalMapsServiceCreatePersonalMap,
-  IPersonalMapsServiceGetPersonalMapReturn,
-} from './interface/personalMapsService.interface';
+import { IPersonalMapsServiceGetPersonalMapReturn } from './interface/personalMapsService.interface';
 import { PersonalMapsService } from './personlMaps.Service';
 
 @Controller()
@@ -21,7 +18,7 @@ export class PersonalMapsController {
 
   @Get('/info/road/map')
   getPersonalMap(
-    @Body() body, //
+    @Body() body: string[], //
   ): Promise<IPersonalMapsServiceGetPersonalMapReturn[]> {
     return this.personalMapService.getPersonalMap({ body });
   }

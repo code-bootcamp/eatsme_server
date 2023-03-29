@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="text/javascript">
+      const eventSource = new EventSource("http://localhost/graphql/sse");
+
+      eventSource.addEventListener("events", (event) => {
+        console.log(event.data);
+      });
+    </script>
+    <title>"알람 테스트"</title>
+  </head>
+  <body></body>
+</html>

@@ -10,19 +10,30 @@ export class AlarmService {
     private alarmRepository: Repository<Alarm>,
   ) {}
 
-  async createCommentAlarm(commentId: any, authorId: any) {
+  async createCommentAlarm(commentId: any, authorId: any, commentUserId: any, commentUserName: any) {
     const alarm = new Alarm();
     alarm.isAlarm = true;
     alarm.users = authorId;
     alarm.comments = commentId;
+    alarm.commentUserId = commentUserId;
+    alarm.commentUserName = commentUserName;
+    await this.alarmRepository.save(alarm);
+  }
+
+  async createReplyAlarm(replyId: any, authorId: any, commentUserId: any, commentUserName: any) {
+    const alarm = new Alarm();
+    alarm.isAlarm = true;
+    alarm.users = authorId;
+    alarm.replies = replyId;
+    alarm.commentUserId = commentUserId;
+    alarm.commentUserName = commentUserName;
     await this.alarmRepository.save(alarm);
   }
 
   async findByUserId(userId: string): Promise<Alarm[]> {
-   console.log(userId)
    return this.alarmRepository.find({ 
     where: { users: { id: userId } },
-    relations: ['comments']
+    relations: ['comments.board.user']
     });
  }
 }

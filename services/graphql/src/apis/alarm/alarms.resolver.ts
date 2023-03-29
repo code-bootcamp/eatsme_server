@@ -1,7 +1,7 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Query, Resolver } from "@nestjs/graphql";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guards";
-import { AlarmService } from "./alarmsservice";
+import { AlarmService } from "./alarms.service";
 import { Alarm } from "./entities/alarm.entity";
 
 

@@ -13,11 +13,19 @@ export class Reservation {
   @Field(() => Int)
   table: number;
 
-  @Column({ type: 'date' })
-  @Field(() => Date)
-  time: Date;
+  @Column({ type: 'varchar' })
+  @Field(() => String)
+  time: string;
 
-  // @ManyToOne(() => User, (user) => user.reservations)
-  // @Field(() => User)
-  // users: User;
+  @Column({ type: 'int' })
+  @Field(() => Int)
+  reservation_time: number;
+
+  @ManyToOne(() => User, (user) => user.reservations)
+  @Field(() => User)
+  users: User;
+
+  @Column({ type: 'varchar' })
+  @Field(() => String)
+  restaurant_id: string;
 }

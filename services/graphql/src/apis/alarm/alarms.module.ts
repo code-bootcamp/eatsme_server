@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AlarmResolver } from "./alarmsresolver";
-import { AlarmService } from "./alarmsservice";
+import { AlarmResolver } from "./alarms.resolver";
+import { AlarmService } from "./alarms.service";
 import { Alarm } from "./entities/alarm.entity";
 
 

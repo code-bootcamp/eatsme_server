@@ -28,7 +28,7 @@ export class Board {
       to: () => new Date(new Date().getTime() + 9 * 60 * 60 * 1000),
     },
   })
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   createdAt: Date;
 
   @Column({ type: 'varchar', length: 100 })
@@ -58,7 +58,6 @@ export class Board {
   @ManyToOne(() => User, (user) => user.boards)
   @Field(() => User)
   user: User;
-
 
   @OneToMany(() => Comment, (comments) => comments.board, {
     onDelete: 'CASCADE',
