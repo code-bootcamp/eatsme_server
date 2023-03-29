@@ -15,14 +15,11 @@ export class UserResolver {
 
   // -----로그인회원 조회-----
   @UseGuards(GqlAuthGuard('access'))
-  @Query(() => String)
+  @Query(() => User)
   fetchLoginUser(
     @Context() context: IContext, //
-  ): string {
-    console.log('================');
-    console.log(context.req.user);
-    console.log('================');
-    return '인가에 성공하였습니다.';
+  ): Promise<User> {
+    return this.userService.findOneByUser({ userId: context.req.user.id });
   }
 
   // -----회원 조회-----

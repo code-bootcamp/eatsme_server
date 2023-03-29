@@ -20,7 +20,6 @@ import { ReservationModule } from './apis/reservations/reservation.module';
     AuthModule,
     AlarmModule,
     BoardModule,
-    BoardModule,
     FilesModule,
     UserModule,
     ReservationModule,

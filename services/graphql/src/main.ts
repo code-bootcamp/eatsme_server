@@ -15,7 +15,6 @@ async function bootstrap() {
     origin: process.env.ORIGIN,
     credentials: true,
   });
-  app.use(helmet.referrerPolicy({ policy: 'strict-origin-when-cross-origin' }));
   await app.listen(7000, () => {
     console.log('=================');
     console.log('🐶🐶🐶 graphql 백엔드 서버 오픈 🐶🐶🐶');

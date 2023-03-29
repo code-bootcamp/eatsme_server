@@ -2,7 +2,6 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/commons/interfaces/context';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
-import { User } from '../users/entities/user.entity';
 import { CreateReservationInput } from './dto/create-reservation.input';
 import { Reservation } from './entities/reservation.entity';
 import { ReservationsService } from './reservation.service';
@@ -16,7 +15,7 @@ export class ReservationsResolver {
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Reservation)
   createReservation(
-    @Args('createReservationinput')
+    @Args('createReservationInput')
     createReservationInput: CreateReservationInput, //
     @Context() context: IContext,
   ): Promise<Reservation> {

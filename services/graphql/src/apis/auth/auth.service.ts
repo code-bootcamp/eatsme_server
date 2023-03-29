@@ -72,7 +72,7 @@ export class AuthService {
       `accessToken:${accessToken.access}`,
       'accessToken',
       {
-        ttl: result[1]['exp'] - Math.trunc(Date.now() / 1000),
+        ttl: result[0]['exp'] - Math.trunc(Date.now() / 1000),
       },
     );
     console.log(result);
@@ -81,11 +81,9 @@ export class AuthService {
       `refreshToken:${refreshToken.refresh}`,
       'refreshToken',
       {
-        ttl: result[0]['exp'] - Math.trunc(Date.now() / 1000),
+        ttl: result[1]['exp'] - Math.trunc(Date.now() / 1000),
       },
     );
-
-    console.log(isAccessToken, isRefreshToken, '@@@');
 
     return '로그아웃';
   }
@@ -95,14 +93,19 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
+
+    // 개발환경;
     res.setHeader(
       'Set-Cookie',
       `refreshToken=${refreshToken};path=/; httpOnly`,
     );
-  }
 
-  restoreAccessToken({ user }: IAuthServiceGetRefreshToken): string {
-    return this.getAccessToken({ user });
+    // 배포환경;
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken};path=/ domain=.jjjbackendclass.shop; SameSite=None; Secure; httpOnly`,
+    );
   }
 
   getAccessToken({ user }: IAuthServiceGetAccessToken): string {
@@ -110,6 +113,11 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_ACCESS_KEY, expiresIn: '2h' },
     );
+  }
+
+  restoreAccessToken({ user }: IAuthServiceGetRefreshToken): string {
+    console.log(user);
+    return this.getAccessToken({ user });
   }
 
   async socialLogin({ req, res }: IAuthServiceSocialLogin) {

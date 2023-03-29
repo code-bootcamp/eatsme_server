@@ -171,9 +171,11 @@ export class UserService {
     const { email, password, nickname } = createUserInput;
 
     if (!email || !email.includes('@') || 30 <= email.length) {
-      throw new ConflictException('제대로된 이메일을 입력해주세요');
+      throw new ConflictException('제대로된 이메일을 입력해주세요.');
     }
-
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요.');
+    }
     await this.isFindOneByEmail({ email });
 
     await this.isFindOneByNickname({ nickname });
