@@ -32,13 +32,13 @@ export class Board {
   @Field(() => Date, { nullable: true })
   createdAt: Date;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
-  boardImg: string;
+  startArea: string;
 
   @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
-  area: string;
+  endArea: string;
 
   @Column({ type: 'varchar', length: 10 })
   @Field(() => String)

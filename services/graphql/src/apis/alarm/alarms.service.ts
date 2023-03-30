@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Alarm } from "./entities/alarm.entity";
+import { IAlarmServiceFindByUserId } from "./interface/alarm-service.interface";
 
 @Injectable()
 export class AlarmService {
@@ -30,7 +31,7 @@ export class AlarmService {
     await this.alarmRepository.save(alarm);
   }
 
-  async findByUserId(userId: string): Promise<Alarm[]> {
+  async findByUserId({userId}: IAlarmServiceFindByUserId): Promise<Alarm[]> {
    return this.alarmRepository.find({ 
     where: { users: { id: userId } },
     relations: ['comments.board.user']

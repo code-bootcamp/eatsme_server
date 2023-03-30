@@ -33,7 +33,10 @@ export class CreateBoardInput {
   boardImg: string;
 
   @Field(() => String)
-  area: string;
+  startArea: string;
+
+  @Field(() => String)
+  endArea: string;
 
   @Field(() => String)
   startPoint: string;
