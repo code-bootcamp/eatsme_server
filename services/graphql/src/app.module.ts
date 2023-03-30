@@ -79,9 +79,6 @@ import { ReplysModule } from './apis/replies/reply.module';
   controllers: [
     AppController, //
   ],
-  providers: [
-    JwtAccessStrategy, //
-    JwtRefreshStrategy,
-  ],
+  providers: [],
 })
 export class AppModule {}
