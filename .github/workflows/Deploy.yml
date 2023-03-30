@@ -27,11 +27,9 @@ jobs:
                   gcloud auth configure-docker
                   cd api-gateway
                   docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY }}:${{ github.sha }} -f ./DockerFile .
-
             - name: api-gateway push tag Docker image
               run: |-
                   docker push ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_API_GATEWAY }}:${{ github.sha }}
-
             - name: api-gateway Update VM with new image
               run: |-
                   gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }}@${{ secrets.GCP_VM_NAME }} \

@@ -17,6 +17,9 @@ class InfoInput {
   @Field(() => String)
   recommend: string;
 
+  @Field(() => String)
+  imgUrl: string;
+
   @Field(() => LocationInput)
   location: LocationInput;
 }
@@ -38,20 +41,11 @@ export class CreateBoardInput {
   @Field(() => String)
   endPoint: string;
 
-  @Field(() => String)
-  customName: string;
-
   @Field(() => Int)
   like: number;
 
   @Field(() => Date)
   createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
-
-  @Field(() => String)
-  userId: string;
-
-  // @Field(() => String)
-  // commentsId: string;
 
   @Field(() => [InfoInput])
   info: InfoInput[];

@@ -13,6 +13,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: process.env.ORIGIN,
+    // origin: '*',
     credentials: true,
   });
   await app.listen(7000, () => {

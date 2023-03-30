@@ -1,6 +1,8 @@
 import { CacheModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+
+
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisClientOptions } from 'redis';
@@ -14,6 +16,8 @@ import { FilesModule } from './apis/files/files.module';
 
 import { AlarmModule } from './apis/alarm/alarms.module';
 import { ReservationModule } from './apis/reservations/reservation.module';
+import { ReplysModule } from './apis/replies/reply.module';
+import { ToggleLikeModule } from './apis/toggleLike/toggleLike.module';
 
 @Module({
   imports: [
@@ -22,7 +26,10 @@ import { ReservationModule } from './apis/reservations/reservation.module';
     BoardModule,
     FilesModule,
     UserModule,
+    ReplysModule,
+    ToggleLikeModule,
     ReservationModule,
+
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
