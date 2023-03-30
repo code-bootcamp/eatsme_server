@@ -35,7 +35,7 @@ export class UserService {
   async findOneByUser({ userId }: IUserFindOneByUser): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['reservations', 'alarms', 'boards.comments.replies']
+      relations: ['reservations', 'alarms', 'boards.comments.replies'],
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
@@ -178,6 +178,10 @@ export class UserService {
     await this.isFindOneByNickname({ nickname });
 
     await this.welcomeToTemplate({ email });
+
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

@@ -4,7 +4,7 @@ import { Profile, Strategy } from 'passport-kakao';
 export class JwtKakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   constructor() {
     super({
-      clientId: process.env.KAKAO_CLIENT_ID,
+      clientID: process.env.KAKAO_CLIENT_ID,
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
       callbackURL: 'https://jjjbackendclass.shop/graphql/login/kakao',
       scope: ['account_email', 'profile_nickname'],
