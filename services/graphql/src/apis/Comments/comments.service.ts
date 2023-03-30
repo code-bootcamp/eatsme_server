@@ -94,6 +94,7 @@ export class CommentsService {
     if (!comments) {
       throw new NotFoundException('댓글 아이디가 일치하지않습니다');
     }
+
     await this.nullCheck({ comment });
     const updateComment = await this.commentsRepository.save({
       ...comments,

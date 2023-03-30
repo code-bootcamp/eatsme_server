@@ -1,23 +1,29 @@
 import { Body, Controller, Delete, Get, Post, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { RestaurantService } from './restaurant.service';
 import { Restaurant } from './schemas/restaurant.schemas';
 
-@Controller()
+@ApiBearerAuth()
+@ApiTags('restaurants')
+@Controller('restaurants')
 export class RestaurantController {
   constructor(
     private readonly restaurantService: RestaurantService, //
   ) {}
 
-  //등록한 식당의 갯수를 반환해보자.
   @Post('/info/road/restaurant')
   postRestaurants(
     @Body() body: { area: string; section: string }, //
   ): Promise<void> {
-    console.log(body);
     return this.restaurantService.postRestaurants({ body });
   }
 
+  @ApiResponse({
+    status: 200,
+    description: '행정구역의 추천 식당 정보를 조회합니다',
+    type: Promise<Restaurant[]>,
+  })
   @Get('/info/road/restaurant')
   getRestaurants(
     @Body() body: string, //

@@ -1,7 +1,6 @@
 import { User } from 'src/apis/users/entities/user.entity';
 import { CreateBoardInput } from '../dto/create-board.input';
 import { FetchBoardsBySectionInput } from '../dto/fetch-board-secton.input';
-import { FetchBoardInput } from '../dto/fetch-board.input';
 import { ToggleLikeInput } from '../../toggleLike/dto/toggle-Like.input';
 import { UpdateBoardInput } from '../dto/update-board.input';
 
@@ -16,7 +15,8 @@ export interface IBoardsServiceFindOne {
 }
 
 export interface IBoardsServiceFindArea {
-  area: string;
+  startArea?: string;
+  endArea?: string;
 }
 
 export interface IBoardsServiceFindSection {

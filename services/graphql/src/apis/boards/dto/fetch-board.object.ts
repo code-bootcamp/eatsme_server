@@ -10,10 +10,13 @@ export class BoardReturn {
   title: string;
 
   @Field(() => Date, { nullable: true })
-  createdAt: Date;
+  createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
 
   @Field(() => String, { nullable: true })
-  boardImg: string;
+  startArea: string;
+
+  @Field(() => String, { nullable: true })
+  endArea: string;
 
   @Field(() => String, { nullable: true })
   startPoint: string;
