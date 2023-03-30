@@ -10,8 +10,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   ) {
     super({
       jwtFromRequest: (req) => {
-        const cookie = req.headers.cookie;
-        const refreshToken = cookie.replace('refreshToken=', '');
+        const refreshToken = req.headers.cookie.split('=')[1];
         return refreshToken;
       },
       secretOrKey: process.env.JWT_REFRESH_KEY,
@@ -19,7 +18,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     });
   }
   async validate(req, payload) {
-    const refreshToken = req.headers.cookie.replace('refreshToken=', '');
+    const refreshToken = req.headers.cookie.split('=')[1];
     const redisRefreshToken = await this.cacheManager.get(
       `refreshToken:${refreshToken}`,
     );
