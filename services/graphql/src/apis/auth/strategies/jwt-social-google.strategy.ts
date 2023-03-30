@@ -6,18 +6,16 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: 'http://localhost:3000/login/google',
+      callbackURL: 'https://jjjbackendclass.shop/graphql/login/google',
       scope: ['email', 'profile'],
     });
   }
 
   validate(accessToken: string, refreshToken: string, profile: Profile) {
-    console.log('@@@', accessToken);
-    console.log('###', refreshToken);
-    console.log('$$$', profile);
-
     return {
       name: profile.displayName,
+      email: profile._json.email,
+      nickname: profile._json.given_name,
     };
   }
 }

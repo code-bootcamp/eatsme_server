@@ -93,9 +93,7 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
-    res.setHeader(
-      'Access-Control-Allow-Origin', process.env.ORIGIN2,
-    );
+    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN2);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader(
       'Set-Cookie',
