@@ -11,6 +11,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
+import { FilesModule } from './apis/files/files.module';
 
 import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
@@ -78,9 +79,6 @@ import { ReplysModule } from './apis/replies/reply.module';
   controllers: [
     AppController, //
   ],
-  providers: [
-    JwtAccessStrategy, //
-    JwtRefreshStrategy,
-  ],
+  providers: [],
 })
 export class AppModule {}
