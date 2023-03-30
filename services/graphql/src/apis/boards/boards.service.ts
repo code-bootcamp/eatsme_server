@@ -11,7 +11,6 @@ import { Comment } from '../Comments/entities/comment.entity';
 import { PersonalMapData } from '../personalData/entities/personalData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
-import { Comment } from '../Comments/entities/comment.entity';
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
 import {
@@ -37,7 +36,7 @@ export class BoardsService {
 
     @InjectRepository(ToggleLike)
     private readonly toggleLikeRepository: Repository<ToggleLike>,
-    
+
     @InjectRepository(Comment)
     private readonly commentsRepository: Repository<Comment>,
 
@@ -48,8 +47,7 @@ export class BoardsService {
   async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
     return this.boardsRepository.findOne({
       where: { id: boardId }, //
-      relations: ['comments.replies','comments','personalMapData', 'user'],
-
+      relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
     });
   }
 
@@ -291,6 +289,4 @@ export class BoardsService {
     const board = await this.boardsRepository.delete(boardId);
     return board.affected ? '데이터삭제' : '데이터없음';
   }
-
-
 }
