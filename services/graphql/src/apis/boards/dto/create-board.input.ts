@@ -12,6 +12,12 @@ class LocationInput {
 @InputType()
 class InfoInput {
   @Field(() => String)
+  area: string;
+
+  @Field(() => String)
+  section: string;
+
+  @Field(() => String)
   restaurantName: string;
 
   @Field(() => String, { nullable: true })
@@ -29,9 +35,6 @@ export class CreateBoardInput {
   @Field(() => String)
   title: string;
 
-  @Field(() => String, { nullable: true })
-  boardImg: string;
-
   @Field(() => String)
   startArea: string;
 
@@ -43,6 +46,8 @@ export class CreateBoardInput {
 
   @Field(() => String)
   endPoint: string;
+  @Field(() => String, { nullable: true })
+  boardImg: string;
 
   @Field(() => Int, { nullable: true })
   like: number;

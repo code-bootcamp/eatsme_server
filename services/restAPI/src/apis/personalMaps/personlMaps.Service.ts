@@ -26,7 +26,7 @@ export class PersonalMapsService {
     body,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
     console.log('---식당 정보 등록---');
-
+    console.log(body);
     const restaurantInfos = Promise.all(
       body.info.map(async (el) => {
         const restaurantInfo = await this.restaurantModel
@@ -66,8 +66,8 @@ export class PersonalMapsService {
             rating,
             phoneNumber,
             openingDays,
-            section: body.startPoint,
-            area: body.area,
+            section: el.section,
+            area: el.area,
           }).save();
           return postRestaurant;
         }
