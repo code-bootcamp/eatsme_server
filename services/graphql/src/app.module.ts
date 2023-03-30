@@ -42,7 +42,6 @@ import { ReplysModule } from './apis/replies/reply.module';
           origin: process.env.ORIGIN,
           credentials: true,
         },
-        uploads: false,
       }),
     }),
     TypeOrmModule.forRoot({

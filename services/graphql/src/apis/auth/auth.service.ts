@@ -93,7 +93,12 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
-    res.setHeader('Set-Cookie', `refreshToken=${refreshToken};path=/`);
+    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken};path=/ domain=.jjjbackendclass.shop; SameSite=None; Secure; httpOnly`,
+    );
   }
 
   restoreAccessToken({ user }: IAuthServiceGetRefreshToken): string {
