@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Comment } from 'src/apis/Comments/entities/comment.entity';
-import { PersonalMapData } from 'src/apis/personalData/entities/personalData.entity';
+import { PersonalMapData } from 'src/apis/personalMapData/entities/personalMapData.entity';
 
 @Entity()
 @ObjectType()

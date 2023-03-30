@@ -14,10 +14,10 @@ class InfoInput {
   @Field(() => String)
   restaurantName: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   recommend: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   imgUrl: string;
 
   @Field(() => LocationInput)
@@ -29,7 +29,7 @@ export class CreateBoardInput {
   @Field(() => String)
   title: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   boardImg: string;
 
   @Field(() => String)
@@ -44,7 +44,7 @@ export class CreateBoardInput {
   @Field(() => String)
   endPoint: string;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   like: number;
 
   @Field(() => Date)

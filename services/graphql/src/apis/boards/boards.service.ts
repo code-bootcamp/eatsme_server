@@ -1,4 +1,5 @@
 import {
+  ConsoleLogger,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -7,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
 import { Comment } from '../Comments/entities/comment.entity';
-import { PersonalMapData } from '../personalData/entities/personalData.entity';
+import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
 import { BoardReturn } from './dto/fetch-board.object';
@@ -31,7 +32,7 @@ export class BoardsService {
     private readonly boardsRepository: Repository<Board>,
 
     @InjectRepository(PersonalMapData)
-    private readonly personalDataRepository: Repository<PersonalMapData>,
+    private readonly personalMapDataRepository: Repository<PersonalMapData>,
 
     @InjectRepository(ToggleLike)
     private readonly toggleLikeRepository: Repository<ToggleLike>,
@@ -223,8 +224,7 @@ export class BoardsService {
           recommend,
           imgUrl,
         } = sum;
-
-        const personalMapData = await this.personalDataRepository.save({
+        const personalMapData = await this.personalMapDataRepository.save({
           restaurantId,
           restaurantName,
           address,
@@ -238,6 +238,7 @@ export class BoardsService {
         return restaurantInfo;
       }),
     );
+
     return { ...board, personalMapData: restaurantMainInfos };
   }
   //게시물 업데이트하기
@@ -245,52 +246,40 @@ export class BoardsService {
     const { info, ...boardInfo } = updateBoardInput;
     const { boardId } = boardInfo;
     const board = await this.findOne({ boardId });
-
     if (!board) {
       throw new NotFoundException('등록되지 않은 게시판입니다.');
     }
-
-    //업데이트,등록,삭제를 한번에 해줘야 하는 과정이다.
-    //입력된 info와 board의 personalMapdata를 비교한다.
-    //personalMapData를 뱐환후 비교한다.
     const restaurantIds = JSON.parse(JSON.stringify(board.personalMapData)).map(
       (el) => {
         return el.restaurantId;
       },
     );
-    const oldRestaurantInfo = await axios.get(
-      'http://road-service:7100/info/road/map',
-      {
-        data: restaurantIds,
-      },
-    );
-
     const newRestaurantInfo = await axios.post(
       'http://road-service:7100/info/road/map',
       {
         info,
       },
     );
-
-    info.map((el, id) => {
-      oldRestaurantInfo.data.forEach((it, idx) => {
-        //식당이름이 같은 경우를 기준으로 업데이트한다.
-        if (el.restaurantName === it.restaurantName) {
-          //기존의 정보와 입력한 정보가 업데이트가 된경우 배열에서 없앤다.
-          console.log(el, it);
-          // this.personalDataRepository.save();
-          info.splice(id, 1, null);
-          oldRestaurantInfo.data.splice(idx, 1);
+    const oldPersonalMapDatas = JSON.parse(
+      JSON.stringify(board.personalMapData),
+    );
+    const newPersonalMapInfos = info.map((el, i) => {
+      const { location, restaurantName, ...rest } = el;
+      return { ...rest, restaurantId: newRestaurantInfo.data[i]._id };
+    });
+    newPersonalMapInfos.forEach(async (fresh, id) => {
+      return oldPersonalMapDatas.forEach(async (old, idx) => {
+        if (fresh.restaurantId === old.restaurantId) {
+          const updatePersonalMapData =
+            await this.personalMapDataRepository.save({
+              ...old,
+              ...fresh,
+            });
+          oldPersonalMapDatas.splice(idx, 1, null);
+          newPersonalMapInfos.splice(id, 1, null);
         }
-        //같은경우가 없는 경우
       });
     });
-
-    console.log('$$$$$$$');
-    //다시한번더 순회하면서 null이 아니면 저장한다.
-    console.log(info);
-    //남아있으면 삭제한다.
-    console.log(oldRestaurantInfo.data);
   }
 
   //게시물 삭제하기

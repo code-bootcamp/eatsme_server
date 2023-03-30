@@ -26,6 +26,7 @@ export class PersonalMapsService {
     body,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
     console.log('---식당 정보 등록---');
+
     const restaurantInfos = Promise.all(
       body.info.map(async (el) => {
         const restaurantInfo = await this.restaurantModel
@@ -72,6 +73,7 @@ export class PersonalMapsService {
         }
       }),
     );
+    console.log('---식당 정보 등록 완료---');
     return restaurantInfos;
   }
 
@@ -80,6 +82,7 @@ export class PersonalMapsService {
   }: IPersonalMapsServiceGetPersonalMap): Promise<
     IPersonalMapsServiceGetPersonalMapReturn[]
   > {
+    console.log('---식당 정보 조회---');
     const restaurantInfo = await Promise.all(
       body.map(async (_id) => {
         //없는 경우 null을 반환한다. 이때 에러를 던져 준다.
@@ -95,7 +98,7 @@ export class PersonalMapsService {
         return { restaurantName, address, rating, _id, location };
       }),
     );
-
+    console.log('---식당 정보 조회 완료');
     return restaurantInfo;
   }
 }

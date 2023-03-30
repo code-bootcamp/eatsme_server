@@ -1,5 +1,4 @@
 import { Catch, ExceptionFilter, HttpException } from '@nestjs/common';
-import { MongooseError } from 'mongoose';
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException) {
