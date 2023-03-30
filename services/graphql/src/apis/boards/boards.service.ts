@@ -1,5 +1,4 @@
 import {
-  ConsoleLogger,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -7,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
-import { Comment } from '../Comments/entities/comment.entity';
+// import { Comment } from '../Comments/entities/comment.entity';
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
@@ -267,19 +266,26 @@ export class BoardsService {
       const { location, restaurantName, ...rest } = el;
       return { ...rest, restaurantId: newRestaurantInfo.data[i]._id };
     });
-    newPersonalMapInfos.forEach(async (fresh, id) => {
-      return oldPersonalMapDatas.forEach(async (old, idx) => {
+    const isSave = [];
+    const isDelete = [];
+    newPersonalMapInfos.forEach(async (fresh, id, freshArr) => {
+      oldPersonalMapDatas.forEach(async (old, idx, oldArr) => {
         if (fresh.restaurantId === old.restaurantId) {
           const updatePersonalMapData =
             await this.personalMapDataRepository.save({
               ...old,
               ...fresh,
             });
-          oldPersonalMapDatas.splice(idx, 1, null);
-          newPersonalMapInfos.splice(id, 1, null);
         }
+        // console.log(freshArr);
+        freshArr = freshArr.splice(id, 1, null);
+        isSave.push(freshArr);
+        isDelete.push(oldArr);
       });
+      console.log('$$$$$$$$$$');
     });
+    // console.log(isDelete);
+    console.log(isSave);
   }
 
   //게시물 삭제하기
