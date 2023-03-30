@@ -26,10 +26,7 @@ describe('AuthService', () => {
           useClass: MockAuthService,
         },
         UserService,
-        {
-          provide:getRepository(User)
-          useClass:
-        }
+       
       ],
       controllers: [
         AuthController, //
@@ -39,6 +36,8 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('로그인시 아이디가 db에 있는지 확인', async () => {});
+    it('로그인시 아이디가 db에 있는지 확인', async () => {
+      //
+    });
   });
 });
