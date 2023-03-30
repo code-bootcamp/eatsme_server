@@ -26,6 +26,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly mailerService: MailerService,
@@ -160,20 +161,26 @@ export class UserService {
   `;
     this.mailerService.sendMail({
       to: email,
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_USER, //   }const storageDelet = image_url
+      //   .split(process.env.BUCKET)[1]
+      //   .replace('/', '');
+      // this.imagesServcie.storageDelete({ storageDelet });
+
       subject: 'EatsMe 가입을 환영합니다.', //이메일 제목
       html: eatsMeTemplate,
     });
   }
 
   //-----회원가입-----
-  async create({ createUserInput }: IUsersCreate): Promise<User> {
+  async createUser({ createUserInput }: IUsersCreate): Promise<User> {
     const { email, password, nickname } = createUserInput;
 
     if (!email || !email.includes('@') || 30 <= email.length) {
-      throw new ConflictException('제대로된 이메일을 입력해주세요');
+      throw new ConflictException('제대로된 이메일을 입력해주세요.');
     }
-
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요.');
+    }
     await this.isFindOneByEmail({ email });
 
     await this.isFindOneByNickname({ nickname });
@@ -181,7 +188,6 @@ export class UserService {
     await this.welcomeToTemplate({ email });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     return this.userRepository.save({
       email,
       password: hashedPassword,
@@ -189,8 +195,11 @@ export class UserService {
     });
   }
 
+  //이미지 추가하는 로직 추가해야합니다!
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
+    const { userImg } = updateUserInput;
     const user = await this.findOneByUser({ userId });
+
     if (updateUserInput.password) {
       const hashpw = await bcrypt.hash(updateUserInput.password, 10);
       return this.userRepository.save({

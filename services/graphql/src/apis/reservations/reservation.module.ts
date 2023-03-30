@@ -20,4 +20,4 @@ import { ReservationsService } from './reservation.service';
   ],
   controllers: [],
 })
-export class reservationModule {}
+export class ReservationModule {}

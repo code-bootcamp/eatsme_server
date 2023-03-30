@@ -50,7 +50,7 @@ export class Board {
 
   @Column({ default: 0 })
   @Field(() => Int)
-  like!: number;
+  like: number;
 
   @ManyToOne(() => User, (user) => user.boards)
   @Field(() => User)

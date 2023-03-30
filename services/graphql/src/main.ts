@@ -1,13 +1,19 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { graphqlUploadExpress } from 'graphql-upload';
 import { HttpExceptionFilter } from 'src/commons/filter/http-exception.filter';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  app.use(graphqlUploadExpress());
+
   app.enableCors({
-    // origin: process.env.ORIGIN,
-    origin: '*',
+    origin: process.env.ORIGIN,
+    // origin: '*',
     credentials: true,
   });
   await app.listen(7000, () => {

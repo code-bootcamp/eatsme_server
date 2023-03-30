@@ -5,11 +5,7 @@ import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
 import { BoardsService } from './boards.service';
 import { CreateBoardInput } from './dto/create-board.input';
 import { FetchBoardsBySectionInput } from './dto/fetch-board-secton.input';
-import { FetchBoardInput } from './dto/fetch-board.input';
 import { BoardReturn } from './dto/fetch-board.object';
-import { ToggleLikeInput } from '../toggleLike/dto/toggle-Like.input';
-import { UpdateBoardInput } from './dto/update-board.input';
-import { Board } from './entities/board.entity';
 
 @Resolver()
 export class BoardsResolver {
