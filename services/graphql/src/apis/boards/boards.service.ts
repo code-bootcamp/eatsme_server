@@ -36,6 +36,9 @@ export class BoardsService {
     @InjectRepository(ToggleLike)
     private readonly toggleLikeRepository: Repository<ToggleLike>,
 
+    @InjectRepository(Comment)
+    private readonly commentsRepository: Repository<Comment>,
+
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}

@@ -11,15 +11,15 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken';
 import {
-  IAuthServcieIsToken,
   IAuthServiceGetAccessToken,
   IAuthServiceGetRefreshToken,
+  IAuthServiceIsToken,
   IAuthServiceLogin,
   IAuthServiceLogout,
   IAuthServiceSetRefreshToken,
+  IAuthServiceSocialLogin,
 } from './interfaces/auth-service.interface';
 import { Cache } from 'cache-manager';
-import { isatty } from 'tty';
 
 @Injectable()
 export class AuthService {
@@ -44,15 +44,15 @@ export class AuthService {
     return this.getAccessToken({ user });
   }
 
-  async isToken({ token }: IAuthServcieIsToken): Promise<Object> {
+  async isToken({ token }: IAuthServiceIsToken): Promise<Object> {
     try {
       for (let i in token) {
         if (i === 'access') {
           return jwt.verify(token.access, process.env.JWT_ACCESS_KEY);
         } else return jwt.verify(token.refresh, process.env.JWT_REFRESH_KEY);
       }
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      console.log(err);
       throw new UnauthorizedException();
     }
   }
@@ -70,19 +70,19 @@ export class AuthService {
       `accessToken:${accessToken.access}`,
       'accessToken',
       {
-        ttl: result[0]['exp'] - result[0]['iat'],
+        ttl: result[1]['exp'] - Math.trunc(Date.now() / 1000),
       },
     );
-
-    console.log(result[1]['exp'], result[1]['iat']);
+    console.log(result);
 
     const isRefreshToken = await this.cacheManager.set(
       `refreshToken:${refreshToken.refresh}`,
       'refreshToken',
       {
-        ttl: result[1]['exp'] - result[1]['iat'],
+        ttl: result[0]['exp'] - Math.trunc(Date.now() / 1000),
       },
     );
+
     console.log(isAccessToken, isRefreshToken, '@@@');
 
     return '로그아웃';
@@ -93,7 +93,12 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
-    res.setHeader('Set-Cookie', `refreshToken=${refreshToken};path=/`);
+    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN2);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken};path=/ domain=.jjjbackendclass.shop; SameSite=None; Secure; httpOnly`,
+    );
   }
 
   restoreAccessToken({ user }: IAuthServiceGetRefreshToken): string {
@@ -105,5 +110,21 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_ACCESS_KEY, expiresIn: '2h' },
     );
+  }
+
+  async socialLogin({ req, res }: IAuthServiceSocialLogin) {
+    console.log(req, res);
+    let user = await this.usersService.isFindOneByEmail({
+      email: req.user.email,
+    });
+
+    if (!user) {
+      user = await this.usersService.createUser({
+        createUserInput: req.user,
+      });
+    }
+    // console.log(user);
+    this.setRefreshToken({ user, res });
+    res.redirect('http://local:5500/seb11_team03_server/index.html');
   }
 }

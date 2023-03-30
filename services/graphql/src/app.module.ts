@@ -11,6 +11,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
+import { FilesModule } from './apis/files/files.module';
 
 import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
@@ -39,10 +40,9 @@ import { ReplysModule } from './apis/replies/reply.module';
         autoSchemaFile: true,
         context: ({ req, res }) => ({ req, res }),
         cors: {
-          origin: process.env.ORIGIN,
+          origin: process.env.ORIGIN2,
           credentials: true,
         },
-        uploads: false,
       }),
     }),
     TypeOrmModule.forRoot({
@@ -79,9 +79,6 @@ import { ReplysModule } from './apis/replies/reply.module';
   controllers: [
     AppController, //
   ],
-  providers: [
-    JwtAccessStrategy, //
-    JwtRefreshStrategy,
-  ],
+  providers: [],
 })
 export class AppModule {}
