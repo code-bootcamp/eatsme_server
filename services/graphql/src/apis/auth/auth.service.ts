@@ -95,10 +95,10 @@ export class AuthService {
     );
 
     // 개발환경;
-    res.setHeader(
-      'Set-Cookie',
-      `refreshToken=${refreshToken};path=/; httpOnly`,
-    );
+    // res.setHeader(
+    //   'Set-Cookie',
+    //   `refreshToken=${refreshToken};path=/; httpOnly`,
+    // );
 
     // 배포환경;
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');

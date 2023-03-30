@@ -20,6 +20,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
 import axios from 'axios';
+import { ImagesService } from '../images/images.service';
 
 @Injectable()
 export class UserService {
@@ -29,7 +30,11 @@ export class UserService {
 
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+  
     private readonly mailerService: MailerService,
+
+    private readonly imagesService: ImagesService
+
   ) {}
 
   //-----유저id확인-----
@@ -195,13 +200,14 @@ export class UserService {
     });
   }
 
-  //이미지 추가하는 로직 추가해야합니다!
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
-    const { userImg } = updateUserInput;
     const user = await this.findOneByUser({ userId });
 
+    if(user.userImg !== updateUserInput?.userImg){
+      this.imagesService.storageDelete({storageDel:user.userImg})
+    }
     if (updateUserInput.password) {
-      const hashpw = await bcrypt.hash(updateUserInput.password, 10);
+      const hashpw = await bcrypt.hash(updateUserInput.password, 1);
       return this.userRepository.save({
         ...user,
         ...updateUserInput,

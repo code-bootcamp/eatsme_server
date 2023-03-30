@@ -5,7 +5,7 @@ import { IFilesServiceUpload } from './interfaces/files-service.interface';
 
 @Injectable()
 export class FilesService {
-  async upload({ file }: IFilesServiceUpload) {
+  async imgUploadOne({ file }: IFilesServiceUpload) {
     const storage = new Storage({
       projectId: process.env.GCP_PROJECTID,
       keyFilename: process.env.GCP_KEY_FILENAME,
