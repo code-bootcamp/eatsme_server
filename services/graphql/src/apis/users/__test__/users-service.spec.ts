@@ -10,7 +10,6 @@ import { ConfigModule } from '@nestjs/config';
 
 import { ImagesService } from 'src/apis/images/images.service';
 
-
 describe('UserService', () => {
   let userService: UserService;
 
@@ -94,6 +93,8 @@ describe('UserService', () => {
       expect(result).toBe('black1594@naver.com');
     });
   });
+
+  // describe('findOneByUser', () => {});
 
   describe('isFindOneByNickname', () => {
     it('닉네임 값을 입력 안한 경우', async () => {
@@ -245,7 +246,6 @@ describe('UserService', () => {
       };
       const mockUserService = new MockUserService();
       const result = await userService.createUser({ ...mydata });
-      console.log(result);
 
       expect(result).toEqual(mockUserService.save(result));
     });

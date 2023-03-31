@@ -3,6 +3,7 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/commons/interfaces/context';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
 import { CreateUserInput } from './dto/create-user.input';
+import { MatchAuthNumberInput } from './dto/matchAuthNumber-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
@@ -22,12 +23,18 @@ export class UserResolver {
     return this.userService.findOneByUser({ userId: context.req.user.id });
   }
 
+  //-----인증번호 확인매치-----
+  @Mutation(() => String)
+  async matchAuthNumber(
+    @Args('matchtAuthNumberInput') matchAuthNumberInput: MatchAuthNumberInput,
+  ) {
+    return this.userService.matchAuthNumber({ matchAuthNumberInput });
+  }
+
   // -----회원 조회-----
 
   @Query(() => User)
-  fetchUser(
-    @Args('userId') userId: string
-  ): Promise<User> {
+  fetchUser(@Args('userId') userId: string): Promise<User> {
     return this.userService.findOneByUser({ userId });
   }
 
