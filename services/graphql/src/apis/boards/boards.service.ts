@@ -10,13 +10,13 @@ import { Comment } from '../Comments/entities/comment.entity';
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
+import { UserService } from '../users/users.service';
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
 import {
   IBoardsServiceCreate,
   IBoardsServiceDelete,
   IBoardsServiceFetchBoard,
-  IBoardsServiceFindArea,
   IBoardsServiceFindOne,
   IBoardsServiceFindSection,
   IBoardsServiceMyFetchBoard,
@@ -41,23 +41,27 @@ export class BoardsService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+
+    private readonly userService: UserService,
   ) {}
 
   async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
-    return this.boardsRepository.findOne({
+    const board = await this.boardsRepository.findOne({
       where: { id: boardId }, //
       relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
     });
+    if (!board) throw new UnprocessableEntityException('등록후 조회해주세요');
+    return board;
   }
 
   //내가 작성한 게시물 정보조회
   async fetchMyBoard({
-    userId,
+    context,
   }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[] | string> {
     const myBoards = await this.boardsRepository.find({
       where: {
         user: {
-          id: userId,
+          id: context.req.user.id,
         },
       },
     });
@@ -74,11 +78,11 @@ export class BoardsService {
   }
 
   async fetchMyLikeBoard({
-    userId,
+    context,
   }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[] | string> {
     const ToggleLikeIds = await this.toggleLikeRepository.find({
       where: {
-        userId,
+        id: context.req.user.id,
       },
     });
     if (ToggleLikeIds.length) {
@@ -120,7 +124,6 @@ export class BoardsService {
         imgUrl,
       } = sum;
 
-
       return {
         restaurantId,
         restaurantName,
@@ -136,42 +139,13 @@ export class BoardsService {
       createdAt: board.createdAt,
     };
   }
-  //시,도별 게시물 정보조회
-  async findByStartArea({
-    startArea,
-  }: IBoardsServiceFindArea): Promise<BoardReturn[]> {
-    const BoardInfo = await this.boardsRepository.find({
-      where: { startArea },
-      relations: ['personalMapData'],
-    });
-    const personalBoards = await Promise.all(
-      BoardInfo.map(async (el) => {
-        return await this.fetchBoard({ boardId: el.id });
-      }),
-    );
-    return personalBoards;
-  }
 
-  async findByEndArea({
-    endArea,
-  }: IBoardsServiceFindArea): Promise<BoardReturn[]> {
-    const BoardInfo = await this.boardsRepository.find({
-      where: { endArea },
-      relations: ['personalMapData'],
-    });
-    const personalBoards = await Promise.all(
-      BoardInfo.map(async (el) => {
-        return await this.fetchBoard({ boardId: el.id });
-      }),
-    );
-    return personalBoards;
-  }
-  //행정구역별 게시물 조회
-  async findByStartPoint({
-    fetchBoardsBySectionInput,
+  //시,행정구역별 게시물 조회
+  async findByEvery({
+    fetchBoardsByEveryInput,
   }: IBoardsServiceFindSection): Promise<BoardReturn[]> {
     const BoardInfo = await this.boardsRepository.find({
-      where: { ...fetchBoardsBySectionInput },
+      where: { ...fetchBoardsByEveryInput },
     });
     const personalBoards = await Promise.all(
       BoardInfo.map(async (el) => {
@@ -195,14 +169,14 @@ export class BoardsService {
   }
   //게시물 작성하기
   async create({
-    userId,
+    id,
     createBoardInput,
   }: IBoardsServiceCreate): Promise<BoardReturn> {
     const { info, ...boardInfo } = createBoardInput;
     const { title, startPoint, endPoint } = boardInfo;
     await this.checkList({ title, startPoint, endPoint });
     const user = await this.usersRepository.findOne({
-      where: { id: userId },
+      where: { id },
     });
     //생성한 식당 정보와 이미지url그리고 추천음식정보를 함께 담아준다.
     const board = await this.boardsRepository.save({
@@ -231,14 +205,12 @@ export class BoardsService {
         const personalMapData = await this.personalMapDataRepository.save({
           restaurantId,
           restaurantName,
-          address,
-          location,
-          rating,
           recommend,
           imgUrl,
           board,
         });
         const { board: newBoard, ...restaurantInfo } = personalMapData;
+        console.log({ board: newBoard, ...restaurantInfo });
         return restaurantInfo;
       }),
     );
@@ -272,15 +244,26 @@ export class BoardsService {
       return { ...rest, restaurantId: newRestaurantInfo.data[i]._id };
     });
 
-
     console.log(oldPersonalMapDatas);
     console.log('$$$$$$$$');
     console.log(newPersonalMapInfos);
   }
 
   //게시물 삭제하기
-  async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
-    const board = await this.boardsRepository.delete(boardId);
-    return board.affected ? '데이터삭제' : '데이터없음';
+  async delete({ boardId, context }: IBoardsServiceDelete): Promise<string> {
+    const user = await this.userService.findOneByUser({
+      userId: context.req.user.id,
+    });
+    const isDelete = JSON.parse(JSON.stringify(user.boards)).filter((el) => {
+      return el.id === boardId;
+    });
+    if (!isDelete.length) {
+      const board = await this.boardsRepository.delete(boardId);
+      return board.affected
+        ? '게시물이 정상적으로 삭제되었습니다.'
+        : '이미 지워진 게시물입니다.';
+    } else {
+      return '이미 지워진 게시물입니다.';
+    }
   }
 }

@@ -23,7 +23,6 @@ import axios from 'axios';
 
 import { ImagesService } from '../images/images.service';
 
-
 @Injectable()
 export class UserService {
   constructor(
@@ -41,7 +40,12 @@ export class UserService {
   async findOneByUser({ userId }: IUserFindOneByUser): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['reservations', 'alarms', 'boards.comments.replies'],
+      relations: [
+        'reservations',
+        'alarms',
+        'boards.comments.replies',
+        'boards',
+      ],
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
@@ -208,7 +212,6 @@ export class UserService {
 
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
     const user = await this.findOneByUser({ userId });
-
 
     if (user.userImg !== updateUserInput?.userImg) {
       this.imagesService.storageDelete({ storageDel: user.userImg });

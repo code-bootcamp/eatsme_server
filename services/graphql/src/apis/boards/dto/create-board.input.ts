@@ -26,7 +26,7 @@ class InfoInput {
   @Field(() => String, { nullable: true })
   imgUrl: string | null;
 
-  @Field(() => LocationInput)
+  @Field(() => LocationInput, { nullable: true })
   location: LocationInput;
 }
 

@@ -1,11 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class FetchBoardsBySectionInput {
-  @Field(() => String)
-  area: string;
+export class FetchBoardsByEveryInput {
+  @Field(() => String, { nullable: true })
+  startArea: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  endArea: string;
+
+  @Field(() => String, { nullable: true })
   startPoint: string;
 
   @Field(() => String, { nullable: true })
