@@ -93,12 +93,11 @@ export class AuthService {
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
 
-
     //개발환경
-    res.setHeader(
-      'Set-Cookie',
-      `refreshToken=${refreshToken};path=/; httpOnly`,
-    );
+    // res.setHeader(
+    //   'Set-Cookie',
+    //   `refreshToken=${refreshToken};path=/; httpOnly`,
+    // );
 
     //배포환경
 
@@ -134,6 +133,6 @@ export class AuthService {
     }
 
     this.setRefreshToken({ user, res });
-    res.redirect('http://local:5500/seb11_team03_server/index.html');
+    res.redirect('https://eatsme.site');
   }
 }
