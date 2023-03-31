@@ -8,7 +8,6 @@ export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema()
 export class Restaurant {
-
   @ApiProperty()
   @Prop({ type: String, default: randomUUID })
   _id: string;

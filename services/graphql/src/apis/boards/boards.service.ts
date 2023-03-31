@@ -44,20 +44,22 @@ export class BoardsService {
   ) {}
 
   async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
-    return this.boardsRepository.findOne({
+    const board = await this.boardsRepository.findOne({
       where: { id: boardId }, //
       relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
     });
+    if (!board) throw new UnprocessableEntityException('등록후 조회해주세요');
+    return board;
   }
 
   //내가 작성한 게시물 정보조회
   async fetchMyBoard({
-    userId,
+    context,
   }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[] | string> {
     const myBoards = await this.boardsRepository.find({
       where: {
         user: {
-          id: userId,
+          id: context.req.user.id,
         },
       },
     });
@@ -74,11 +76,11 @@ export class BoardsService {
   }
 
   async fetchMyLikeBoard({
-    userId,
+    context,
   }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[] | string> {
     const ToggleLikeIds = await this.toggleLikeRepository.find({
       where: {
-        userId,
+        id: context.req.user.id,
       },
     });
     if (ToggleLikeIds.length) {
@@ -119,7 +121,6 @@ export class BoardsService {
         recommend,
         imgUrl,
       } = sum;
-
 
       return {
         restaurantId,
@@ -195,14 +196,14 @@ export class BoardsService {
   }
   //게시물 작성하기
   async create({
-    userId,
+    id,
     createBoardInput,
   }: IBoardsServiceCreate): Promise<BoardReturn> {
     const { info, ...boardInfo } = createBoardInput;
     const { title, startPoint, endPoint } = boardInfo;
     await this.checkList({ title, startPoint, endPoint });
     const user = await this.usersRepository.findOne({
-      where: { id: userId },
+      where: { id },
     });
     //생성한 식당 정보와 이미지url그리고 추천음식정보를 함께 담아준다.
     const board = await this.boardsRepository.save({
@@ -231,9 +232,6 @@ export class BoardsService {
         const personalMapData = await this.personalMapDataRepository.save({
           restaurantId,
           restaurantName,
-          address,
-          location,
-          rating,
           recommend,
           imgUrl,
           board,
@@ -271,7 +269,6 @@ export class BoardsService {
       const { location, restaurantName, ...rest } = el;
       return { ...rest, restaurantId: newRestaurantInfo.data[i]._id };
     });
-
 
     console.log(oldPersonalMapDatas);
     console.log('$$$$$$$$');

@@ -3,12 +3,13 @@ import { CreateBoardInput } from '../dto/create-board.input';
 import { FetchBoardsBySectionInput } from '../dto/fetch-board-secton.input';
 import { ToggleLikeInput } from '../../toggleLike/dto/toggle-Like.input';
 import { UpdateBoardInput } from '../dto/update-board.input';
+import { IContext } from 'src/commons/interfaces/context';
 
 export interface IBoardsServiceFetchBoard {
   boardId: string;
 }
 export interface IBoardsServiceMyFetchBoard {
-  userId: string;
+  context: IContext;
 }
 export interface IBoardsServiceFindOne {
   boardId: string;
@@ -35,7 +36,7 @@ export interface IBoardsServiceNullCheckList {
 
 export interface IBoardsServiceCreate {
   createBoardInput: CreateBoardInput;
-  userId: string;
+  id: string;
 }
 
 export interface IBoardsServiceUpdate {

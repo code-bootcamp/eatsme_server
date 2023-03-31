@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { Body, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/commons/interfaces/context';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
@@ -24,8 +24,7 @@ export class BoardsResolver {
   fetchMyBoard(
     @Context() context: IContext, //
   ): Promise<BoardReturn[] | string> {
-    const { id: userId } = context.req.user;
-    return this.boardsService.fetchMyBoard({ userId });
+    return this.boardsService.fetchMyBoard({ context });
   }
 
   @UseGuards(GqlAuthGuard('access'))
@@ -34,8 +33,7 @@ export class BoardsResolver {
   fetchMyLikeBoard(
     @Context() context: IContext, //
   ): Promise<BoardReturn[] | string> {
-    const { id: userId } = context.req.user;
-    return this.boardsService.fetchMyLikeBoard({ userId });
+    return this.boardsService.fetchMyLikeBoard({ context });
   }
 
   @Query(() => [BoardReturn])
@@ -68,9 +66,9 @@ export class BoardsResolver {
     @Context() context: IContext,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
   ): Promise<BoardReturn> {
-    const { id: userId } = context.req.user;
+    const { id } = context.req.user;
     return this.boardsService.create(
-      JSON.parse(JSON.stringify({ createBoardInput, userId })),
+      JSON.parse(JSON.stringify({ createBoardInput, id })),
     );
   }
 
