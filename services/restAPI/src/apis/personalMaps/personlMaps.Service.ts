@@ -26,7 +26,6 @@ export class PersonalMapsService {
     body,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
     console.log('---식당 정보 등록---');
-    console.log(body);
     const restaurantInfos = Promise.all(
       body.info.map(async (el) => {
         const restaurantInfo = await this.restaurantModel
@@ -39,37 +38,54 @@ export class PersonalMapsService {
         if (restaurantInfo.length) {
           return await restaurantInfo[0];
         } else {
+          const add = '제주 제주시 애월읍 하귀로 66';
           const config = {
             method: 'get',
-            url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${el.restaurantName}&key=${this.apiKey}&location=${el.location.lat}%2C${el.location.lng}&radius=10&language=ko&type=restaurant`,
+            url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${el.restaurantName}&key=${this.apiKey}&location=${el.location.lat}%2C${el.location.lng}&radius=100&language=ko`,
           };
           const result = await axios(config);
           const newRestaurant = result.data.results.filter((it) => {
+            console.log('#######');
+            console.log(el.restaurantName, it.name);
             return it.name === el.restaurantName;
           });
-          const {
-            geometry,
-            place_id,
-            name: restaurantName,
-            rating,
-            user_ratings_total: userRatingsTotal,
-          } = newRestaurant[0];
-          const address = newRestaurant[0].formatted_address || null;
-          const { location } = geometry;
-          const { phoneNumber, openingDays } =
-            await this.restaurantService.getDetails(place_id);
-          const postRestaurant = await new this.restaurantModel({
-            restaurantName,
-            address,
-            location,
-            userRatingsTotal,
-            rating,
-            phoneNumber,
-            openingDays,
-            section: el.section,
-            area: el.area,
-          }).save();
-          return postRestaurant;
+          if (newRestaurant) {
+            console.log('입력값을 그대로 저장');
+            console.log(el);
+
+            const postRestaurant = await new this.restaurantModel({
+              ...el,
+              openingDays: null,
+              phoneNumber: null,
+            }).save();
+            console.log(postRestaurant);
+          } else {
+            const {
+              geometry,
+              place_id,
+              name: restaurantName,
+              rating,
+              user_ratings_total: userRatingsTotal,
+            } = newRestaurant[0];
+            const address = newRestaurant[0].formatted_address || null;
+            const { location } = geometry;
+            const { phoneNumber, openingDays } =
+              await this.restaurantService.getDetails(place_id);
+            console.log('########');
+            const postRestaurant = await new this.restaurantModel({
+              restaurantName,
+              address,
+              location,
+              userRatingsTotal,
+              rating,
+              phoneNumber,
+              openingDays,
+              section: el.section,
+              area: el.area,
+            }).save();
+            console.log(postRestaurant);
+            return postRestaurant;
+          }
         }
       }),
     );

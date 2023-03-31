@@ -198,8 +198,8 @@ export class BoardsService {
     createBoardInput,
   }: IBoardsServiceCreate): Promise<BoardReturn> {
     const { info, ...boardInfo } = createBoardInput;
-    // const { title, startPoint, endPoint } = boardInfo;
-    // await this.checkList({ title, startPoint, endPoint });
+    const { title, startPoint, endPoint } = boardInfo;
+    await this.checkList({ title, startPoint, endPoint });
     const user = await this.usersRepository.findOne({
       where: { id: userId },
     });
