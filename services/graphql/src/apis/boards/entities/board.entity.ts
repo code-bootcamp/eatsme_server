@@ -52,7 +52,9 @@ export class Board {
   @Field(() => Int)
   like: number;
 
-  @ManyToOne(() => User, (user) => user.boards)
+  @ManyToOne(() => User, (user) => user.boards, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => User)
   user: User;
 
@@ -62,7 +64,13 @@ export class Board {
   @Field(() => [Comment])
   comments: Comment[];
 
-  @OneToMany(() => PersonalMapData, (personalMapData) => personalMapData.board)
+  @OneToMany(
+    () => PersonalMapData,
+    (personalMapData) => personalMapData.board,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @Field(() => PersonalMapData)
   personalMapData: PersonalMapData;
 }

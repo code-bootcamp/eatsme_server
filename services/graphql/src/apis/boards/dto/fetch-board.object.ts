@@ -1,5 +1,6 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { Comment } from 'src/apis/Comments/entities/comment.entity';
+import { User } from 'src/apis/users/entities/user.entity';
 
 @ObjectType()
 export class BoardReturn {
@@ -32,6 +33,9 @@ export class BoardReturn {
 
   @Field(() => [Comment], { nullable: true })
   comments: Comment[];
+
+  @Field(() => User)
+  user: User;
 }
 
 @ObjectType()
@@ -63,6 +67,6 @@ class RestaurantBoardInfo {
   @Field(() => String, { nullable: true })
   rating: string;
 
-  @Field(() => LocationObject)
+  @Field(() => LocationObject, { nullable: true })
   location: LocationObject;
 }

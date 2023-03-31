@@ -26,7 +26,6 @@ export class RestaurantController {
     return this.restaurantService.postRestaurants({ body });
   }
 
-
   @Get('/info/road/restaurant')
   @ApiOperation({ summary: 'Create cat' })
   @ApiResponse({

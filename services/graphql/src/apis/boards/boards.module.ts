@@ -26,9 +26,7 @@ import { Board } from './entities/board.entity';
     BoardsResolver, //
     BoardsService,
     UserService,
-
     ImagesService,
-
   ],
 })
 export class BoardModule {}

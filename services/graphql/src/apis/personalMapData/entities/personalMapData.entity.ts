@@ -13,15 +13,17 @@ export class PersonalMapData {
   @Field(() => String)
   restaurantId: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Field(() => String)
   recommend: string;
 
-  @Column()
-  @Field(() => String, { nullable: true, defaultValue: null })
+  @Column({ nullable: true })
+  @Field(() => String)
   imgUrl: string | null;
 
-  @ManyToOne(() => Board, (board) => board.personalMapData)
+  @ManyToOne(() => Board, (board) => board.personalMapData, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Board)
   board: Board;
 }
