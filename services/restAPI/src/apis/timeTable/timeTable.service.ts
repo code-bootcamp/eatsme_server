@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ITimeTableFindOne } from './interfaces/timeTable.interface';
@@ -11,7 +11,11 @@ export class TimeTalbesService {
     private readonly timeTableModel: Model<TimeTableDocument>,
   ) {}
 
-  findOne({ _id }: ITimeTableFindOne): Promise<TimeTableDocument> {
-    return this.timeTableModel.findOne({ _id }).exec();
+  async findOne({ _id }: ITimeTableFindOne): Promise<TimeTableDocument> {
+    const result = await this.timeTableModel.findOne({ _id }).exec();
+    if (!result)
+      throw new UnprocessableEntityException('예약 가능한 시간이 아닙니다.');
+
+    return result;
   }
 }
