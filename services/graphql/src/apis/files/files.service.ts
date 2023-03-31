@@ -1,10 +1,12 @@
 import { Storage } from '@google-cloud/storage';
+
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { getToday } from 'src/commons/utils/utils';
 import { IFilesServiceUpload } from './interfaces/files-service.interface';
 
 @Injectable()
 export class FilesService {
+
   async upload({ file }: IFilesServiceUpload) {
     const storage = new Storage({
       projectId: process.env.GCP_PROJECTID,
@@ -25,5 +27,6 @@ export class FilesService {
     }
 
     return fileName;
+
   }
 }

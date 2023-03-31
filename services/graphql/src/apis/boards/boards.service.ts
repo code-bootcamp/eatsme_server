@@ -120,6 +120,7 @@ export class BoardsService {
         imgUrl,
       } = sum;
 
+
       return {
         restaurantId,
         restaurantName,
@@ -226,15 +227,7 @@ export class BoardsService {
           recommend,
           imgUrl,
         } = sum;
-        console.log({
-          _id: restaurantId,
-          restaurantName,
-          address,
-          location,
-          rating,
-          recommend,
-          imgUrl,
-        });
+
         const personalMapData = await this.personalMapDataRepository.save({
           restaurantId,
           restaurantName,
@@ -278,6 +271,7 @@ export class BoardsService {
       const { location, restaurantName, ...rest } = el;
       return { ...rest, restaurantId: newRestaurantInfo.data[i]._id };
     });
+
 
     console.log(oldPersonalMapDatas);
     console.log('$$$$$$$$');

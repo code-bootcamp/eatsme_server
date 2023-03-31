@@ -20,7 +20,9 @@ import {
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
 import axios from 'axios';
+
 import { ImagesService } from '../images/images.service';
+
 
 @Injectable()
 export class UserService {
@@ -191,6 +193,10 @@ export class UserService {
       throw new ConflictException('제대로 비밀번호를 입력해주세요');
     }
 
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     return this.userRepository.save({
@@ -203,10 +209,10 @@ export class UserService {
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
     const user = await this.findOneByUser({ userId });
 
+
     if (user.userImg !== updateUserInput?.userImg) {
       this.imagesService.storageDelete({ storageDel: user.userImg });
     }
-
     if (updateUserInput.password) {
       const hashpw = await bcrypt.hash(updateUserInput.password, 10);
       return this.userRepository.save({

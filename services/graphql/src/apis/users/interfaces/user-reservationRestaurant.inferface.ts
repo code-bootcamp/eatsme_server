@@ -10,7 +10,9 @@ export class UserReservationRestaurantLocation {
 }
 
 @ObjectType()
+
 export class UserReservationRestaurant {
+
   @Field(() => String)
   _id: string;
   @Field(() => String)

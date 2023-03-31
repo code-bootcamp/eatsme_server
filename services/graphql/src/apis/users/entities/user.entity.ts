@@ -3,7 +3,9 @@ import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
 import { Board } from 'src/apis/boards/entities/board.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
 import { UserReservationRestaurant } from '../interfaces/user-reservationRestaurant.inferface';
+
 
 @Entity()
 @ObjectType()
@@ -32,8 +34,10 @@ export class User {
   @Field(() => [Reservation])
   reservations: Reservation[];
 
+
   @Field(() => [UserReservationRestaurant])
   restaurant: UserReservationRestaurant[];
+
 
   @OneToMany(() => Board, (boards) => boards.user)
   @Field(() => [Board])
