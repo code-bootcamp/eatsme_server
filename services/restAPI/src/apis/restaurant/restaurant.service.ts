@@ -193,6 +193,7 @@ export class RestaurantService {
     req,
   }: IRestaurantServiceGetRestaurant): Promise<object> {
     const { restaurantId, reservation_time, table } = req.body;
+
     const restaurantInfo = await this.findOneRestaurant({
       restaurant_id: restaurantId,
     });

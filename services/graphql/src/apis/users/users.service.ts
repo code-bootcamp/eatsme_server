@@ -21,14 +21,20 @@ import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
 import axios from 'axios';
 
+import { ImagesService } from '../images/images.service';
+
+
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly mailerService: MailerService,
+
+    private readonly imagesService: ImagesService,
   ) {}
 
   //-----유저id확인-----
@@ -143,19 +149,15 @@ export class UserService {
   }
 
   //-----회원가입환영template-----
-  async welcomeToTemplate({ email }: IUsersSendToTemplate) {
+  async welcomeToTemplate({ email, nickname }: IUsersSendToTemplate) {
     const eatsMeTemplate = `
     <html>
         <body>
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="width: 500px;">
                     <h1>🌟🌟EatsMe 가입을 환영합니다🌟🌟</h1>
-                    <hr /=> {
-                      return email;
-                    });
-                    expect(await userService.checkEmail({ email })).toBe(email);
-                  });>
-                    <div style="color: black;">가입을 환영합니다.</div>
+              
+                    <div style="color: black;">${nickname}님의 가입을 환영합니다.</div>
                 </div>
             </div>
         </body>
@@ -181,7 +183,15 @@ export class UserService {
 
     await this.isFindOneByNickname({ nickname });
 
-    await this.welcomeToTemplate({ email });
+    await this.welcomeToTemplate({ email, nickname });
+
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
+
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
 
     if (!password) {
       throw new ConflictException('제대로 비밀번호를 입력해주세요');
@@ -198,6 +208,11 @@ export class UserService {
 
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
     const user = await this.findOneByUser({ userId });
+
+
+    if (user.userImg !== updateUserInput?.userImg) {
+      this.imagesService.storageDelete({ storageDel: user.userImg });
+    }
     if (updateUserInput.password) {
       const hashpw = await bcrypt.hash(updateUserInput.password, 10);
       return this.userRepository.save({

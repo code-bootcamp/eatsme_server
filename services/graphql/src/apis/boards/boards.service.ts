@@ -120,6 +120,7 @@ export class BoardsService {
         imgUrl,
       } = sum;
 
+
       return {
         restaurantId,
         restaurantName,
@@ -270,6 +271,7 @@ export class BoardsService {
       const { location, restaurantName, ...rest } = el;
       return { ...rest, restaurantId: newRestaurantInfo.data[i]._id };
     });
+
 
     console.log(oldPersonalMapDatas);
     console.log('$$$$$$$$');

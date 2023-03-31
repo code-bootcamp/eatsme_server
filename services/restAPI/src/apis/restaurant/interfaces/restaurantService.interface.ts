@@ -13,10 +13,16 @@ export interface IRestaurantServiceFindOneRestaurant {
 }
 
 export interface IRestaurantServiceGetRestaurants {
+
   body: {
     area: string;
     section: string;
   };
+}
+
+export interface IRestaurantServiceUserGetRestaurants {
+  req: Request;
+
 }
 
 export interface IRestaurantServiceUserGetRestaurants {

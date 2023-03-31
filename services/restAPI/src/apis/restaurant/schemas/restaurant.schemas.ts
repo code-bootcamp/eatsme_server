@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+
 import { randomUUID } from 'crypto';
 import { HydratedDocument } from 'mongoose';
 
@@ -7,6 +8,7 @@ export type RestaurantDocument = HydratedDocument<Restaurant>;
 
 @Schema()
 export class Restaurant {
+
   @ApiProperty()
   @Prop({ type: String, default: randomUUID })
   _id: string;

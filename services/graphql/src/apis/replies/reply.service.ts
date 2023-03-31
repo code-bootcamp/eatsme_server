@@ -84,7 +84,9 @@ export class ReplysService {
       commentUserName: newComment.user.nickname,
     });
     await this.alarmsRepository.save(newAlarm);
-    return newComment
+
+    return newComment;
+
   }
 
   async update({ updateReplyInput }: IReplysServiceUpdate): Promise<Reply> {
@@ -107,7 +109,9 @@ export class ReplysService {
     //   commentUserName: updateComment.user.nickname,
     // });
 
-    return updateComment
+
+    return updateComment;
+
   }
 
   async delete({ replyId }: IReplysServiceDelete): Promise<string> {

@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from '../Comments/entities/comment.entity';
+
+import { ImagesService } from '../images/images.service';
+
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
@@ -23,6 +26,9 @@ import { Board } from './entities/board.entity';
     BoardsResolver, //
     BoardsService,
     UserService,
+
+    ImagesService,
+
   ],
 })
 export class BoardModule {}

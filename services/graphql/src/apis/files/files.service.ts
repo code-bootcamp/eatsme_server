@@ -1,33 +1,32 @@
 import { Storage } from '@google-cloud/storage';
-import { Injectable } from '@nestjs/common';
+
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { getToday } from 'src/commons/utils/utils';
 import { IFilesServiceUpload } from './interfaces/files-service.interface';
 
 @Injectable()
 export class FilesService {
-  async upload({ file }: IFilesServiceUpload): Promise<string> {
-    const bucket = process.env.GCP_BUCKET;
 
+  async upload({ file }: IFilesServiceUpload) {
     const storage = new Storage({
       projectId: process.env.GCP_PROJECTID,
       keyFilename: process.env.GCP_KEY_FILENAME,
-    }).bucket(bucket);
+    }).bucket(process.env.GCP_BUCKET);
 
-    await new Promise((resolve, reject) =>
+    const fname = `userImg/${getToday()}/${file.filename}`;
+    const fileName = await new Promise((resolve, reject) => {
       file
         .createReadStream()
-        .pipe(storage.file(file.filename).createWriteStream())
-        .on('finish', () => {
-          console.log('성공');
-          resolve('성공!!!');
-        })
-        .on('error', () => {
-          console.log('실패');
-          reject('실패!!!');
-        }),
-    );
+        .pipe(storage.file(fname).createWriteStream())
+        .on('finish', () => resolve(`${process.env.GCP_BUCKET}/${fname}`))
+        .on('error', () => reject('false'));
+    });
 
-    console.log('파일전송이 완료되었습니다.');
+    if (fileName === 'false') {
+      throw new HttpException('이미지 업로드 오류', HttpStatus.CONFLICT);
+    }
 
-    return '끝';
+    return fileName;
+
   }
 }

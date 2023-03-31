@@ -11,7 +11,10 @@ export class FilesResolver {
   @Mutation(() => String)
   uploadFile(
     @Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload,
+
+  ) {
   ): Promise<string> {
+
     return this.filesService.upload({ file });
   }
 }
