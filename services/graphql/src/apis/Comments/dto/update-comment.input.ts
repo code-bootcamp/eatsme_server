@@ -1,10 +1,8 @@
 import { Field, InputType, PartialType } from '@nestjs/graphql';
+import { CreateCommentInput } from './create-comment.input';
 
 @InputType()
-export class UpdateCommentInput {
+export class UpdateCommentInput extends PartialType(CreateCommentInput) {
   @Field(() => String)
-  comment: string;
-
-  @Field(() => String)
-  commentId: string;
+  commentId?: string;
 }

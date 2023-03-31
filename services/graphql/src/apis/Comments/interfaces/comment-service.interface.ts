@@ -8,10 +8,16 @@ export interface ICommentsServiceCreate {
 
 export interface ICommentsServiceUpdate {
   updateCommentInput: UpdateCommentInput;
+  userId?: string;
 }
 
 export interface ICommentServiceNullList {
   comment: string;
+}
+
+export interface ICommentServiceCheckUser {
+  userId: string;
+  commentId: string;
 }
 
 export interface ICommentsServiceFindOne {
@@ -20,4 +26,5 @@ export interface ICommentsServiceFindOne {
 
 export interface ICommentsServiceDelete {
   commentId: string;
+  userId?: string;
 }

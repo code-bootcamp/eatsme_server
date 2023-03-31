@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AlarmResolver } from "./alarms.resolver";
+import { AlarmController } from "./alarms.controller";
 import { AlarmService } from "./alarms.service";
 import { Alarm } from "./entities/alarm.entity";
 
@@ -13,9 +13,11 @@ import { Alarm } from "./entities/alarm.entity";
   ])
  ],
  providers: [
-   AlarmResolver,
    AlarmService,
  ],
+ controllers: [
+  AlarmController,
+ ]
 })
 
 export class AlarmModule {}

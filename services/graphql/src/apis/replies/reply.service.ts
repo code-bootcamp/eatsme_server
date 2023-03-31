@@ -7,11 +7,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Alarm } from '../alarm/entities/alarm.entity';
-import { Board } from '../boards/entities/board.entity';
 import { Comment } from '../Comments/entities/comment.entity';
 import { User } from '../users/entities/user.entity';
 import { Reply } from './entities/reply.entity';
 import {
+  IReplyServiceCheckUser,
   IReplyServiceNullList,
   IReplysServiceCreate,
   IReplysServiceDelete,
@@ -53,6 +53,21 @@ export class ReplysService {
     }
   }
 
+  // 대댓글작성유저하고 로그인유저하고 일치하는지 확인
+  async checkUser({ userId, replyId }: IReplyServiceCheckUser): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    const replies = await this.replysRepository.findOne({ 
+      where: { id: replyId },
+      relations: [ 'user' ]
+    });
+    if (!replies) {
+      throw new NotFoundException('댓글정보가 일치하지않습니다');
+    }
+    if(user.id !== replies.user.id) {
+      throw new NotFoundException('댓글 작성자가 아닙니다');
+    }
+  }
+
   //대댓글 생성
   async create({ userId, createReplyInput }: IReplysServiceCreate): Promise<Reply> {
     const { reply, commentId } = createReplyInput;
@@ -68,7 +83,7 @@ export class ReplysService {
       relations: ['board.user']
     });
     if (!comments) {
-      throw new NotFoundException('현재 없는 댓글 입니다');
+      throw new NotFoundException('현재 없는 대댓글 입니다');
     }
     await this.nullCheck({ reply });
     const newComment = await this.replysRepository.save({
@@ -77,11 +92,9 @@ export class ReplysService {
       user,
     });
     const newAlarm =  this.alarmsRepository.create({
-      isAlarm: true,
       users: comments.board.user,
       replies: newComment,
-      commentUserId: newComment.user.id,
-      commentUserName: newComment.user.nickname,
+      alarmMessage: `${newComment.user.nickname}님이 대댓글을 작성했습니다`
     });
     await this.alarmsRepository.save(newAlarm);
 
@@ -89,32 +102,31 @@ export class ReplysService {
 
   }
 
-  async update({ updateReplyInput }: IReplysServiceUpdate): Promise<Reply> {
+  // 대댓글 수정
+  async update({ userId, updateReplyInput }: IReplysServiceUpdate): Promise<Reply> {
     const { reply, replyId } = updateReplyInput;
-    const replies = await this.findOne({ replyId });
-    if (!replies) {
-      throw new NotFoundException('댓글 아이디가 일치하지않습니다');
-    }
+    const replies = await this.replysRepository.findOne({ 
+      where: { id: replyId },
+      relations: ['user']
+    });
+    await this.checkUser({ userId, replyId })
     await this.nullCheck({ reply });
     const updateComment = await this.replysRepository.save({
       ...replies,
       reply,
     });
 
-    // const updateAlarm = await this.alarmsRepository.create({
-    //   isAlarm: true,
-    //   users: comments.board.user,
-    //   comments: updateComment,
-    //   commentUserId: updateComment.user.id,
-    //   commentUserName: updateComment.user.nickname,
-    // });
-
-
-    return updateComment;
-
+    const updateAlarm = this.alarmsRepository.create({
+      users: replies.user,
+      replies: updateComment,
+      alarmMessage: `${updateComment.user.nickname}님이 대댓글을 수정했습니다`
+    });
+    await this.alarmsRepository.save(updateAlarm);
+    return updateComment
   }
 
-  async delete({ replyId }: IReplysServiceDelete): Promise<string> {
+  async delete({ userId, replyId }: IReplysServiceDelete): Promise<string> {
+    await this.checkUser({ replyId, userId })
     const reply = await this.replysRepository.delete(replyId);
     return reply.affected ? '데이터삭제' : '데이터없음';
   }

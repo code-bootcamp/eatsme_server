@@ -1,10 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, PartialType } from '@nestjs/graphql';
+import { CreateReplyInput } from './create-reply.input';
 
 @InputType()
-export class UpdateReplyInput {
+export class UpdateReplyInput extends PartialType(CreateReplyInput){
   @Field(() => String)
-  reply: string;
-
-  @Field(() => String)
-  replyId: string;
+  replyId?: string;
 }

@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Alarm } from '../alarm/entities/alarm.entity';
 import { Board } from '../boards/entities/board.entity';
-import { Reply } from '../replies/entities/reply.entity';
 import { User } from '../users/entities/user.entity';
 import { Comment } from './entities/comment.entity';
 import {
@@ -17,6 +16,7 @@ import {
   ICommentsServiceUpdate,
   ICommentsServiceFindOne,
   ICommentsServiceDelete,
+  ICommentServiceCheckUser,
 } from './interfaces/comment-service.interface';
 
 @Injectable()
@@ -54,6 +54,22 @@ export class CommentsService {
     }
   }
 
+  // 댓글작성유저하고 로그인유저하고 일치하는지 확인
+  async checkUser({ userId, commentId }: ICommentServiceCheckUser): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    const comments = await this.commentsRepository.findOne({ 
+      where: { id: commentId },
+      relations: [ 'user' ]
+    });
+    if (!comments) {
+      throw new NotFoundException('댓글정보가 일치하지않습니다');
+    }
+    if(user.id !== comments.user.id) {
+      throw new NotFoundException('댓글 작성자가 아닙니다');
+    }
+  }
+
+  //댓글 생성
   async create({
     userId, createCommentInput,
   }: ICommentsServiceCreate): Promise<Comment> {
@@ -65,54 +81,55 @@ export class CommentsService {
     });
     const board = await this.boardsRepository.findOne({
       where: {
-        id: boardId, //id필드가 boardId 변수와 일치하는 board객체를 찾을때 사용하는 필터
+        id: boardId,
       },
       relations: ['user']
     });
-    await this.nullCheck({ comment });
+    if (!board) {
+      throw new UnprocessableEntityException('게시판정보가 없습니다');
+    }
+    await this.nullCheck({ comment })
     const newComment = await this.commentsRepository.save({
       ...createCommentInput,
       board,
       user,
     });
     const newAlarm =  this.alarmsRepository.create({
-      isAlarm: true,
       users: board.user,
       comments: newComment,
-      commentUserId: newComment.user.id,
-      commentUserName: newComment.user.nickname,
+      alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다` 
     });
-     this.alarmsRepository.save(newAlarm);
+    this.alarmsRepository.save(newAlarm);
     return newComment
   }
 
+  // 댓글 수정
   async update({
+    userId,
     updateCommentInput,
   }: ICommentsServiceUpdate): Promise<Comment> {
     const { comment, commentId } = updateCommentInput;
-    const comments = await this.findOne({ commentId });
-    if (!comments) {
-      throw new NotFoundException('댓글 아이디가 일치하지않습니다');
-    }
-
+    const comments = await this.commentsRepository.findOne({ 
+      where: { id: commentId },
+      relations: [ 'user' ]
+    });
+    await this.checkUser({ userId, commentId })
     await this.nullCheck({ comment });
     const updateComment = await this.commentsRepository.save({
       ...comments,
       comment,
     });
-
-    const updateAlarm = await this.alarmsRepository.create({
-      isAlarm: true,
-      users: comments.board.user,
+    const updateAlarm = this.alarmsRepository.create({
+      users: comments.user,
       comments: updateComment,
-      commentUserId: updateComment.user.id,
-      commentUserName: updateComment.user.nickname,
+      alarmMessage: `${updateComment.user.nickname}님이 댓글을 수정했습니다`
     });
     await this.alarmsRepository.save(updateAlarm);
     return updateComment
   }
 
-  async delete({ commentId }: ICommentsServiceDelete): Promise<string> {
+  async delete({ commentId, userId }: ICommentsServiceDelete): Promise<string> {
+    await this.checkUser({ commentId, userId })
     const isDeleted = await this.commentsRepository.delete(commentId);
     return isDeleted.affected ? '데이터삭제' : '데이터없음';
   }

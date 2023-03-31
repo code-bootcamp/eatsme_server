@@ -34,8 +34,9 @@ export class ReplysResolver {
     @Args('updateReplyInput') updateReplyInput: UpdateReplyInput,
     @Context() context: IContext, //
   ): Promise<Reply> {
+    const userId = context.req.user.id
     return this.replysService.update(
-      JSON.parse(JSON.stringify({ updateReplyInput })),
+      JSON.parse(JSON.stringify({ updateReplyInput, userId })),
     );
   }
 
@@ -45,6 +46,7 @@ export class ReplysResolver {
     @Args('replyId') replyId: string, //
     @Context() context: IContext, //
   ): Promise<string> {
-    return this.replysService.delete({ replyId });
+    const userId = context.req.user.id
+    return this.replysService.delete({ replyId, userId });
   }
 }

@@ -23,7 +23,7 @@ export class Reply {
   @Field(() => [Alarm])
   alarms: Alarm[];
 
-  @Column(() => String)
-  @Field(() => String)
+  @ManyToOne(() => User)
+  @Field(() => User)
   user: User;
 }
