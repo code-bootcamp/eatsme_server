@@ -94,7 +94,7 @@ export class UserService {
       '0',
     );
 
-    await this.cacheManager.set(email, authNumber, {
+    this.cacheManager.set(email, authNumber, {
       ttl: 180,
     });
 
