@@ -10,6 +10,7 @@ import { Comment } from '../Comments/entities/comment.entity';
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
+import { UserService } from '../users/users.service';
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
 import {
@@ -40,6 +41,8 @@ export class BoardsService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+
+    private readonly userService: UserService,
   ) {}
 
   async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
@@ -248,7 +251,19 @@ export class BoardsService {
 
   //게시물 삭제하기
   async delete({ boardId, context }: IBoardsServiceDelete): Promise<string> {
-    const board = await this.boardsRepository.delete(boardId);
-    return board.affected ? '데이터삭제' : '데이터없음';
+    const user = await this.userService.findOneByUser({
+      userId: context.req.user.id,
+    });
+    const isDelete = JSON.parse(JSON.stringify(user.boards)).filter((el) => {
+      return el.id === boardId;
+    });
+    if (!isDelete.length) {
+      const board = await this.boardsRepository.delete(boardId);
+      return board.affected
+        ? '게시물이 정상적으로 삭제되었습니다.'
+        : '이미 지워진 게시물입니다.';
+    } else {
+      return '이미 지워진 게시물입니다.';
+    }
   }
 }

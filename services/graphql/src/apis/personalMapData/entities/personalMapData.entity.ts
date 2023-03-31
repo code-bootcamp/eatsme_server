@@ -21,7 +21,9 @@ export class PersonalMapData {
   @Field(() => String)
   imgUrl: string | null;
 
-  @ManyToOne(() => Board, (board) => board.personalMapData)
+  @ManyToOne(() => Board, (board) => board.personalMapData, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Board)
   board: Board;
 }
