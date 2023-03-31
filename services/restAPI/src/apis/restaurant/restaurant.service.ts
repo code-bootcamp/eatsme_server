@@ -34,10 +34,10 @@ export class RestaurantService {
   ) {}
   apiKey = process.env.GOOGLE_MAP_API_KEY;
   async postRestaurants({
-    body,
+    req,
   }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
-    const location = Object.values(body).join(' ');
-    const { area, section } = body;
+    const location = Object.values(req.body).join(' ');
+    const { area, section } = req.body;
     const config = {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${location}&key=${this.apiKey}&language=ko&type=restaurant`,
@@ -138,12 +138,12 @@ export class RestaurantService {
   }
 
   async getRestaurants({
-    body,
+    req,
   }: IRestaurantServiceGetRestaurants): Promise<Restaurant[]> {
     const result = await this.restaurantModel
       .find({
-        area: body.area,
-        section: body.section,
+        area: req.query.area,
+        section: req.query.section,
       })
       .exec();
     if (!result[0]) {

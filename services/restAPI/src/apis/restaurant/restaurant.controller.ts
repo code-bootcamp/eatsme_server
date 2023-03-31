@@ -21,24 +21,25 @@ export class RestaurantController {
 
   @Post('/info/road/restaurant')
   postRestaurants(
-    @Body() body: { area: string; section: string }, //
+    @Req() req: Request, //
   ): Promise<void> {
-    return this.restaurantService.postRestaurants({ body });
+    return this.restaurantService.postRestaurants({ req });
   }
 
-  @Get('/info/road/restaurant')
-  @ApiOperation({ summary: 'Create cat' })
-  @ApiResponse({
-    status: 200,
-    description: '행정구역의 추천 식당 정보를 조회합니다',
+  // @ApiOperation({ summary: 'Create cat' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '행정구역의 추천 식당 정보를 조회합니다',
 
-    type: Promise<Restaurant[]>,
-  })
+  //   type: Promise<Restaurant[]>,
+  // })
+  // getRestaurantsInput
+  @Get('/info/road/restaurant')
   getRestaurants(
-    @Body() body: getRestaurantsInput, //
+    @Req() req: Request, ////
   ): Promise<Restaurant[]> {
-    console.log(body);
-    return this.restaurantService.getRestaurants({ body });
+    console.log(req);
+    return this.restaurantService.getRestaurants({ req });
   }
 
   @Get('/info/road/get/restaurant')

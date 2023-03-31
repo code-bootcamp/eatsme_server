@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { Restaurant } from '../schemas/restaurant.schemas';
 
 export interface IRestaurantServicePostAndGetRestaurant {
-  body: { area: string; section: string };
+  req: Request;
 }
 export interface IRestaurantServiceGetRestaurant {
   req: Request;
@@ -13,16 +13,11 @@ export interface IRestaurantServiceFindOneRestaurant {
 }
 
 export interface IRestaurantServiceGetRestaurants {
-
-  body: {
-    area: string;
-    section: string;
-  };
+  req: Request;
 }
 
 export interface IRestaurantServiceUserGetRestaurants {
   req: Request;
-
 }
 
 export interface IRestaurantServiceUserGetRestaurants {
