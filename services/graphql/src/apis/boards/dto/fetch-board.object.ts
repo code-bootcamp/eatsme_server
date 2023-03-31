@@ -45,24 +45,24 @@ class LocationObject {
 
 @ObjectType()
 class RestaurantBoardInfo {
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   restaurantId: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   restaurantName: string;
 
   @Field(() => String, { nullable: true })
   address: string;
 
   @Field(() => String, { nullable: true })
-  imgUrl: string;
+  imgUrl: string | null;
 
   @Field(() => String, { nullable: true })
-  recommend: string;
+  recommend: string | null;
 
   @Field(() => String, { nullable: true })
   rating: string;
 
-  @Field(() => LocationObject, { nullable: true })
+  @Field(() => LocationObject)
   location: LocationObject;
 }

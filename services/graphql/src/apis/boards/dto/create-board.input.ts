@@ -21,10 +21,10 @@ class InfoInput {
   restaurantName: string;
 
   @Field(() => String, { nullable: true })
-  recommend: string;
+  recommend: string | null;
 
   @Field(() => String, { nullable: true })
-  imgUrl: string;
+  imgUrl: string | null;
 
   @Field(() => LocationInput)
   location: LocationInput;
