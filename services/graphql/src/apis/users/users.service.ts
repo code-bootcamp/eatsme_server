@@ -80,16 +80,23 @@ export class UserService {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
     await this.isFindOneByEmail({ email });
+
+    await this.sendToAuthNumber({ email });
+
     // await this.sendToTemplate({ email });
     return email;
   }
 
   //-----이메일인증번호 템플릿 전송-----
-  async sendToTemplate({ email }: IUsersSendToTemplate): Promise<string> {
+  async sendToAuthNumber({ email }: IUsersSendToTemplate): Promise<string> {
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
     );
+
+    await this.cacheManager.set(email, authNumber, {
+      ttl: 180,
+    });
 
     const eatsMeTemplate = `
     <html>
@@ -115,13 +122,14 @@ export class UserService {
   }
 
   //-----인증번호 확인매치-----
-  async matchAuthNumber({ email, authNumber }) {
+  async matchAuthNumber({ matchAuthNumberInput }) {
+    const { email, authNumber } = matchAuthNumberInput;
     const pass = await this.cacheManager.get(email);
 
-    if (pass === authNumber) {
-      return true;
+    if (pass !== authNumber) {
+      throw new UnprocessableEntityException('토큰이 잘못되었습니다.');
     }
-    throw new UnprocessableEntityException('토큰이 잘못되었습니다.');
+    return true;
   }
 
   //-----이메일 db 유무확인-----
@@ -193,14 +201,6 @@ export class UserService {
       throw new ConflictException('제대로 비밀번호를 입력해주세요');
     }
 
-    if (!password) {
-      throw new ConflictException('제대로 비밀번호를 입력해주세요');
-    }
-
-    if (!password) {
-      throw new ConflictException('제대로 비밀번호를 입력해주세요');
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     return this.userRepository.save({
@@ -216,6 +216,7 @@ export class UserService {
     if (user.userImg !== updateUserInput?.userImg) {
       this.imagesService.storageDelete({ storageDel: user.userImg });
     }
+
     if (updateUserInput.password) {
       const hashpw = await bcrypt.hash(updateUserInput.password, 10);
       return this.userRepository.save({

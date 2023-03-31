@@ -19,7 +19,7 @@ export interface IUsersCheckNickname {
 
 export interface IUsersSendToTemplate {
   email: string;
-  nickname: string;
+  nickname?: string;
 }
 
 export interface IUsersFindOneByNickname {
