@@ -11,14 +11,18 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
+import { FilesModule } from './apis/files/files.module';
 
-import { JwtAccessStrategy } from './apis/auth/strategies/jwt-access.strategy';
-import { JwtRefreshStrategy } from './apis/auth/strategies/jwt-refresh-strategy';
-import { reservationModule } from './apis/reservations/reservation.module';
+
+import { ReservationModule } from './apis/reservations/reservation.module';
+
 import { CommentModule } from './apis/Comments/comments.module';
 import { AlarmModule } from './apis/alarm/alarms.module';
 import { ToggleLikeModule } from './apis/toggleLike/toggleLike.module';
 import { ReplysModule } from './apis/replies/reply.module';
+
+
+
 
 @Module({
   imports: [
@@ -26,12 +30,12 @@ import { ReplysModule } from './apis/replies/reply.module';
     AlarmModule,
     BoardModule,
     CommentModule,
+    FilesModule,
     ReplysModule,
     UserModule,
     ReplysModule,
     ToggleLikeModule,
-    reservationModule,
-
+    ReservationModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -42,7 +46,6 @@ import { ReplysModule } from './apis/replies/reply.module';
           origin: process.env.ORIGIN,
           credentials: true,
         },
-        uploads: false,
       }),
     }),
     TypeOrmModule.forRoot({
@@ -79,9 +82,6 @@ import { ReplysModule } from './apis/replies/reply.module';
   controllers: [
     AppController, //
   ],
-  providers: [
-    JwtAccessStrategy, //
-    JwtRefreshStrategy,
-  ],
+  providers: [],
 })
 export class AppModule {}

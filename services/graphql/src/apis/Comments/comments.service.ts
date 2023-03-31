@@ -109,7 +109,6 @@ export class CommentsService {
     updateCommentInput,
   }: ICommentsServiceUpdate): Promise<Comment> {
     const { comment, commentId } = updateCommentInput;
-    // const user = await this.usersRepository.findOne({ where: { id: userId } });
     const comments = await this.commentsRepository.findOne({ 
       where: { id: commentId },
       relations: [ 'user' ]

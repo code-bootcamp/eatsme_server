@@ -16,7 +16,9 @@ export class ReservationsResolver {
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Reservation)
   createReservation(
-    @Args('createReservationinput')
+
+    @Args('createReservationInput')
+
     createReservationInput: CreateReservationInput, //
     @Context() context: IContext,
   ): Promise<Reservation> {

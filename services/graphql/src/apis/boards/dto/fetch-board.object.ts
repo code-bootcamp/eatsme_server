@@ -10,10 +10,13 @@ export class BoardReturn {
   title: string;
 
   @Field(() => Date, { nullable: true })
-  createdAt: Date;
+  createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
 
   @Field(() => String, { nullable: true })
-  boardImg: string;
+  startArea: string;
+
+  @Field(() => String, { nullable: true })
+  endArea: string;
 
   @Field(() => String, { nullable: true })
   startPoint: string;
@@ -42,24 +45,24 @@ class LocationObject {
 
 @ObjectType()
 class RestaurantBoardInfo {
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   restaurantId: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   restaurantName: string;
 
   @Field(() => String, { nullable: true })
   address: string;
 
   @Field(() => String, { nullable: true })
-  imgUrl: string;
+  imgUrl: string | null;
 
   @Field(() => String, { nullable: true })
-  recommend: string;
+  recommend: string | null;
 
   @Field(() => String, { nullable: true })
   rating: string;
 
-  @Field(() => LocationObject, { nullable: true })
+  @Field(() => LocationObject)
   location: LocationObject;
 }

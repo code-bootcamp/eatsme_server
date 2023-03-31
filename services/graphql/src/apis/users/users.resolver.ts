@@ -51,7 +51,7 @@ export class UserResolver {
   createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
-    return this.userService.create({ createUserInput });
+    return this.userService.createUser({ createUserInput });
   }
 
   @UseGuards(GqlAuthGuard('access'))

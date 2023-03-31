@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Alarm } from '../alarm/entities/alarm.entity';
-import { Board } from '../boards/entities/board.entity';
 import { Comment } from '../Comments/entities/comment.entity';
 import { User } from '../users/entities/user.entity';
 import { Reply } from './entities/reply.entity';
@@ -98,7 +97,9 @@ export class ReplysService {
       alarmMessage: `${newComment.user.nickname}님이 대댓글을 작성했습니다`
     });
     await this.alarmsRepository.save(newAlarm);
-    return newComment
+
+    return newComment;
+
   }
 
   // 대댓글 수정

@@ -21,32 +21,42 @@ import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
 import axios from 'axios';
 
+import { ImagesService } from '../images/images.service';
+
+
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly mailerService: MailerService,
+
+    private readonly imagesService: ImagesService,
   ) {}
 
   //-----유저id확인-----
   async findOneByUser({ userId }: IUserFindOneByUser): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['reservations', 'alarms', 'boards.comments.replies']
+      relations: ['reservations', 'alarms', 'boards.comments.replies'],
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
-    const reservationRestaurant = await axios.get(
-      'http://road-service:7100/info/road/find/restaurant',
-      { data: restaurantIdArr },
-    );
-
+    if (restaurantIdArr.length) {
+      const reservationRestaurant = await axios.get(
+        'http://road-service:7100/info/road/find/restaurant',
+        { data: restaurantIdArr },
+      );
+      return {
+        ...user,
+        restaurant: reservationRestaurant.data,
+      };
+    }
     return {
       ...user,
-      restaurant: reservationRestaurant.data,
     };
   }
 
@@ -139,19 +149,15 @@ export class UserService {
   }
 
   //-----회원가입환영template-----
-  async welcomeToTemplate({ email }: IUsersSendToTemplate) {
+  async welcomeToTemplate({ email, nickname }: IUsersSendToTemplate) {
     const eatsMeTemplate = `
     <html>
         <body>
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="width: 500px;">
                     <h1>🌟🌟EatsMe 가입을 환영합니다🌟🌟</h1>
-                    <hr /=> {
-                      return email;
-                    });
-                    expect(await userService.checkEmail({ email })).toBe(email);
-                  });>
-                    <div style="color: black;">가입을 환영합니다.</div>
+              
+                    <div style="color: black;">${nickname}님의 가입을 환영합니다.</div>
                 </div>
             </div>
         </body>
@@ -166,7 +172,7 @@ export class UserService {
   }
 
   //-----회원가입-----
-  async create({ createUserInput }: IUsersCreate): Promise<User> {
+  async createUser({ createUserInput }: IUsersCreate): Promise<User> {
     const { email, password, nickname } = createUserInput;
 
     if (!email || !email.includes('@') || 30 <= email.length) {
@@ -177,7 +183,19 @@ export class UserService {
 
     await this.isFindOneByNickname({ nickname });
 
-    await this.welcomeToTemplate({ email });
+    await this.welcomeToTemplate({ email, nickname });
+
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
+
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
+
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -190,6 +208,11 @@ export class UserService {
 
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
     const user = await this.findOneByUser({ userId });
+
+
+    if (user.userImg !== updateUserInput?.userImg) {
+      this.imagesService.storageDelete({ storageDel: user.userImg });
+    }
     if (updateUserInput.password) {
       const hashpw = await bcrypt.hash(updateUserInput.password, 10);
       return this.userRepository.save({
