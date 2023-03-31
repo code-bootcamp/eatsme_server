@@ -1,17 +1,22 @@
 import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RestaurantModule } from './apis/restaurant/restaurant.module';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
+import { PersonalMapsModule } from './apis/personalMaps/personlMaps.module';
 import { ChannelModule } from './apis/\bchat bot/channel.module';
+import { TimeTableModule } from './apis/timeTable/timeTable.module';
+import { RemainTableMoudle } from './apis/remaintable/remainTable.module';
 
 @Module({
   imports: [
+    PersonalMapsModule,
     RestaurantModule,
     ChannelModule,
+    TimeTableModule,
+    RemainTableMoudle,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MY_MONGODB), //
     CacheModule.register<RedisClientOptions>({
@@ -23,8 +28,6 @@ import { ChannelModule } from './apis/\bchat bot/channel.module';
   controllers: [
     AppController, //
   ],
-  providers: [
-    AppService, //
-  ],
+  providers: [],
 })
 export class AppModule {}

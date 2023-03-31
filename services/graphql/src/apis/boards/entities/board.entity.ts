@@ -7,8 +7,9 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm'; 
+} from 'typeorm';
 import { Comment } from 'src/apis/Comments/entities/comment.entity';
+import { PersonalMapData } from 'src/apis/personalMapData/entities/personalMapData.entity';
 
 @Entity()
 @ObjectType()
@@ -19,27 +20,31 @@ export class Board {
 
   @Column({ type: 'varchar', length: 20 })
   @Field(() => String)
-  course: string;
+  title: string;
 
   @CreateDateColumn({
     type: 'timestamp',
     transformer: {
       from: (value?: Date) => value,
       to: () => new Date(new Date().getTime() + 9 * 60 * 60 * 1000),
-    }, 
+    },
   })
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   createdAt: Date;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
-  boardImg: string;
+  startArea: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 10 })
+  @Field(() => String)
+  endArea: string;
+
+  @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
   startPoint: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 10 })
   @Field(() => String)
   endPoint: string;
 
@@ -51,7 +56,13 @@ export class Board {
   @Field(() => User)
   user: User;
 
-  @OneToMany(() => Comment, (comments) => comments.board, { onDelete: 'CASCADE' } ) //{ onDelete: 'CASCADE' }는 부모엔티티에서 작업하는게 자식엔티티에도 영향을 주는것을 의미함(예시: 수정 삭제) 
+  @OneToMany(() => Comment, (comments) => comments.board, {
+    onDelete: 'CASCADE',
+  }) //{ onDelete: 'CASCADE' }는 부모엔티티에서 작업하는게 자식엔티티에도 영향을 주는것을 의미함(예시: 수정 삭제)
   @Field(() => [Comment])
   comments: Comment[];
+
+  @OneToMany(() => PersonalMapData, (personalMapData) => personalMapData.board)
+  @Field(() => PersonalMapData)
+  personalMapData: PersonalMapData;
 }

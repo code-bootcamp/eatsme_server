@@ -15,27 +15,47 @@ import {
   IUsersFindOneByEmail,
   IUsersFindOneByNickname,
   IUsersSendToTemplate,
+  IUsersUpdate,
 } from './interfaces/user-service.interface';
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
+import axios from 'axios';
+import { ImagesService } from '../images/images.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly mailerService: MailerService,
+
+    private readonly imagesService: ImagesService,
   ) {}
 
   //-----유저id확인-----
   async findOneByUser({ userId }: IUserFindOneByUser): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
+      relations: ['reservations', 'alarms', 'boards.comments.replies'],
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
-    return user;
+    const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
+    if (restaurantIdArr.length) {
+      const reservationRestaurant = await axios.get(
+        'http://road-service:7100/info/road/find/restaurant',
+        { data: restaurantIdArr },
+      );
+      return {
+        ...user,
+        restaurant: reservationRestaurant.data,
+      };
+    }
+    return {
+      ...user,
+    };
   }
 
   //-----유저email확인-----
@@ -78,7 +98,7 @@ export class UserService {
         </body>
     </html>
   `;
-    await this.mailerService.sendMail({
+    this.mailerService.sendMail({
       to: email,
       from: process.env.EMAIL_USER,
       subject: 'EatsMe 인증 번호입니다', //이메일 제목
@@ -127,25 +147,21 @@ export class UserService {
   }
 
   //-----회원가입환영template-----
-  async welcomeToTemplate({ email }: IUsersSendToTemplate) {
+  async welcomeToTemplate({ email, nickname }: IUsersSendToTemplate) {
     const eatsMeTemplate = `
     <html>
         <body>
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="width: 500px;">
                     <h1>🌟🌟EatsMe 가입을 환영합니다🌟🌟</h1>
-                    <hr /=> {
-                      return email;
-                    });
-                    expect(await userService.checkEmail({ email })).toBe(email);
-                  });>
-                    <div style="color: black;">가입을 환영합니다.</div>
+              
+                    <div style="color: black;">${nickname}님의 가입을 환영합니다.</div>
                 </div>
             </div>
         </body>
     </html>
   `;
-    await this.mailerService.sendMail({
+    this.mailerService.sendMail({
       to: email,
       from: process.env.EMAIL_USER,
       subject: 'EatsMe 가입을 환영합니다.', //이메일 제목
@@ -154,7 +170,7 @@ export class UserService {
   }
 
   //-----회원가입-----
-  async create({ createUserInput }: IUsersCreate): Promise<User> {
+  async createUser({ createUserInput }: IUsersCreate): Promise<User> {
     const { email, password, nickname } = createUserInput;
 
     if (!email || !email.includes('@') || 30 <= email.length) {
@@ -165,7 +181,11 @@ export class UserService {
 
     await this.isFindOneByNickname({ nickname });
 
-    await this.welcomeToTemplate({ email });
+    await this.welcomeToTemplate({ email, nickname });
+
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -174,5 +194,27 @@ export class UserService {
       password: hashedPassword,
       nickname,
     });
+  }
+
+  async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
+    const user = await this.findOneByUser({ userId });
+
+    if (user.userImg !== updateUserInput?.userImg) {
+      this.imagesService.storageDelete({ storageDel: user.userImg });
+    }
+
+    if (updateUserInput.password) {
+      const hashpw = await bcrypt.hash(updateUserInput.password, 10);
+      return this.userRepository.save({
+        ...user,
+        ...updateUserInput,
+        password: hashpw,
+      });
+    } else {
+      return this.userRepository.save({
+        ...user,
+        ...updateUserInput,
+      });
+    }
   }
 }

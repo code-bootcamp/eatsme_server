@@ -1,33 +1,47 @@
-import { CreateBoardMapInput } from "../dto/create-bard-map.input";
-import { CreateBoardInput } from "../dto/create-board.input";
-import { UpdateBoardInput } from "../dto/update-board.input";
+import { User } from 'src/apis/users/entities/user.entity';
+import { CreateBoardInput } from '../dto/create-board.input';
+import { FetchBoardsBySectionInput } from '../dto/fetch-board-secton.input';
+import { ToggleLikeInput } from '../../toggleLike/dto/toggle-Like.input';
+import { UpdateBoardInput } from '../dto/update-board.input';
 
+export interface IBoardsServiceFetchBoard {
+  boardId: string;
+}
+export interface IBoardsServiceMyFetchBoard {
+  userId: string;
+}
 export interface IBoardsServiceFindOne {
- boardId: string;
+  boardId: string;
+}
+
+export interface IBoardsServiceFindArea {
+  startArea?: string;
+  endArea?: string;
+}
+
+export interface IBoardsServiceFindSection {
+  fetchBoardsBySectionInput: FetchBoardsBySectionInput;
 }
 
 export interface IBoardsServiceNullCheckTitle {
- course: string;
-
+  title: string;
 }
 
 export interface IBoardsServiceNullCheckList {
-  course: string,
-  startPoint: string,
-  endPoint: string,
+  title: string;
+  startPoint: string;
+  endPoint: string;
 }
 
 export interface IBoardsServiceCreate {
-//  createBoardMapInput: CreateBoardMapInput[],
- createBoardInput: CreateBoardInput;
- userId: string;
+  createBoardInput: CreateBoardInput;
+  userId: string;
 }
 
 export interface IBoardsServiceUpdate {
- updateBoardInput: UpdateBoardInput;
+  updateBoardInput: UpdateBoardInput;
 }
 
 export interface IBoardsServiceDelete {
   boardId: string;
- }
-
+}
