@@ -42,6 +42,7 @@ export class ReservationsService {
       'http://road-service:7100/info/road/get/restaurant',
       { data: { ...createReservationInput } },
     );
+
     const { _id } = restaurants.data.restaurantInfo;
     return this.reservationsRepository.save({
       table,
