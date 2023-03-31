@@ -187,6 +187,10 @@ export class UserService {
       throw new ConflictException('제대로 비밀번호를 입력해주세요');
     }
 
+    if (!password) {
+      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     return this.userRepository.save({

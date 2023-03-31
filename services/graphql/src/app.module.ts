@@ -11,6 +11,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
+import { FilesModule } from './apis/files/files.module';
 
 import { ReservationModule } from './apis/reservations/reservation.module';
 import { CommentModule } from './apis/Comments/comments.module';
