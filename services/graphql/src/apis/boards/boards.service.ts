@@ -226,6 +226,15 @@ export class BoardsService {
           recommend,
           imgUrl,
         } = sum;
+        console.log({
+          _id: restaurantId,
+          restaurantName,
+          address,
+          location,
+          rating,
+          recommend,
+          imgUrl,
+        });
         const personalMapData = await this.personalMapDataRepository.save({
           restaurantId,
           restaurantName,
@@ -269,26 +278,10 @@ export class BoardsService {
       const { location, restaurantName, ...rest } = el;
       return { ...rest, restaurantId: newRestaurantInfo.data[i]._id };
     });
-    const isSave = [];
-    const isDelete = [];
-    newPersonalMapInfos.forEach(async (fresh, id, freshArr) => {
-      oldPersonalMapDatas.forEach(async (old, idx, oldArr) => {
-        if (fresh.restaurantId === old.restaurantId) {
-          const updatePersonalMapData =
-            await this.personalMapDataRepository.save({
-              ...old,
-              ...fresh,
-            });
-        }
-        // console.log(freshArr);
-        freshArr = freshArr.splice(id, 1, null);
-        isSave.push(freshArr);
-        isDelete.push(oldArr);
-      });
-      console.log('$$$$$$$$$$');
-    });
-    // console.log(isDelete);
-    console.log(isSave);
+
+    console.log(oldPersonalMapDatas);
+    console.log('$$$$$$$$');
+    console.log(newPersonalMapInfos);
   }
 
   //게시물 삭제하기

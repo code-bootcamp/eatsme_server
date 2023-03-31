@@ -18,8 +18,8 @@ export class PersonalMapData {
   recommend: string;
 
   @Column()
-  @Field(() => String)
-  imgUrl: string;
+  @Field(() => String, { nullable: true, defaultValue: null })
+  imgUrl: string | null;
 
   @ManyToOne(() => Board, (board) => board.personalMapData)
   @Field(() => Board)

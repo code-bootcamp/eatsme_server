@@ -3,11 +3,9 @@ import { RestaurantDocument } from 'src/apis/restaurant/schemas/restaurant.schem
 
 export interface IPersonalMapsServiceCreatePersonalMap {
   body: {
-    area: string;
-    course: string;
-    startPoint: string;
-    endPoint: string;
     info: {
+      area: string;
+      section: string;
       restaurantName: string;
       recommend: string;
       location: {

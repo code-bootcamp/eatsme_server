@@ -33,7 +33,6 @@ export class AuthService {
   async login({ loginAuthInput, context }: IAuthServiceLogin): Promise<string> {
     const { email, password } = loginAuthInput;
     const user = await this.usersService.findOneByEmail({ email });
-
     const isAuth = await bcrypt.compare(password, user.password);
     if (!isAuth) {
       throw new UnprocessableEntityException(
@@ -93,6 +92,7 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
+
     res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader(
