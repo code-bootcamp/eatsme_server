@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
-// import { Comment } from '../Comments/entities/comment.entity';
+import { Comment } from '../Comments/entities/comment.entity';
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';

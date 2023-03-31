@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Alarm } from '../alarm/entities/alarm.entity';
-import { Board } from '../boards/entities/board.entity';
 import { Comment } from '../Comments/entities/comment.entity';
 import { User } from '../users/entities/user.entity';
 import { Reply } from './entities/reply.entity';
@@ -54,18 +53,21 @@ export class ReplysService {
   }
 
   //대댓글 생성
-  async create({ userId, createReplyInput }: IReplysServiceCreate): Promise<Reply> {
+  async create({
+    userId,
+    createReplyInput,
+  }: IReplysServiceCreate): Promise<Reply> {
     const { reply, commentId } = createReplyInput;
     const user = await this.usersRepository.findOne({
       where: {
-        id: userId, 
+        id: userId,
       },
     });
     const comments = await this.commentsRepository.findOne({
       where: {
         id: commentId,
       },
-      relations: ['board.user']
+      relations: ['board.user'],
     });
     if (!comments) {
       throw new NotFoundException('현재 없는 댓글 입니다');
@@ -76,7 +78,7 @@ export class ReplysService {
       comments,
       user,
     });
-    const newAlarm =  this.alarmsRepository.create({
+    const newAlarm = this.alarmsRepository.create({
       isAlarm: true,
       users: comments.board.user,
       replies: newComment,
@@ -84,7 +86,7 @@ export class ReplysService {
       commentUserName: newComment.user.nickname,
     });
     await this.alarmsRepository.save(newAlarm);
-    return newComment
+    return newComment;
   }
 
   async update({ updateReplyInput }: IReplysServiceUpdate): Promise<Reply> {
@@ -107,7 +109,7 @@ export class ReplysService {
     //   commentUserName: updateComment.user.nickname,
     // });
 
-    return updateComment
+    return updateComment;
   }
 
   async delete({ replyId }: IReplysServiceDelete): Promise<string> {
