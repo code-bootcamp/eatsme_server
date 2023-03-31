@@ -4,7 +4,7 @@ import { IContext } from 'src/commons/interfaces/context';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
 import { BoardsService } from './boards.service';
 import { CreateBoardInput } from './dto/create-board.input';
-import { FetchBoardsBySectionInput } from './dto/fetch-board-secton.input';
+import { FetchBoardsByEveryInput } from './dto/fetch-board-secton.input';
 import { BoardReturn } from './dto/fetch-board.object';
 import { UpdateBoardInput } from './dto/update-board.input';
 
@@ -29,7 +29,6 @@ export class BoardsResolver {
 
   @UseGuards(GqlAuthGuard('access'))
   @Query(() => [BoardReturn])
-  //String을 같이 넣을 순 없을까?
   fetchMyLikeBoard(
     @Context() context: IContext, //
   ): Promise<BoardReturn[] | string> {
@@ -37,26 +36,12 @@ export class BoardsResolver {
   }
 
   @Query(() => [BoardReturn])
-  fetchBoardsByStartArea(
-    @Args('startArea') startArea: string, //
+  fetchBoardsByEvery(
+    @Args('fetchBoardsByEveryInput')
+    fetchBoardsByEveryInput: FetchBoardsByEveryInput,
   ): Promise<BoardReturn[]> {
-    return this.boardsService.findByStartArea({ startArea });
-  }
-
-  @Query(() => [BoardReturn])
-  fetchBoardsByEndArea(
-    @Args('endArea') endArea: string, //
-  ): Promise<BoardReturn[]> {
-    return this.boardsService.findByEndArea({ endArea });
-  }
-
-  @Query(() => [BoardReturn])
-  fetchBoardsBySection(
-    @Args('fetchBoardsWithSectionInput')
-    fetchBoardsBySectionInput: FetchBoardsBySectionInput,
-  ): Promise<BoardReturn[]> {
-    return this.boardsService.findByStartPoint(
-      JSON.parse(JSON.stringify({ fetchBoardsBySectionInput })),
+    return this.boardsService.findByEvery(
+      JSON.parse(JSON.stringify({ fetchBoardsByEveryInput })),
     );
   }
 
@@ -89,6 +74,6 @@ export class BoardsResolver {
     @Args('boardId') boardId: string,
     @Context() context: IContext,
   ): Promise<string> {
-    return this.boardsService.delete({ boardId });
+    return this.boardsService.delete({ boardId, context });
   }
 }

@@ -1,9 +1,9 @@
 import { User } from 'src/apis/users/entities/user.entity';
 import { CreateBoardInput } from '../dto/create-board.input';
-import { FetchBoardsBySectionInput } from '../dto/fetch-board-secton.input';
 import { ToggleLikeInput } from '../../toggleLike/dto/toggle-Like.input';
 import { UpdateBoardInput } from '../dto/update-board.input';
 import { IContext } from 'src/commons/interfaces/context';
+import { FetchBoardsByEveryInput } from '../dto/fetch-board-secton.input';
 
 export interface IBoardsServiceFetchBoard {
   boardId: string;
@@ -21,7 +21,7 @@ export interface IBoardsServiceFindArea {
 }
 
 export interface IBoardsServiceFindSection {
-  fetchBoardsBySectionInput: FetchBoardsBySectionInput;
+  fetchBoardsByEveryInput: FetchBoardsByEveryInput;
 }
 
 export interface IBoardsServiceNullCheckTitle {
@@ -45,4 +45,5 @@ export interface IBoardsServiceUpdate {
 
 export interface IBoardsServiceDelete {
   boardId: string;
+  context: IContext;
 }

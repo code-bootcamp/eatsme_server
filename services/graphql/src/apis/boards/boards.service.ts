@@ -16,7 +16,6 @@ import {
   IBoardsServiceCreate,
   IBoardsServiceDelete,
   IBoardsServiceFetchBoard,
-  IBoardsServiceFindArea,
   IBoardsServiceFindOne,
   IBoardsServiceFindSection,
   IBoardsServiceMyFetchBoard,
@@ -137,42 +136,13 @@ export class BoardsService {
       createdAt: board.createdAt,
     };
   }
-  //시,도별 게시물 정보조회
-  async findByStartArea({
-    startArea,
-  }: IBoardsServiceFindArea): Promise<BoardReturn[]> {
-    const BoardInfo = await this.boardsRepository.find({
-      where: { startArea },
-      relations: ['personalMapData'],
-    });
-    const personalBoards = await Promise.all(
-      BoardInfo.map(async (el) => {
-        return await this.fetchBoard({ boardId: el.id });
-      }),
-    );
-    return personalBoards;
-  }
 
-  async findByEndArea({
-    endArea,
-  }: IBoardsServiceFindArea): Promise<BoardReturn[]> {
-    const BoardInfo = await this.boardsRepository.find({
-      where: { endArea },
-      relations: ['personalMapData'],
-    });
-    const personalBoards = await Promise.all(
-      BoardInfo.map(async (el) => {
-        return await this.fetchBoard({ boardId: el.id });
-      }),
-    );
-    return personalBoards;
-  }
-  //행정구역별 게시물 조회
-  async findByStartPoint({
-    fetchBoardsBySectionInput,
+  //시,행정구역별 게시물 조회
+  async findByEvery({
+    fetchBoardsByEveryInput,
   }: IBoardsServiceFindSection): Promise<BoardReturn[]> {
     const BoardInfo = await this.boardsRepository.find({
-      where: { ...fetchBoardsBySectionInput },
+      where: { ...fetchBoardsByEveryInput },
     });
     const personalBoards = await Promise.all(
       BoardInfo.map(async (el) => {
@@ -237,6 +207,7 @@ export class BoardsService {
           board,
         });
         const { board: newBoard, ...restaurantInfo } = personalMapData;
+        console.log({ board: newBoard, ...restaurantInfo });
         return restaurantInfo;
       }),
     );
@@ -276,7 +247,7 @@ export class BoardsService {
   }
 
   //게시물 삭제하기
-  async delete({ boardId }: IBoardsServiceDelete): Promise<string> {
+  async delete({ boardId, context }: IBoardsServiceDelete): Promise<string> {
     const board = await this.boardsRepository.delete(boardId);
     return board.affected ? '데이터삭제' : '데이터없음';
   }

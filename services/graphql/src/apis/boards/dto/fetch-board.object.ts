@@ -67,6 +67,6 @@ class RestaurantBoardInfo {
   @Field(() => String, { nullable: true })
   rating: string;
 
-  @Field(() => LocationObject)
+  @Field(() => LocationObject, { nullable: true })
   location: LocationObject;
 }
