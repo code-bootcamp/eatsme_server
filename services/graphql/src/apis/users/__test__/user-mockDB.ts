@@ -1,25 +1,22 @@
 export class MockUserService {
   mydb = [
-    {
-      id: '임의로 지정한 아이디입니다.',
-      email: 'aaa@aaa.com',
-      password: '12341234',
-      nickname: '짱구',
-      userImg: '임의로 지정한 유저이미지입니다.',
-    },
-    {
-      id: '임의로 지정한 아이디입니다2.',
-      email: 'bbb@bbb.com',
-      password: '12341234',
-      nickname: '철수',
-      userImg: '임의로 지정한 유저이미지입니다2.',
-    },
-    {
-      id: '임의로 지정한 아이디입니다3.',
-      email: 'qqq@aqqqaa.com',
-      password: '12341234',
-      nickname: '훈이',
-      userImg: '임의로 지정한 유저이미지입니다.3',
-    },
+    { email: 'aaa@aaa.com', password: '12341234', nickname: '짱구' },
+    { email: 'qqq@qqq.com', password: '1q2w3e4r', nickname: '철수' },
+    { email: 'www@www.com', password: 'qwerty12', nickname: '훈이' },
   ];
+
+  findOne({ where }) {
+    const users = this.mydb.filter((el) => el.email === where.email);
+    if (users.length) return users[0];
+
+    const nicknames = this.mydb.filter((el) => el.nickname === where.nickname);
+    if (nicknames.length) return nicknames[0];
+    return null;
+  }
+
+  save({ email, password, nickname }) {
+    this.mydb.push({ email, password, nickname });
+
+    return { email, password, nickname };
+  }
 }

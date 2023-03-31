@@ -12,12 +12,21 @@ class LocationInput {
 @InputType()
 class InfoInput {
   @Field(() => String)
-  restaurantName: string;
+  area: string;
 
   @Field(() => String)
-  recommend: string;
+  section: string;
 
-  @Field(() => LocationInput)
+  @Field(() => String)
+  restaurantName: string;
+
+  @Field(() => String, { nullable: true })
+  recommend: string | null;
+
+  @Field(() => String, { nullable: true })
+  imgUrl: string | null;
+
+  @Field(() => LocationInput, { nullable: true })
   location: LocationInput;
 }
 
@@ -27,31 +36,24 @@ export class CreateBoardInput {
   title: string;
 
   @Field(() => String)
-  boardImg: string;
+  startArea: string;
 
   @Field(() => String)
-  area: string;
+  endArea: string;
 
   @Field(() => String)
   startPoint: string;
 
   @Field(() => String)
   endPoint: string;
+  @Field(() => String, { nullable: true })
+  boardImg: string;
 
-  @Field(() => String)
-  customName: string;
-
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   like: number;
 
   @Field(() => Date)
   createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
-
-  @Field(() => String)
-  userId: string;
-
-  // @Field(() => String)
-  // commentsId: string;
 
   @Field(() => [InfoInput])
   info: InfoInput[];

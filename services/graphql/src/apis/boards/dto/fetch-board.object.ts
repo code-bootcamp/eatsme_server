@@ -1,49 +1,56 @@
-import { Field, Float, Int, ObjectType, PartialType } from '@nestjs/graphql';
-import { info } from 'console';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { Comment } from 'src/apis/Comments/entities/comment.entity';
+import { User } from 'src/apis/users/entities/user.entity';
 
 @ObjectType()
 export class BoardReturn {
   @Field(() => String, { nullable: true })
   id: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   title: string;
 
-  @Field(() => Date)
-  createdAt: Date;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
 
-  @Field(() => String)
-  boardImg: string;
+  @Field(() => String, { nullable: true })
+  startArea: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  endArea: string;
+
+  @Field(() => String, { nullable: true })
   startPoint: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   endPoint: string;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   like: number;
 
-  @Field(() => [String])
-  restaurantIds: string[];
+  @Field(() => [RestaurantBoardInfo], { nullable: true })
+  personalMapData: RestaurantBoardInfo[];
 
-  @Field(() => [RestaurantBoardInfo])
-  info: RestaurantBoardInfo[];
+  @Field(() => [Comment], { nullable: true })
+  comments: Comment[];
+
+  @Field(() => User)
+  user: User;
 }
 
 @ObjectType()
 class LocationObject {
-  @Field(() => Float)
+  @Field(() => Float, { nullable: true })
   lat: number;
 
-  @Field(() => Float)
+  @Field(() => Float, { nullable: true })
   lng: number;
 }
 
 @ObjectType()
 class RestaurantBoardInfo {
-  @Field(() => String, { nullable: true })
-  _id: string;
+  @Field(() => String)
+  restaurantId: string;
 
   @Field(() => String)
   restaurantName: string;
@@ -51,9 +58,15 @@ class RestaurantBoardInfo {
   @Field(() => String, { nullable: true })
   address: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  imgUrl: string | null;
+
+  @Field(() => String, { nullable: true })
+  recommend: string | null;
+
+  @Field(() => String, { nullable: true })
   rating: string;
 
-  @Field(() => LocationObject)
+  @Field(() => LocationObject, { nullable: true })
   location: LocationObject;
 }

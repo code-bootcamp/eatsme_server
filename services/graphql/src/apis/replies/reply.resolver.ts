@@ -16,17 +16,16 @@ export class ReplysResolver {
     return this.replysService.findOne({ replyId });
   }
 
-  @Query(() => [Reply])
-  fetchReplys(): Promise<Reply[]> {
-    return this.replysService.findAll();
-  }
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Reply)
   createReply(
     @Args('createReplyInput') createReplyInput: CreateReplyInput,
     @Context() context: IContext, //
   ): Promise<Reply> {
-    return this.replysService.create({ createReplyInput });
+    const userId = context.req.user.id
+    return this.replysService.create(
+      JSON.parse(JSON.stringify({ createReplyInput, userId })),
+    );
   }
 
   @UseGuards(GqlAuthGuard('access'))
@@ -35,7 +34,9 @@ export class ReplysResolver {
     @Args('updateReplyInput') updateReplyInput: UpdateReplyInput,
     @Context() context: IContext, //
   ): Promise<Reply> {
-    return this.replysService.update({ updateReplyInput });
+    return this.replysService.update(
+      JSON.parse(JSON.stringify({ updateReplyInput })),
+    );
   }
 
   @UseGuards(GqlAuthGuard('access'))

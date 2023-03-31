@@ -36,7 +36,7 @@ export class AuthResolver {
       access: context.req.headers.authorization.split(' ')[1],
     };
     const refreshToken = {
-      refresh: context.req.headers.cookie.replace('refreshToken=', ''),
+      refresh: context.req.headers.cookie.split('=')[1],
     };
     return this.authService.logout({ accessToken, refreshToken });
   }

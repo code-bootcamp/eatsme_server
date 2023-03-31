@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class FetchBoardInput {
+export class ToggleLikeInput {
   @Field(() => String)
   boardId: string;
 
-  @Field(() => [String])
-  restaurantIds: string[];
+  @Field(() => Boolean)
+  isLike: boolean;
 }
