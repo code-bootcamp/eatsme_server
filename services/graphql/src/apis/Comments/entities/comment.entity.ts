@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { userInfo } from 'os';
 import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
 import { Board } from 'src/apis/boards/entities/board.entity';
 import { Reply } from 'src/apis/replies/entities/reply.entity';
@@ -34,7 +35,7 @@ export class Comment {
   @Field(() => [Alarm])
   alarms: Alarm[];
 
-  @Column(() => String)
-  @Field(() => String)
+  @ManyToOne(() => User)
+  @Field(() => User)
   user: User;
 }

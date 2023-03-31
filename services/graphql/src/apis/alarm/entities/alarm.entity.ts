@@ -29,9 +29,5 @@ export class Alarm {
 
   @Column()
   @Field(() => String)
-  commentUserId: string;
-
-  @Column()
-  @Field(() => String)
-  commentUserName: string;
+  alarmMessage: string;
 }

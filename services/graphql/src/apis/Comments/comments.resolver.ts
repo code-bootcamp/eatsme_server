@@ -27,8 +27,9 @@ export class CommentsResolver {
     @Args('updateCommentInput') updateCommentInput: UpdateCommentInput,
     @Context() context: IContext,
   ): Promise<Comment> {
+    const userId = context.req.user.id
     return this.commentsService.update(
-      JSON.parse(JSON.stringify({ updateCommentInput })),
+      JSON.parse(JSON.stringify({ updateCommentInput, userId })),
     );
   }
 
@@ -38,6 +39,7 @@ export class CommentsResolver {
     @Args('commentId') commentId: string,
     @Context() context: IContext,
   ): Promise<string> {
-    return this.commentsService.delete({ commentId });
+    const userId = context.req.user.id
+    return this.commentsService.delete({ commentId, userId });
   }
 }

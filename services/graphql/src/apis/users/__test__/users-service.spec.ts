@@ -7,15 +7,12 @@ import { MockUserService } from './user-mockDB';
 import {
   CacheModule,
   ConflictException,
-  HttpException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { RedisClientOptions } from 'redis';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { Repository } from 'typeorm';
 
 describe('UserService', () => {
-  let userRepository: Repository<User>;
   let userService: UserService;
 
   beforeEach(async () => {
