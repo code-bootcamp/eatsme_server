@@ -62,7 +62,6 @@ export class RestaurantService {
       //   url: `https://maps.googleapis.com/maps/api/place/photo/?maxwidth=300&photo_reference=${el?.photos[0]?.photo_reference}&key=${this.apiKey}`,
       // };
       // const result = await axios(config);
-
       const {
         geometry,
         place_id,
@@ -143,7 +142,8 @@ export class RestaurantService {
   }: IRestaurantServiceGetRestaurants): Promise<Restaurant[]> {
     const result = await this.restaurantModel
       .find({
-        section: Object.values(body)[0],
+        area: body.area,
+        section: body.section,
       })
       .exec();
     if (!result[0]) {
@@ -193,7 +193,6 @@ export class RestaurantService {
     req,
   }: IRestaurantServiceGetRestaurant): Promise<object> {
     const { restaurantId, reservation_time, table } = req.body;
-
     const restaurantInfo = await this.findOneRestaurant({
       restaurant_id: restaurantId,
     });
