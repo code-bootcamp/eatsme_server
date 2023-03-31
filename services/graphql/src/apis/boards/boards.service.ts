@@ -226,15 +226,7 @@ export class BoardsService {
           recommend,
           imgUrl,
         } = sum;
-        console.log({
-          _id: restaurantId,
-          restaurantName,
-          address,
-          location,
-          rating,
-          recommend,
-          imgUrl,
-        });
+
         const personalMapData = await this.personalMapDataRepository.save({
           restaurantId,
           restaurantName,
