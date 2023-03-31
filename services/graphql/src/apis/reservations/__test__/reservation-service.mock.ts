@@ -1,22 +1,20 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { UnprocessableEntityException } from '@nestjs/common';
 import axios from 'axios';
-import { Repository } from 'typeorm';
-import { UserService } from '../users/users.service';
-import { Reservation } from './entities/reservation.entity';
+import { Reservation } from '../entities/reservation.entity';
 import {
   IReservationDelete,
   IReservationsCreate,
-} from './interfaces/reservations-service.interface';
+} from '../interfaces/reservations-service.interface';
+import {
+  MockReservationsRepository,
+  MockRestaurantRepository,
+  MockUserRepository,
+} from './reservation-mock.DB';
 
-@Injectable()
-export class ReservationsService {
-  constructor(
-    @InjectRepository(Reservation)
-    private readonly reservationsRepository: Repository<Reservation>, //
-
-    private readonly usersService: UserService,
-  ) {}
+export class MockingReservationService {
+  User = new MockUserRepository();
+  restaurant = new MockRestaurantRepository();
+  reservations = new MockReservationsRepository();
 
   async createReservation({
     createReservationInput, //
@@ -24,7 +22,7 @@ export class ReservationsService {
   }: IReservationsCreate): Promise<Reservation> {
     const { restaurantId, time, table, reservation_time } =
       createReservationInput;
-    const user = await this.usersService.findOneByUser({ userId });
+    const user = this.User.findOne({ where: { id: userId } });
 
     const isReservation = user.reservations.filter((el) => {
       if (
@@ -44,7 +42,8 @@ export class ReservationsService {
     );
 
     const { _id } = restaurants.data.restaurantInfo;
-    return this.reservationsRepository.save({
+
+    return this.reservations.save({
       table,
       time,
       reservation_time,
@@ -59,10 +58,12 @@ export class ReservationsService {
     userId,
     restaurant_id,
   }: IReservationDelete): Promise<boolean> {
-    const user = await this.usersService.findOneByUser({ userId });
-    const deleteRestaurant = user.reservations.filter(
-      (el) => el.restaurant_id === restaurant_id,
-    );
+    const user = await this.User.findOne({ where: { id: userId } });
+
+    const deleteRestaurant = user.reservations.filter((el) => {
+      return el.restaurant_id === restaurant_id;
+    });
+
     if (!deleteRestaurant.length)
       throw new UnprocessableEntityException('예약정보가 없습니다.');
 
@@ -72,11 +73,9 @@ export class ReservationsService {
     );
 
     if (result.data) {
-      return (await this.reservationsRepository.delete({ restaurant_id }))
-        .affected
+      return (await this.reservations.delete({ restaurant_id })).affected
         ? true
         : false;
     }
-    return false;
   }
 }
