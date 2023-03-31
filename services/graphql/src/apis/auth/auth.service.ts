@@ -93,11 +93,11 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
-    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN2);
+    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader(
       'Set-Cookie',
-      `refreshToken=${refreshToken};path=/ domain=.jjjbackendclass.shop; SameSite=None; Secure; httpOnly`,
+      `refreshToken=${refreshToken};path=/; domain=.jjjbackendclass.shop; SameSite=None; Secure; httpOnly`,
     );
   }
 
@@ -123,7 +123,7 @@ export class AuthService {
         createUserInput: req.user,
       });
     }
-    // console.log(user);
+
     this.setRefreshToken({ user, res });
     res.redirect('http://local:5500/seb11_team03_server/index.html');
   }

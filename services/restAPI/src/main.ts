@@ -23,7 +23,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({
-    origin: process.env.ORIGIN2,
+    origin: process.env.ORIGIN,
     // origin: '*',
     credentials: true,
   });
