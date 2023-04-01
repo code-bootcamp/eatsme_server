@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from '../Comments/entities/comment.entity';
+import { FilesService } from '../files/files.service';
 
 import { ImagesService } from '../images/images.service';
 
@@ -25,6 +26,7 @@ import { Board } from './entities/board.entity';
   providers: [
     BoardsResolver, //
     BoardsService,
+    FilesService,
     UserService,
     ImagesService,
   ],

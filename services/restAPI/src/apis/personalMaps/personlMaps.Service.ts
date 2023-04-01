@@ -23,18 +23,17 @@ export class PersonalMapsService {
   apiKey = process.env.GOOGLE_MAP_API_KEY;
 
   async createPersonalMap({
-    body,
+    req,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
     console.log('---식당 정보 등록---');
     const restaurantInfos = Promise.all(
-      body.info.map(async (el) => {
+      req.body.info.map(async (el) => {
         const restaurantInfo = await this.restaurantModel
           .find({
             restaurantName: el.restaurantName,
             location: el.location,
           })
           .exec();
-
         if (restaurantInfo.length) {
           return await restaurantInfo[0];
         } else {
@@ -43,11 +42,9 @@ export class PersonalMapsService {
             url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${el.restaurantName}&key=${this.apiKey}&location=${el.location.lat}%2C${el.location.lng}&radius=100&language=ko`,
           };
           const result = await axios(config);
-          console.log(result.data);
           const newRestaurant = result.data.results.filter((it) => {
             return it.name === el.restaurantName;
           });
-
           if (newRestaurant) {
             const postRestaurant = await new this.restaurantModel({
               ...el,
@@ -89,25 +86,27 @@ export class PersonalMapsService {
   }
 
   async getPersonalMap({
-    body,
+    req,
   }: IPersonalMapsServiceGetPersonalMap): Promise<
     IPersonalMapsServiceGetPersonalMapReturn[]
   > {
     console.log('---식당 정보 조회---');
     const restaurantInfo = await Promise.all(
-      body.map(async (_id) => {
-        //없는 경우 null을 반환한다. 이때 에러를 던져 준다.
-        const result = await this.restaurantModel.findById({ _id });
-        if (!result) {
-          throw new HttpException(
-            '등록되지 않은 식당입니다. 등록후 조회해주세요',
-            HttpStatus.BAD_REQUEST,
-          );
-        }
+      JSON.parse(JSON.stringify(req.query.data))
+        .split(',')
+        .map(async (_id) => {
+          //없는 경우 null을 반환한다. 이때 에러를 던져 준다.
+          const result = await this.restaurantModel.findById({ _id });
+          if (!result) {
+            throw new HttpException(
+              '등록되지 않은 식당입니다. 등록후 조회해주세요',
+              HttpStatus.BAD_REQUEST,
+            );
+          }
 
-        const { restaurantName, address, rating, _id: id, location } = result;
-        return { restaurantName, address, rating, _id, location };
-      }),
+          const { restaurantName, address, rating, _id: id, location } = result;
+          return { restaurantName, address, rating, _id, location };
+        }),
     );
     console.log('---식당 정보 조회 완료');
     return restaurantInfo;

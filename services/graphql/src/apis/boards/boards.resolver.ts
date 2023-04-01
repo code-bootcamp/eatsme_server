@@ -7,6 +7,7 @@ import { CreateBoardInput } from './dto/create-board.input';
 import { FetchBoardsByEveryInput } from './dto/fetch-board-secton.input';
 import { BoardReturn } from './dto/fetch-board.object';
 import { UpdateBoardInput } from './dto/update-board.input';
+import { Board } from './entities/board.entity';
 
 @Resolver()
 export class BoardsResolver {
