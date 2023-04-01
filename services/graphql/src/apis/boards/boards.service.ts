@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
 import { Comment } from '../Comments/entities/comment.entity';
+import { FilesService } from '../files/files.service';
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { User } from '../users/entities/user.entity';
@@ -43,6 +44,8 @@ export class BoardsService {
     private readonly usersRepository: Repository<User>,
 
     private readonly userService: UserService,
+
+    private readonly filesService: FilesService,
   ) {}
 
   async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
@@ -107,10 +110,7 @@ export class BoardsService {
       },
     );
     const restaurantInfo = await axios.get(
-      'http://road-service:7100/info/road/map',
-      {
-        data: restaurantIds,
-      },
+      `http://road-service:7100/info/road/map?data=${restaurantIds}`,
     );
     board.personalMapData = restaurantInfo.data.map((el, i) => {
       const sum = { ...el, ...board.personalMapData[i] };
@@ -146,12 +146,14 @@ export class BoardsService {
   }: IBoardsServiceFindSection): Promise<BoardReturn[]> {
     const BoardInfo = await this.boardsRepository.find({
       where: { ...fetchBoardsByEveryInput },
+      relations: ['user', 'comments', 'comments.replies', 'personalMapData'],
     });
     const personalBoards = await Promise.all(
       BoardInfo.map(async (el) => {
         return await this.fetchBoard({ boardId: el.id });
       }),
     );
+
     return personalBoards;
   }
   //지역 선택검증
@@ -184,11 +186,13 @@ export class BoardsService {
       user,
     });
     const restaurantInfo = await axios.post(
-      'http://road-service:7100/info/road/map',
+      `http://road-service:7100/info/road/map`,
       {
         info,
       },
     );
+    //트랜잭션을 꼭해줘야 하는구나 트랜잭션이 없기에 발생하는 에러 인듯 하다.
+    console.log(restaurantInfo);
     const restaurantMainInfos = await Promise.all(
       restaurantInfo.data.map(async (el, i) => {
         const sum = { ...el, ...info[i] };
@@ -200,17 +204,20 @@ export class BoardsService {
           rating,
           recommend,
           imgUrl,
+          area,
+          section,
         } = sum;
 
         const personalMapData = await this.personalMapDataRepository.save({
+          area,
+          board,
+          section,
           restaurantId,
           restaurantName,
           recommend,
           imgUrl,
-          board,
         });
         const { board: newBoard, ...restaurantInfo } = personalMapData;
-        console.log({ board: newBoard, ...restaurantInfo });
         return restaurantInfo;
       }),
     );
@@ -225,28 +232,28 @@ export class BoardsService {
     if (!board) {
       throw new NotFoundException('등록되지 않은 게시판입니다.');
     }
-    const restaurantIds = JSON.parse(JSON.stringify(board.personalMapData)).map(
-      (el) => {
-        return el.restaurantId;
-      },
-    );
+
+    //입력값에 대한 정제가 필요하다.
     const newRestaurantInfo = await axios.post(
       'http://road-service:7100/info/road/map',
       {
         info,
       },
     );
-    const oldPersonalMapDatas = JSON.parse(
-      JSON.stringify(board.personalMapData),
-    );
-    const newPersonalMapInfos = info.map((el, i) => {
+    const newPersonalMapData = info.map((el, i) => {
+      console.log(el);
+
       const { location, restaurantName, ...rest } = el;
       return { ...rest, restaurantId: newRestaurantInfo.data[i]._id };
     });
 
+    const oldPersonalMapDatas = JSON.parse(
+      JSON.stringify(board.personalMapData),
+    );
+    console.log(newPersonalMapData);
+    console.log('#########');
     console.log(oldPersonalMapDatas);
-    console.log('$$$$$$$$');
-    console.log(newPersonalMapInfos);
+    //id,area,section,restaurantId,recommend,imgUrl
   }
 
   //게시물 삭제하기

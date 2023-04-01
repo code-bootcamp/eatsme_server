@@ -11,6 +11,14 @@ export class PersonalMapData {
 
   @Column()
   @Field(() => String)
+  area: string;
+
+  @Column()
+  @Field(() => String)
+  section: string;
+
+  @Column()
+  @Field(() => String)
   restaurantId: string;
 
   @Column({ nullable: true })
