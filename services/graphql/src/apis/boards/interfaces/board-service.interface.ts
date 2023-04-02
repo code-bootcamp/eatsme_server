@@ -41,6 +41,7 @@ export interface IBoardsServiceCreate {
 
 export interface IBoardsServiceUpdate {
   updateBoardInput: UpdateBoardInput;
+  context: IContext;
 }
 
 export interface IBoardsServiceDelete {
