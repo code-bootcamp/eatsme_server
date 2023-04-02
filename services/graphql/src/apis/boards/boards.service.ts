@@ -1,17 +1,11 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
-import { json } from 'stream/consumers';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Comment } from '../Comments/entities/comment.entity';
 import { FilesService } from '../files/files.service';
 import { ImagesService } from '../images/images.service';
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
-import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
 import { ToggleLikeService } from '../toggleLike/toggleLike.service';
 import { User } from '../users/entities/user.entity';
 import { UserService } from '../users/users.service';
@@ -36,9 +30,6 @@ export class BoardsService {
 
     @InjectRepository(PersonalMapData)
     private readonly personalMapDataRepository: Repository<PersonalMapData>,
-
-    @InjectRepository(Comment)
-    private readonly commentsRepository: Repository<Comment>,
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,

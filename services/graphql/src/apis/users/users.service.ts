@@ -49,11 +49,13 @@ export class UserService {
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
+
     if (restaurantIdArr.length) {
       const reservationRestaurant = await axios.get(
         'http://road-service:7100/info/road/find/restaurant',
         { data: restaurantIdArr },
       );
+
       return {
         ...user,
         restaurant: reservationRestaurant.data,

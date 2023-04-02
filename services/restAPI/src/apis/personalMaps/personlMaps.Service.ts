@@ -108,5 +108,6 @@ export class PersonalMapsService {
       return { restaurantId, restaurantName, rating, address, location };
     });
     return personalMapInfo;
+
   }
 }
