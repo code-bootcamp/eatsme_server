@@ -40,10 +40,8 @@ export class BoardsResolver {
   fetchBoardsByEvery(
     @Args('fetchBoardsByEveryInput')
     fetchBoardsByEveryInput: FetchBoardsByEveryInput,
-  ): Promise<BoardReturn[]> {
-    return this.boardsService.findByEvery(
-      JSON.parse(JSON.stringify({ fetchBoardsByEveryInput })),
-    );
+  ): Promise<void> {
+    return this.boardsService.findByEvery({ fetchBoardsByEveryInput });
   }
 
   @UseGuards(GqlAuthGuard('access'))
@@ -63,10 +61,8 @@ export class BoardsResolver {
   updateBoard(
     @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
     @Context() context: IContext,
-  ): Promise<void> {
-    return this.boardsService.update(
-      JSON.parse(JSON.stringify({ updateBoardInput })),
-    );
+  ): Promise<BoardReturn> {
+    return this.boardsService.update({ updateBoardInput, context });
   }
 
   @UseGuards(GqlAuthGuard('access'))
