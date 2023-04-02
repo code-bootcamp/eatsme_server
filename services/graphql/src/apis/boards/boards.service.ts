@@ -150,26 +150,16 @@ export class BoardsService {
   //시,행정구역별 게시물 조회
   async findByEvery({
     fetchBoardsByEveryInput,
-  }: IBoardsServiceFindSection): Promise<void> {
-    const boards = await this.boardsRepository.find({
+  }: IBoardsServiceFindSection): Promise<BoardReturn[]> {
+    const BoardInfo = await this.boardsRepository.find({
       where: { ...fetchBoardsByEveryInput },
-      relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
     });
-
-    const restaurantIdsArr = await Promise.all(
-      boards.map(async (el, i) => {
-        if (el.personalMapData) {
-          return JSON.parse(JSON.stringify(el.personalMapData)).map((el, i) => {
-            return el.id;
-          });
-        }
+    const personalBoards = await Promise.all(
+      BoardInfo.map(async (el) => {
+        return await this.fetchBoard({ boardId: el.id });
       }),
     );
-    //객체로 담아서 보내야 한다. 모든 정보는
-
-    const restaurantInfo = await axios.get(
-      `http://road-service:7100/info/road/map?data=${restaurantIdsArr}`,
-    );
+    return personalBoards;
   }
   //지역 선택검증
   async checkList({
