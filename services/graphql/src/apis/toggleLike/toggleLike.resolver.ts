@@ -16,9 +16,6 @@ export class ToggleLikeResolver {
     @Args('toggleLikeInput') toggleLikeInput: ToggleLikeInput, //
     @Context() context: IContext,
   ): Promise<string> {
-    const { id: userId } = context.req.user;
-    return this.toggleLikeService.toggleLike(
-      JSON.parse(JSON.stringify({ toggleLikeInput, userId })),
-    );
+    return this.toggleLikeService.toggleLike({ toggleLikeInput, context });
   }
 }

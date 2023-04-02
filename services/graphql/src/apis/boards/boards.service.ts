@@ -12,6 +12,7 @@ import { FilesService } from '../files/files.service';
 import { ImagesService } from '../images/images.service';
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
+import { ToggleLikeService } from '../toggleLike/toggleLike.service';
 import { User } from '../users/entities/user.entity';
 import { UserService } from '../users/users.service';
 import { BoardReturn } from './dto/fetch-board.object';
@@ -36,14 +37,13 @@ export class BoardsService {
     @InjectRepository(PersonalMapData)
     private readonly personalMapDataRepository: Repository<PersonalMapData>,
 
-    @InjectRepository(ToggleLike)
-    private readonly toggleLikeRepository: Repository<ToggleLike>,
-
     @InjectRepository(Comment)
     private readonly commentsRepository: Repository<Comment>,
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+
+    private readonly toggleLikeService: ToggleLikeService,
 
     private readonly userService: UserService,
 
@@ -51,6 +51,8 @@ export class BoardsService {
 
     private readonly imagesService: ImagesService,
   ) {}
+
+  //findOned이 필요할까?
 
   async findOne({ boardId }: IBoardsServiceFindOne): Promise<Board> {
     const board = await this.boardsRepository.findOne({
@@ -60,21 +62,52 @@ export class BoardsService {
     if (!board) throw new UnprocessableEntityException('등록후 조회해주세요');
     return board;
   }
+  //한개의 게시물 정보조회
+  async fetchBoard({
+    boardId,
+  }: IBoardsServiceFetchBoard): Promise<BoardReturn> {
+    const board = await this.findOne({ boardId });
+    const restaurantIds = JSON.parse(JSON.stringify(board.personalMapData)).map(
+      (el) => {
+        return el.restaurantId;
+      },
+    );
 
+    const restaurantInfo = await axios.get(
+      `http://road-service:7100/info/road/map?data=${restaurantIds}`,
+    );
+    board.personalMapData = restaurantInfo.data.map((el, i) => {
+      return { ...el, ...board.personalMapData[i] };
+    });
+
+    return {
+      ...JSON.parse(JSON.stringify(board)),
+      createdAt: board.createdAt,
+    };
+  }
   //내가 작성한 게시물 정보조회
   async fetchMyBoard({
     context,
   }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[] | string> {
-    const myBoards = await this.boardsRepository.find({
+    const boards = await this.boardsRepository.find({
       where: {
         user: {
           id: context.req.user.id,
         },
       },
     });
-    if (myBoards.length) {
+    // const BoardsIds = boards.map((el) => {
+    //   return el.id;
+    // });
+
+    if (boards.length) {
+      // const qqq = await this.boardsRepository.find({
+      //   where: {
+      //     id: In(BoardsIds),
+      //   },
+      // });
       const fetchMyBoards = await Promise.all(
-        myBoards.map(async (el) => {
+        boards.map(async (el) => {
           return await this.fetchBoard({ boardId: el.id });
         }),
       );
@@ -87,10 +120,8 @@ export class BoardsService {
   async fetchMyLikeBoard({
     context,
   }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[] | string> {
-    const ToggleLikeIds = await this.toggleLikeRepository.find({
-      where: {
-        id: context.req.user.id,
-      },
+    const ToggleLikeIds = await this.toggleLikeService.findToggleLikeIds({
+      context,
     });
     if (ToggleLikeIds.length) {
       const fetchMyLikeBoard = await Promise.all(
@@ -103,70 +134,34 @@ export class BoardsService {
       return '찜한 게시물이 없습니다.';
     }
   }
-  //한개의 게시물 정보조회
-  async fetchBoard({
-    boardId,
-  }: IBoardsServiceFetchBoard): Promise<BoardReturn> {
-    const board = await this.findOne({ boardId });
-    const restaurantIds = JSON.parse(JSON.stringify(board.personalMapData)).map(
-      (el, i) => {
-        return el.restaurantId;
-      },
-    );
-    const restaurantInfo = await axios.get(
-      `http://road-service:7100/info/road/map?data=${restaurantIds}`,
-    );
-    board.personalMapData = restaurantInfo.data.map((el, i) => {
-      const sum = { ...el, ...board.personalMapData[i] };
-      const {
-        _id: restaurantId,
-        restaurantName,
-        address,
-        location,
-        rating,
-        recommend,
-        imgUrl,
-      } = sum;
-
-      return {
-        restaurantId,
-        restaurantName,
-        address,
-        location,
-        rating,
-        recommend,
-        imgUrl,
-      };
-    });
-    return {
-      ...JSON.parse(JSON.stringify(board)),
-      createdAt: board.createdAt,
-    };
-  }
 
   //시,행정구역별 게시물 조회
   async findByEvery({
     fetchBoardsByEveryInput,
-  }: IBoardsServiceFindSection): Promise<void> {
+  }: IBoardsServiceFindSection): Promise<BoardReturn[]> {
     const boards = await this.boardsRepository.find({
       where: { ...fetchBoardsByEveryInput },
       relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
     });
-
-    const restaurantIdsArr = await Promise.all(
-      boards.map(async (el, i) => {
-        if (el.personalMapData) {
-          return JSON.parse(JSON.stringify(el.personalMapData)).map((el, i) => {
-            return el.id;
-          });
-        }
+    const personalBoards = await Promise.all(
+      boards.map(async (el) => {
+        return await this.fetchBoard({ boardId: el.id });
       }),
     );
-    //객체로 담아서 보내야 한다. 모든 정보는
+    return personalBoards;
+    // const restaurantIdsArr = await Promise.all(
+    //   boards.map(async (el, i) => {
+    //     if (el.personalMapData) {
+    //       return JSON.parse(JSON.stringify(el.personalMapData)).map((el, i) => {
+    //         return el.id;
+    //       });
+    //     }
+    //   }),
+    // );
 
-    const restaurantInfo = await axios.get(
-      `http://road-service:7100/info/road/map?data=${restaurantIdsArr}`,
-    );
+    // const restaurantInfo = await axios.get(
+    //   `http://road-service:7100/info/road/map?data=${restaurantIdsArr}`,
+    // );
   }
   //지역 선택검증
   async checkList({

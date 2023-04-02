@@ -44,6 +44,7 @@ export class UserService {
         'alarms',
         'boards.comments.replies',
         'boards',
+        'toggleLikes',
       ],
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');

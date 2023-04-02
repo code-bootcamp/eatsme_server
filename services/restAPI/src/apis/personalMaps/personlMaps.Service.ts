@@ -94,14 +94,19 @@ export class PersonalMapsService {
 
   async getPersonalMap({
     req,
-  }: IPersonalMapsServiceGetPersonalMap): Promise<void> {
-    //하나의 배열을 받는 경우? 여러개도 동시에 할 수 있을까?
-    //일단은 하나만 받는것으로 하자.
-    const ids = JSON.stringify(req.query.data).split(',');
-
+  }: IPersonalMapsServiceGetPersonalMap): Promise<
+    IPersonalMapsServiceGetPersonalMapReturn[]
+  > {
+    const ids = JSON.parse(JSON.stringify(req.query.data)).split(',');
     const restuarantinfo = await this.restaurantModel.find({
       _id: { $in: ids },
     });
-    console.log(restuarantinfo);
+    const personalMapInfo = restuarantinfo.map((el) => {
+      const { _id: restaurantId, restaurantName, location } = el;
+      const address = el.address || null;
+      const rating = el.address || null;
+      return { restaurantId, restaurantName, rating, address, location };
+    });
+    return personalMapInfo;
   }
 }

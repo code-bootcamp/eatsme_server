@@ -40,7 +40,7 @@ export class BoardsResolver {
   fetchBoardsByEvery(
     @Args('fetchBoardsByEveryInput')
     fetchBoardsByEveryInput: FetchBoardsByEveryInput,
-  ): Promise<void> {
+  ): Promise<BoardReturn[]> {
     return this.boardsService.findByEvery({ fetchBoardsByEveryInput });
   }
 
