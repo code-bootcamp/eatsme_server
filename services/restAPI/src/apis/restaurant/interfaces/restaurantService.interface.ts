@@ -1,5 +1,8 @@
 import { Request } from 'express';
 
+export interface IRestaurantServiceFindByIds {
+  req: Request;
+}
 export interface IRestaurantServicePostAndGetRestaurant {
   req: Request;
 }

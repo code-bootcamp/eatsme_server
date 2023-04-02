@@ -11,8 +11,17 @@ export interface IBoardsServiceFetchBoard {
 export interface IBoardsServiceMyFetchBoard {
   context: IContext;
 }
-export interface IBoardsServiceFindOne {
+
+export interface IBoardsServiceFindByBoardId {
   boardId: string;
+}
+
+export interface IBoardsServiceFindByUser {
+  context: IContext;
+}
+
+export interface IBoardsServiceFindByEvery {
+  fetchBoardsByEveryInput: FetchBoardsByEveryInput;
 }
 
 export interface IBoardsServiceFindArea {
@@ -36,7 +45,7 @@ export interface IBoardsServiceNullCheckList {
 
 export interface IBoardsServiceCreate {
   createBoardInput: CreateBoardInput;
-  id: string;
+  context: IContext;
 }
 
 export interface IBoardsServiceUpdate {

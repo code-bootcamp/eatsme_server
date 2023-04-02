@@ -25,8 +25,8 @@ export class PersonalMapsService {
     private readonly restaurantModel: Model<RestaurantDocument>,
     private readonly restaurantService: RestaurantService,
   ) {}
-  apiKey = process.env.GOOGLE_MAP_API_KEY;
 
+  apiKey = process.env.GOOGLE_MAP_API_KEY;
   async createPersonalMap({
     req,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
@@ -46,13 +46,11 @@ export class PersonalMapsService {
             method: 'get',
             url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${el.restaurantName}&key=${this.apiKey}&location=${el.location.lat}%2C${el.location.lng}&radius=100&language=ko`,
           };
-          //에러가 날 가능성이 있는 부분1
           const result = await axios(config);
           const newRestaurant = result.data.results.filter((it) => {
             return it.name === el.restaurantName;
           });
           if (newRestaurant) {
-            //에러가 날 가능성이 있는 부분2
             const postRestaurant = await new this.restaurantModel({
               ...el,
               openingDays: null,
@@ -71,7 +69,6 @@ export class PersonalMapsService {
             const { location } = geometry;
             const { phoneNumber, openingDays } =
               await this.restaurantService.getDetails(place_id);
-            //에러가 날 가능성이 있는 부분3
             const postRestaurant = await new this.restaurantModel({
               restaurantName,
               address,
@@ -97,11 +94,11 @@ export class PersonalMapsService {
   }: IPersonalMapsServiceGetPersonalMap): Promise<
     IPersonalMapsServiceGetPersonalMapReturn[]
   > {
-    const ids = JSON.parse(JSON.stringify(req.query.data)).split(',');
-    const restuarantinfo = await this.restaurantModel.find({
-      _id: { $in: ids },
-    });
-    const personalMapInfo = restuarantinfo.map((el) => {
+    const restaurantInfo = await this.restaurantService.findByIds({ req });
+
+    const personalMapInfo = restaurantInfo.map((el) => {
+      console.log(el);
+      console.log('$$$$$$');
       const { _id: restaurantId, restaurantName, location } = el;
       const address = el.address || null;
       const rating = el.address || null;

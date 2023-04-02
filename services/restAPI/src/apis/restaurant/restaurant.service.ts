@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
 import {
   IRestaurantServiceDeleteCollection,
+  IRestaurantServiceFindByIds,
   IRestaurantServiceFindOneRestaurant,
   IRestaurantServiceGetDetails,
   IRestaurantServiceGetDetailsReturn,
@@ -33,6 +34,14 @@ export class RestaurantService {
   ) {}
 
   apiKey = process.env.GOOGLE_MAP_API_KEY;
+
+  async findByIds({ req }: IRestaurantServiceFindByIds): Promise<Restaurant[]> {
+    const ids = JSON.parse(JSON.stringify(req.query.data)).split(',');
+    return await this.restaurantModel.find({
+      _id: { $in: ids },
+    });
+  }
+
   async postRestaurants({
     req,
   }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
