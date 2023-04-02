@@ -65,12 +65,9 @@ export class UserService {
   }
 
   //-----유저email확인-----
-  async findOneByEmail({ email }: IUsersFindOneByEmail): Promise<User> {
+  async findOneByEmail({ email }: IUsersFindOneByEmail) {
     const user = await this.userRepository.findOne({ where: { email } });
 
-    if (!user) {
-      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
-    }
     return user;
   }
 
@@ -79,10 +76,10 @@ export class UserService {
     if (!email || !email.includes('@') || 30 <= email.length) {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
+
     await this.isFindOneByEmail({ email });
 
     await this.sendToAuthNumber({ email });
-
     // await this.sendToTemplate({ email });
     return email;
   }
@@ -95,12 +92,14 @@ export class UserService {
       6,
       '0',
     );
+
     if (user) {
       this.updateUser({
         userId: user.id,
         updateUserInput: { password: authNumber },
       });
     }
+
     this.cacheManager.set(email, authNumber, {
       ttl: 180,
     });

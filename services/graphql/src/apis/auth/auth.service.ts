@@ -33,6 +33,10 @@ export class AuthService {
   async login({ loginAuthInput, context }: IAuthServiceLogin): Promise<string> {
     const { email, password } = loginAuthInput;
     const user = await this.usersService.findOneByEmail({ email });
+    if (!user) {
+      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
+    }
+
     const isAuth = await bcrypt.compare(password, user.password);
     if (!isAuth) {
       throw new UnprocessableEntityException(
