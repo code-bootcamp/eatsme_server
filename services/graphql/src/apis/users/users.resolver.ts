@@ -26,7 +26,7 @@ export class UserResolver {
   //-----인증번호 확인매치-----
   @Mutation(() => String)
   async matchAuthNumber(
-    @Args('matchtAuthNumberInput') matchAuthNumberInput: MatchAuthNumberInput,
+    @Args('matchAuthNumberInput') matchAuthNumberInput: MatchAuthNumberInput,
   ) {
     return this.userService.matchAuthNumber({ matchAuthNumberInput });
   }

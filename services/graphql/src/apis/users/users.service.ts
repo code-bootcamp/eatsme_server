@@ -89,11 +89,18 @@ export class UserService {
 
   //-----이메일인증번호 템플릿 전송-----
   async sendToAuthNumber({ email }: IUsersSendToTemplate): Promise<string> {
+    const user = await this.findOneByEmail({ email });
+
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
     );
-
+    if (user) {
+      this.updateUser({
+        userId: user.id,
+        updateUserInput: { password: authNumber },
+      });
+    }
     this.cacheManager.set(email, authNumber, {
       ttl: 180,
     });

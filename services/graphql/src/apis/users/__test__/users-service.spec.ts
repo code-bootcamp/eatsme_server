@@ -9,6 +9,7 @@ import { MockUserService } from './user-mockDB';
 import { ConfigModule } from '@nestjs/config';
 
 import { ImagesService } from 'src/apis/images/images.service';
+import { MatchAuthNumberInput } from '../dto/matchAuthNumber-user.input';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -90,11 +91,43 @@ describe('UserService', () => {
       const email = 'black1594@naver.com';
 
       const result = await userService.checkEmail({ email });
-      expect(result).toBe('black1594@naver.com');
+      expect(result).toBe(email);
     });
   });
 
-  // describe('findOneByUser', () => {});
+  describe('findOneByEmail', () => {
+    it('db에 없는 EMail 입력 했을 때', () => {
+      const email = 'black1594@naver.com';
+
+      try {
+        userService.findOneByEmail({ email });
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConflictException);
+      }
+    });
+
+    it('db에 있는 EMail 입력 했을 때', async () => {
+      const email = 'aaa@aaa.com';
+
+      const result = await userService.findOneByEmail({ email });
+      expect(result.email).toBe(email);
+    });
+  });
+
+  // describe('matchAuthNumber', async () => {
+  //   it('인증번호 못맞췄을 경우', () => {
+  //     const mydata: MatchAuthNumberInput = {
+  //       email: 'black1594@naver.com',
+  //       authNumber: '123456',
+  //     };
+
+  //     try {
+  //       //
+  //     } catch (err) {
+  //       expect(err).toBeInstanceOf(ConflictException);
+  //     }
+  //   });
+  // });
 
   describe('isFindOneByNickname', () => {
     it('닉네임 값을 입력 안한 경우', async () => {
@@ -125,7 +158,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('create', () => {
+  describe('createUser', () => {
     it('이메일 양식 값이 주어지지 않았을 때', async () => {
       const mydata: IUsersCreate = {
         createUserInput: {

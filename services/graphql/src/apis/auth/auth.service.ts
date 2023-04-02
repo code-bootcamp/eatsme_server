@@ -82,8 +82,6 @@ export class AuthService {
       },
     );
 
-    console.log(isAccessToken, isRefreshToken, '@@@');
-
     return '로그아웃';
   }
 
@@ -94,10 +92,10 @@ export class AuthService {
     );
 
     //개발환경
-    // res.setHeader(
-    //   'Set-Cookie',
-    //   `refreshToken=${refreshToken};path=/; httpOnly`,
-    // );
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken};path=/; httpOnly`,
+    );
 
     //배포환경
 
@@ -133,6 +131,6 @@ export class AuthService {
     }
 
     this.setRefreshToken({ user, res });
-    res.redirect('https://eatsme.site');
+    res.redirect('http://eatsme.site');
   }
 }
