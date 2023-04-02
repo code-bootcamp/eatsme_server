@@ -104,8 +104,7 @@ export class PersonalMapsService {
             );
           }
 
-          const { restaurantName, address, rating, _id: id, location } = result;
-          return { restaurantName, address, rating, _id, location };
+          return { ...result, _id: result.id };
         }),
     );
     console.log('---식당 정보 조회 완료');

@@ -6,7 +6,6 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UserReservationRestaurant } from '../interfaces/user-reservationRestaurant.inferface';
 
-
 @Entity()
 @ObjectType()
 export class User {
@@ -27,17 +26,15 @@ export class User {
   nickname: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   userImg: string;
 
   @OneToMany(() => Reservation, (reservation) => reservation.users)
   @Field(() => [Reservation])
   reservations: Reservation[];
 
-
   @Field(() => [UserReservationRestaurant])
   restaurant: UserReservationRestaurant[];
-
 
   @OneToMany(() => Board, (boards) => boards.user)
   @Field(() => [Board])

@@ -19,8 +19,9 @@ export class PersonalMapsController {
 
   @Get('/info/road/map')
   getPersonalMap(
-    @Req() req: Request,
+    @Req() req: Request, //
   ): Promise<IPersonalMapsServiceGetPersonalMapReturn[]> {
+    console.log(req.query);
     return this.personalMapService.getPersonalMap({ req });
   }
 }
