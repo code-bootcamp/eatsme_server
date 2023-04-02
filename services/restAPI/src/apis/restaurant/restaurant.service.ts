@@ -31,6 +31,7 @@ export class RestaurantService {
 
     private readonly timeTablesServcie: TimeTalbesService,
   ) {}
+
   apiKey = process.env.GOOGLE_MAP_API_KEY;
   async postRestaurants({
     req,
@@ -77,7 +78,6 @@ export class RestaurantService {
             restaurantName,
           })
           .exec();
-
         if (!findRestaurant) {
           const postRestaurant = await new this.restaurantModel({
             restaurantName,
@@ -95,6 +95,7 @@ export class RestaurantService {
       }
     });
   }
+
   async getDetails(
     place_id: IRestaurantServiceGetDetails,
   ): Promise<IRestaurantServiceGetDetailsReturn> {

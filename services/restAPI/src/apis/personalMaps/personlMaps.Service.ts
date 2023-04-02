@@ -97,23 +97,17 @@ export class PersonalMapsService {
   }: IPersonalMapsServiceGetPersonalMap): Promise<
     IPersonalMapsServiceGetPersonalMapReturn[]
   > {
-    console.log('---식당 정보 조회---');
-    const restaurantInfo = await Promise.all(
-      JSON.parse(JSON.stringify(req.query.data))
-        .split(',')
-        .map(async (_id) => {
-          //없는 경우 null을 반환한다. 이때 에러를 던져 준다.
-          const result = await this.restaurantModel.findById({ _id });
-          if (!result) {
-            throw new HttpException(
-              '등록되지 않은 식당입니다. 등록후 조회해주세요',
-              HttpStatus.BAD_REQUEST,
-            );
-          }
-          return { ...result, _id: result.id };
-        }),
-    );
-    console.log('---식당 정보 조회 완료');
-    return restaurantInfo;
+    const ids = JSON.parse(JSON.stringify(req.query.data)).split(',');
+    const restuarantinfo = await this.restaurantModel.find({
+      _id: { $in: ids },
+    });
+    const personalMapInfo = restuarantinfo.map((el) => {
+      const { _id: restaurantId, restaurantName, location } = el;
+      const address = el.address || null;
+      const rating = el.address || null;
+      return { restaurantId, restaurantName, rating, address, location };
+    });
+    return personalMapInfo;
+
   }
 }

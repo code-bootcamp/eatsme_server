@@ -55,6 +55,12 @@ class RestaurantBoardInfo {
   @Field(() => String, { nullable: true })
   restaurantName: string;
 
+  @Field(() => String)
+  area: string;
+
+  @Field(() => String)
+  section: string;
+
   @Field(() => String, { nullable: true })
   address: string;
 

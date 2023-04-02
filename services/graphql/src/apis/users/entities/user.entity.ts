@@ -5,6 +5,7 @@ import { Board } from 'src/apis/boards/entities/board.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UserReservationRestaurant } from '../interfaces/user-reservationRestaurant.inferface';
+import { ToggleLike } from 'src/apis/toggleLike/entities/toggleLike.entity';
 
 @Entity()
 @ObjectType()
@@ -26,7 +27,7 @@ export class User {
   nickname: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   userImg: string;
 
   @OneToMany(() => Reservation, (reservation) => reservation.users)
@@ -43,4 +44,8 @@ export class User {
   @OneToMany(() => Alarm, (alarm) => alarm.users)
   @Field(() => [Alarm])
   alarms: Alarm[];
+
+  @OneToMany(() => ToggleLike, (toggleLikes) => toggleLikes.user)
+  @Field(() => [ToggleLike])
+  toggleLikes: ToggleLike[];
 }

@@ -7,6 +7,7 @@ import { ImagesService } from '../images/images.service';
 
 import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
 import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
+import { ToggleLikeService } from '../toggleLike/toggleLike.service';
 import { User } from '../users/entities/user.entity';
 import { UserService } from '../users/users.service';
 import { BoardsResolver } from './boards.resolver';
@@ -29,6 +30,7 @@ import { Board } from './entities/board.entity';
     FilesService,
     UserService,
     ImagesService,
+    ToggleLikeService,
   ],
 })
 export class BoardModule {}
