@@ -20,7 +20,8 @@ export class PersonalMapsController {
   @Get('/info/road/map')
   getPersonalMap(
     @Req() req: Request, //
-  ): Promise<void> {
+  ): Promise<IPersonalMapsServiceGetPersonalMapReturn[]> {
+    console.log(req.query);
     return this.personalMapService.getPersonalMap({ req });
   }
 }

@@ -113,31 +113,34 @@ export class BoardsService {
         return el.restaurantId;
       },
     );
-    const restaurantInfo = await axios.get(
-      `http://road-service:7100/info/road/map?data=${restaurantIds}`,
-    );
-    board.personalMapData = restaurantInfo.data.map((el, i) => {
-      const sum = { ...el, ...board.personalMapData[i] };
-      const {
-        _id: restaurantId,
-        restaurantName,
-        address,
-        location,
-        rating,
-        recommend,
-        imgUrl,
-      } = sum;
+    if (restaurantIds.length) {
+      const restaurantInfo = await axios.get(
+        `http://road-service:7100/info/road/map?data=${restaurantIds}`,
+      );
+      board.personalMapData = restaurantInfo.data.map((el, i) => {
+        const sum = { ...el, ...board.personalMapData[i] };
+        const {
+          _id: restaurantId,
+          restaurantName,
+          address,
+          location,
+          rating,
+          recommend,
+          imgUrl,
+        } = sum;
 
-      return {
-        restaurantId,
-        restaurantName,
-        address,
-        location,
-        rating,
-        recommend,
-        imgUrl,
-      };
-    });
+        return {
+          restaurantId,
+          restaurantName,
+          address,
+          location,
+          rating,
+          recommend,
+          imgUrl,
+        };
+      });
+    }
+
     return {
       ...JSON.parse(JSON.stringify(board)),
       createdAt: board.createdAt,

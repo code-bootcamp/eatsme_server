@@ -98,10 +98,15 @@ export class PersonalMapsService {
     //하나의 배열을 받는 경우? 여러개도 동시에 할 수 있을까?
     //일단은 하나만 받는것으로 하자.
     const ids = JSON.stringify(req.query.data).split(',');
+   // const restuarantinfo = await this.restaurantModel.find({
+   //   _id: { $in: ids },
+   // });
+   // console.log(restuarantinfo);
+          return { ...result, _id: result.id };
+        }),
+    );
+    console.log('---식당 정보 조회 완료');
+    return restaurantInfo;
 
-    const restuarantinfo = await this.restaurantModel.find({
-      _id: { $in: ids },
-    });
-    console.log(restuarantinfo);
   }
 }
