@@ -9,7 +9,7 @@ on:
 
 jobs:
     Road-service-deploy:
-        name: Food-service-deploy
+        name: Road-service-deploy
         runs-on: ubuntu-latest
 
         steps:

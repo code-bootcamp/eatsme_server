@@ -94,19 +94,26 @@ export class PersonalMapsService {
 
   async getPersonalMap({
     req,
-  }: IPersonalMapsServiceGetPersonalMap): Promise<void> {
-    //하나의 배열을 받는 경우? 여러개도 동시에 할 수 있을까?
-    //일단은 하나만 받는것으로 하자.
-    const ids = JSON.stringify(req.query.data).split(',');
-   // const restuarantinfo = await this.restaurantModel.find({
-   //   _id: { $in: ids },
-   // });
-   // console.log(restuarantinfo);
+  }: IPersonalMapsServiceGetPersonalMap): Promise<
+    IPersonalMapsServiceGetPersonalMapReturn[]
+  > {
+    console.log('---식당 정보 조회---');
+    const restaurantInfo = await Promise.all(
+      JSON.parse(JSON.stringify(req.query.data))
+        .split(',')
+        .map(async (_id) => {
+          //없는 경우 null을 반환한다. 이때 에러를 던져 준다.
+          const result = await this.restaurantModel.findById({ _id });
+          if (!result) {
+            throw new HttpException(
+              '등록되지 않은 식당입니다. 등록후 조회해주세요',
+              HttpStatus.BAD_REQUEST,
+            );
+          }
           return { ...result, _id: result.id };
         }),
     );
     console.log('---식당 정보 조회 완료');
     return restaurantInfo;
-
   }
 }
