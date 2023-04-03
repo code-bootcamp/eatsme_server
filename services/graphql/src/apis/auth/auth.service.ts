@@ -93,11 +93,11 @@ export class AuthService {
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
 
-    //개발환경
-    // res.setHeader(
-    //   'Set-Cookie',
-    //   `refreshToken=${refreshToken};path=/; httpOnly`,
-    // );
+    // 개발환경
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken};path=/; httpOnly`,
+    );
 
     //배포환경
 

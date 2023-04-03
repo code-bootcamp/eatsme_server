@@ -15,7 +15,6 @@ export interface IReplyServiceCheckUser {
   replyId: string;
 }
 
-
 export interface IReplysServiceCreate {
   createReplyInput: CreateReplyInput;
   userId?: string;
