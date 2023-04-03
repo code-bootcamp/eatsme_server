@@ -9,9 +9,6 @@ export class CreateReservationInput {
   time: string;
 
   @Field(() => String)
-  division: string;
-
-  @Field(() => String)
   restaurantId: string;
 
   @Field(() => Int)

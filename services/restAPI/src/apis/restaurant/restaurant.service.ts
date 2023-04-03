@@ -218,28 +218,27 @@ export class RestaurantService {
   async getRestaurant({
     req,
   }: IRestaurantServiceGetRestaurant): Promise<object> {
-    const { restaurantId, reservation_time, table } = req.body;
+    const { restaurantId, reservation_time, table } = req.query;
 
     const restaurantInfo = await this.findOneRestaurant({
-      restaurant_id: restaurantId,
+      restaurant_id: String(restaurantId),
     });
     const isRemainTable = await this.remainTablesService.findOne({
       createReamintalbeInput: {
-        reservation_time,
+        reservation_time: Number(reservation_time),
         restaurant: restaurantInfo,
       },
     });
 
     await this.remainTablesService.remainTable({
       _id: isRemainTable._id,
-      table,
+      table: Number(table),
     });
     const reservationTime = await this.timeTablesService.findOne({
-      _id: reservation_time,
+      _id: String(reservation_time),
     });
 
-    const result = { restaurantInfo, ...reservationTime };
-    return result;
+    return { restaurantInfo, reservationTime };
   }
 
   deleteCollection({
