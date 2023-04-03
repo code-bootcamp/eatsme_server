@@ -27,5 +27,9 @@ import { ToggleLikeModule } from '../toggleLike/toggleLike.module';
     BoardsResolver, //
     BoardsService,
   ],
+
+  exports: [
+    BoardsService, //
+  ],
 })
 export class BoardModule {}
