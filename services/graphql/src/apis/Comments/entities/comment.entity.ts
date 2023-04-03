@@ -37,7 +37,9 @@ export class Comment {
   @Field(() => [Alarm])
   alarms: Alarm[];
 
-  @ManyToOne(() => User)
+
+  @ManyToOne(() => User, (user) => user.comments)
+
   @Field(() => User, { nullable: true })
   user: User;
 }

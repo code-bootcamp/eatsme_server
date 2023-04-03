@@ -59,7 +59,13 @@ export class BoardsService {
   }: IBoardsServiceFindByBoardId): Promise<Board> {
     const board = await this.boardsRepository.findOne({
       where: { id: boardId }, //
-      relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
+      relations: [
+        'comments',
+        'comments.user',
+        'comments.replies.user',
+        'personalMapData',
+        'user',
+      ],
     });
     if (!board) throw new UnprocessableEntityException('등록후 조회해주세요');
     return board;
@@ -149,7 +155,9 @@ export class BoardsService {
 
     const personalBoards = await Promise.all(
       boards.map(async (el) => {
-        return await this.fetchBoard({ boardId: el.id });
+        const qqq = await this.fetchBoard({ boardId: el.id });
+        console.log(qqq);
+        return qqq;
       }),
     );
 

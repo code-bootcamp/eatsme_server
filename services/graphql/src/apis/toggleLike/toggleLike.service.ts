@@ -4,10 +4,7 @@ import { Repository } from 'typeorm';
 import { BoardsService } from '../boards/boards.service';
 import { UserService } from '../users/users.service';
 import { ToggleLike } from './entities/toggleLike.entity';
-import {
-  IBoardsServiceToggleLike,
-  IToggleLikeServicefindToggleLikeIds,
-} from './interface/toggleLike-service.interface';
+import { IBoardsServiceToggleLike } from './interface/toggleLike-service.interface';
 
 @Injectable()
 export class ToggleLikeService {
