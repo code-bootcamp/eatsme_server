@@ -33,12 +33,11 @@ export class PersonalMapsService {
     console.log('---식당 정보 등록---');
     const restaurantInfos = await Promise.all(
       req.body.info.map(async (el) => {
-        const restaurantInfo = await this.restaurantModel
-          .find({
+        const restaurantInfo =
+          await this.restaurantService.findByNameWithLocation({
             restaurantName: el.restaurantName,
             location: el.location,
-          })
-          .exec();
+          });
         if (restaurantInfo.length) {
           return await restaurantInfo[0];
         } else {
@@ -47,17 +46,11 @@ export class PersonalMapsService {
             url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${el.restaurantName}&key=${this.apiKey}&location=${el.location.lat}%2C${el.location.lng}&radius=100&language=ko`,
           };
           const result = await axios(config);
+          //반복적으로 요청을보낸다.
           const newRestaurant = result.data.results.filter((it) => {
             return it.name === el.restaurantName;
           });
-          if (newRestaurant) {
-            const postRestaurant = await new this.restaurantModel({
-              ...el,
-              openingDays: null,
-              phoneNumber: null,
-            }).save();
-            return postRestaurant;
-          } else {
+          if (newRestaurant.length) {
             const {
               geometry,
               place_id,
@@ -81,6 +74,13 @@ export class PersonalMapsService {
               area: el.area,
             }).save();
             return postRestaurant;
+          } else {
+            const postRestaurant = await new this.restaurantModel({
+              ...el,
+              openingDays: null,
+              phoneNumber: null,
+            }).save();
+            return postRestaurant;
           }
         }
       }),
@@ -95,15 +95,16 @@ export class PersonalMapsService {
     IPersonalMapsServiceGetPersonalMapReturn[]
   > {
     const restaurantInfo = await this.restaurantService.findByIds({ req });
-
     const personalMapInfo = restaurantInfo.map((el) => {
-      console.log(el);
-      console.log('$$$$$$');
       const { _id: restaurantId, restaurantName, location } = el;
+
       const address = el.address || null;
-      const rating = el.address || null;
+
+      const rating = el.rating || null;
+
       return { restaurantId, restaurantName, rating, address, location };
     });
+
     return personalMapInfo;
   }
 }

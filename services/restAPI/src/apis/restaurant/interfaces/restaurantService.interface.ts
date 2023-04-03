@@ -3,6 +3,15 @@ import { Request } from 'express';
 export interface IRestaurantServiceFindByIds {
   req: Request;
 }
+
+export interface IRestaurantServiceFindByNameWithLocation {
+  restaurantName: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+}
+
 export interface IRestaurantServicePostAndGetRestaurant {
   req: Request;
 }

@@ -5,6 +5,7 @@ import axios from 'axios';
 import {
   IRestaurantServiceDeleteCollection,
   IRestaurantServiceFindByIds,
+  IRestaurantServiceFindByNameWithLocation,
   IRestaurantServiceFindOneRestaurant,
   IRestaurantServiceGetDetails,
   IRestaurantServiceGetDetailsReturn,
@@ -35,11 +36,25 @@ export class RestaurantService {
 
   apiKey = process.env.GOOGLE_MAP_API_KEY;
 
+  // saveRestaurantInfo() {}
   async findByIds({ req }: IRestaurantServiceFindByIds): Promise<Restaurant[]> {
     const ids = JSON.parse(JSON.stringify(req.query.data)).split(',');
-    return await this.restaurantModel.find({
+    return this.restaurantModel.find({
       _id: { $in: ids },
     });
+  }
+
+  async findByNameWithLocation({
+    restaurantName,
+    location,
+  }: IRestaurantServiceFindByNameWithLocation): Promise<Restaurant[]> {
+    const restaurantInfo = await this.restaurantModel
+      .find({
+        restaurantName,
+        location,
+      })
+      .exec();
+    return restaurantInfo;
   }
 
   async postRestaurants({
