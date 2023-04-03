@@ -77,20 +77,28 @@ export class UserService {
     if (!email || !email.includes('@') || 30 <= email.length) {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
+
     await this.isFindOneByEmail({ email });
 
     await this.sendToAuthNumber({ email });
-
-    // await this.sendToTemplate({ email });
     return email;
   }
 
   //-----이메일인증번호 템플릿 전송-----
   async sendToAuthNumber({ email }: IUsersSendToTemplate): Promise<string> {
+    const user = await this.findOneByEmail({ email });
+
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
     );
+
+    if (user) {
+      this.updateUser({
+        userId: user.id,
+        updateUserInput: { password: authNumber },
+      });
+    }
 
     this.cacheManager.set(email, authNumber, {
       ttl: 180,
@@ -106,6 +114,7 @@ export class UserService {
                     <div style="color: black;">인증번호는 ${authNumber} 입니다.</div>
                 </div>
             </div>
+
         </body>
     </html>
   `;
