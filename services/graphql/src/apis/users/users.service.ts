@@ -32,6 +32,7 @@ export class UserService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly mailerService: MailerService,
+
     private readonly imagesService: ImagesService,
   ) {}
 
@@ -44,18 +45,15 @@ export class UserService {
         'alarms',
         'boards.comments.replies',
         'boards',
-        'toggleLikes',
       ],
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
-
     if (restaurantIdArr.length) {
       const reservationRestaurant = await axios.get(
         'http://road-service:7100/info/road/find/restaurant',
         { data: restaurantIdArr },
       );
-
       return {
         ...user,
         restaurant: reservationRestaurant.data,
@@ -204,18 +202,16 @@ export class UserService {
     await this.isFindOneByNickname({ nickname });
 
     await this.welcomeToTemplate({ email, nickname });
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!password) {
-      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+      return this.userRepository.save({
+        email,
+        password: hashedPassword,
+        nickname,
+      });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    return this.userRepository.save({
-      email,
-      password: hashedPassword,
-      nickname,
-    });
+    return this.userRepository.save({ ...createUserInput });
   }
 
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {

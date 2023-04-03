@@ -23,17 +23,23 @@ jobs:
                   credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
             - name: Create gcp-file-storage.json
-              run: echo "${{ secrets.GCP_FILE_STORAGE }}" >> gcp-file-storage.json
+              id: create-gcp-file-storage-json
+              uses: jsdaniell/create-json@v1.2.2
+              with:
+                  name: 'gcp-file-storage.json'
+                  json: ${{ secrets.GCP_FILE_STORAGE }}
 
             - name: Food-service Build tag Docker image
               run: |-
                   gcloud auth configure-docker
+                  mv gcp-file-storage.json services/graphql/
                   cd services/graphql
-                  touch gcp-file-storage.json
                   docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE }}:${{ github.sha }} -f ./DockerFile .
+
             - name: Food-service push tag Docker image
               run: |-
                   docker push ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE }}:${{ github.sha }}
+
             - name: Food-service Update VM with new image
               run: |-
                   gcloud compute ssh --project=${{ secrets.GCP_PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.GCP_VM_NAME }}@${{ secrets.GCP_VM_NAME }} \
