@@ -25,9 +25,6 @@ export class BoardReturn {
   @Field(() => String, { nullable: true })
   endPoint: string;
 
-  @Field(() => Int, { nullable: true })
-  like: number;
-
   @Field(() => [RestaurantBoardInfo], { nullable: true })
   personalMapData: RestaurantBoardInfo[];
 

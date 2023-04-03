@@ -3,7 +3,12 @@ import { Board } from './entities/board.entity';
 
 import axios from 'axios';
 
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -34,8 +39,6 @@ export class BoardsService {
     private readonly boardsRepository: Repository<Board>,
 
     private readonly personalMapDataService: PersonalMapDataService,
-
-    private readonly toggleLikeService: ToggleLikeService,
 
     private readonly userService: UserService,
 
@@ -121,20 +124,18 @@ export class BoardsService {
 
   async fetchMyLikeBoard({
     context,
-  }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[] | string> {
-    const ToggleLikeIds = await this.toggleLikeService.findToggleLikeIds({
-      context,
+  }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[]> {
+    const user = await this.userService.findOneByUser({
+      userId: context.req.user.id,
     });
-    if (ToggleLikeIds.length) {
-      const fetchMyLikeBoard = await Promise.all(
-        ToggleLikeIds.map(async (el) => {
-          return await this.fetchBoard({ boardId: el.boardId });
-        }),
-      );
-      return fetchMyLikeBoard;
-    } else {
-      return '찜한 게시물이 없습니다.';
-    }
+
+    const fetchMyLikeBoard = await Promise.all(
+      user.toggleLikes.map(async (el) => {
+        return this.fetchBoard({ boardId: el.board.id });
+      }),
+    );
+
+    return fetchMyLikeBoard;
   }
 
   async findByEvery({

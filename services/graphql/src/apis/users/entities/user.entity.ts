@@ -2,7 +2,15 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
 import { Board } from 'src/apis/boards/entities/board.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { UserReservationRestaurant } from '../interfaces/user-reservationRestaurant.inferface';
 import { ToggleLike } from 'src/apis/toggleLike/entities/toggleLike.entity';
@@ -19,7 +27,6 @@ export class User {
   email: string;
 
   @Column()
-  // @Field(() => String)
   password: string;
 
   @Column({ type: 'varchar', length: 20 })
@@ -30,12 +37,12 @@ export class User {
   @Field(() => String)
   userImg: string;
 
+  @Field(() => [UserReservationRestaurant])
+  restaurant: UserReservationRestaurant[];
+
   @OneToMany(() => Reservation, (reservation) => reservation.users)
   @Field(() => [Reservation])
   reservations: Reservation[];
-
-  @Field(() => [UserReservationRestaurant])
-  restaurant: UserReservationRestaurant[];
 
   @OneToMany(() => Board, (boards) => boards.user)
   @Field(() => [Board])

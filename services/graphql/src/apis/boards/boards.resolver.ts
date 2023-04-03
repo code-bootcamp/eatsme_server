@@ -7,6 +7,7 @@ import { CreateBoardInput } from './dto/create-board.input';
 import { FetchBoardsByEveryInput } from './dto/fetch-board-secton.input';
 import { BoardReturn } from './dto/fetch-board.object';
 import { UpdateBoardInput } from './dto/update-board.input';
+import { Board } from './entities/board.entity';
 
 @Resolver()
 export class BoardsResolver {
@@ -31,7 +32,7 @@ export class BoardsResolver {
   @Query(() => [BoardReturn])
   fetchMyLikeBoard(
     @Context() context: IContext, //
-  ): Promise<BoardReturn[] | string> {
+  ): Promise<BoardReturn[]> {
     return this.boardsService.fetchMyLikeBoard({ context });
   }
 

@@ -9,14 +9,12 @@ import { UserModule } from '../users/users.module';
 import { FilesModule } from '../files/files.module';
 import { ImagesModule } from '../images/images.module';
 import { PersonalMapDataModule } from '../personalMapData/personalMapData.module';
-import { ToggleLikeModule } from '../toggleLike/toggleLike.module';
 
 @Module({
   imports: [
     UserModule,
     FilesModule,
     ImagesModule,
-    ToggleLikeModule,
     PersonalMapDataModule,
     PersonalMapDataModule,
     TypeOrmModule.forFeature([
