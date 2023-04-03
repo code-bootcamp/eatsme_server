@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { Restaurant } from '../restaurant/schemas/restaurant.schemas';
 import { RestaurantService } from '../restaurant/restaurant.service';
