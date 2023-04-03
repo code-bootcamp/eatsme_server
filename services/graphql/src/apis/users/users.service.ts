@@ -66,12 +66,7 @@ export class UserService {
 
   //-----유저email확인-----
   async findOneByEmail({ email }: IUsersFindOneByEmail): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user) {
-      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
-    }
-    return user;
+    return this.userRepository.findOne({ where: { email } });
   }
 
   //-----이메일 만드는 방식 확인-----

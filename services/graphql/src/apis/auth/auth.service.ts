@@ -122,7 +122,7 @@ export class AuthService {
 
   async socialLogin({ req, res }: IAuthServiceSocialLogin) {
     console.log(req, res);
-    let user = await this.usersService.isFindOneByEmail({
+    let user = await this.usersService.findOneByEmail({
       email: req.user.email,
     });
 
