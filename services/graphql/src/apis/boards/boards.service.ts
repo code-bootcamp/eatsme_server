@@ -62,7 +62,7 @@ export class BoardsService {
       relations: [
         'comments',
         'comments.user',
-        'comments.replies',
+        'comments.replies.user',
         'personalMapData',
         'user',
       ],
