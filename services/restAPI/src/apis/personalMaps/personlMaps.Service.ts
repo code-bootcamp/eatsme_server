@@ -25,20 +25,19 @@ export class PersonalMapsService {
     private readonly restaurantModel: Model<RestaurantDocument>,
     private readonly restaurantService: RestaurantService,
   ) {}
-  apiKey = process.env.GOOGLE_MAP_API_KEY;
 
+  apiKey = process.env.GOOGLE_MAP_API_KEY;
   async createPersonalMap({
     req,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
     console.log('---식당 정보 등록---');
     const restaurantInfos = await Promise.all(
       req.body.info.map(async (el) => {
-        const restaurantInfo = await this.restaurantModel
-          .find({
+        const restaurantInfo =
+          await this.restaurantService.findByNameWithLocation({
             restaurantName: el.restaurantName,
             location: el.location,
-          })
-          .exec();
+          });
         if (restaurantInfo.length) {
           return await restaurantInfo[0];
         } else {
@@ -46,20 +45,12 @@ export class PersonalMapsService {
             method: 'get',
             url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${el.restaurantName}&key=${this.apiKey}&location=${el.location.lat}%2C${el.location.lng}&radius=100&language=ko`,
           };
-          //에러가 날 가능성이 있는 부분1
           const result = await axios(config);
+          //반복적으로 요청을보낸다.
           const newRestaurant = result.data.results.filter((it) => {
             return it.name === el.restaurantName;
           });
-          if (newRestaurant) {
-            //에러가 날 가능성이 있는 부분2
-            const postRestaurant = await new this.restaurantModel({
-              ...el,
-              openingDays: null,
-              phoneNumber: null,
-            }).save();
-            return postRestaurant;
-          } else {
+          if (newRestaurant.length) {
             const {
               geometry,
               place_id,
@@ -71,7 +62,6 @@ export class PersonalMapsService {
             const { location } = geometry;
             const { phoneNumber, openingDays } =
               await this.restaurantService.getDetails(place_id);
-            //에러가 날 가능성이 있는 부분3
             const postRestaurant = await new this.restaurantModel({
               restaurantName,
               address,
@@ -82,6 +72,13 @@ export class PersonalMapsService {
               openingDays,
               section: el.section,
               area: el.area,
+            }).save();
+            return postRestaurant;
+          } else {
+            const postRestaurant = await new this.restaurantModel({
+              ...el,
+              openingDays: null,
+              phoneNumber: null,
             }).save();
             return postRestaurant;
           }
@@ -97,16 +94,17 @@ export class PersonalMapsService {
   }: IPersonalMapsServiceGetPersonalMap): Promise<
     IPersonalMapsServiceGetPersonalMapReturn[]
   > {
-    const ids = JSON.parse(JSON.stringify(req.query.data)).split(',');
-    const restuarantinfo = await this.restaurantModel.find({
-      _id: { $in: ids },
-    });
-    const personalMapInfo = restuarantinfo.map((el) => {
+    const restaurantInfo = await this.restaurantService.findByIds({ req });
+    const personalMapInfo = restaurantInfo.map((el) => {
       const { _id: restaurantId, restaurantName, location } = el;
+
       const address = el.address || null;
-      const rating = el.address || null;
+
+      const rating = el.rating || null;
+
       return { restaurantId, restaurantName, rating, address, location };
     });
+
     return personalMapInfo;
 
   }

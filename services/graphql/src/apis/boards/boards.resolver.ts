@@ -1,4 +1,4 @@
-import { Body, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/commons/interfaces/context';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
@@ -7,7 +7,6 @@ import { CreateBoardInput } from './dto/create-board.input';
 import { FetchBoardsByEveryInput } from './dto/fetch-board-secton.input';
 import { BoardReturn } from './dto/fetch-board.object';
 import { UpdateBoardInput } from './dto/update-board.input';
-import { Board } from './entities/board.entity';
 
 @Resolver()
 export class BoardsResolver {
@@ -41,7 +40,7 @@ export class BoardsResolver {
     @Args('fetchBoardsByEveryInput')
     fetchBoardsByEveryInput: FetchBoardsByEveryInput,
   ): Promise<BoardReturn[]> {
-    return this.boardsService.findByEvery({ fetchBoardsByEveryInput });
+    return this.boardsService.fetchByEvery({ fetchBoardsByEveryInput });
   }
 
   @UseGuards(GqlAuthGuard('access'))
@@ -50,10 +49,7 @@ export class BoardsResolver {
     @Context() context: IContext,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
   ): Promise<BoardReturn> {
-    const { id } = context.req.user;
-    return this.boardsService.create(
-      JSON.parse(JSON.stringify({ createBoardInput, id })),
-    );
+    return this.boardsService.create({ createBoardInput, context });
   }
 
   @UseGuards(GqlAuthGuard('access'))

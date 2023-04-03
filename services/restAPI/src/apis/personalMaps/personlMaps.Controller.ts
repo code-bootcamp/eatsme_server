@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Controller, Get, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { Restaurant } from '../restaurant/schemas/restaurant.schemas';
 import { IPersonalMapsServiceGetPersonalMapReturn } from './interface/personalMapsService.interface';
