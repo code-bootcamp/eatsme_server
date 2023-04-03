@@ -94,13 +94,22 @@ export class CommentsService {
       board,
       user,
     });
-    const newAlarm =  this.alarmsRepository.create({
-      users: board.user,
-      comments: newComment,
-      alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다` 
-    });
-    this.alarmsRepository.save(newAlarm);
-    return newComment
+
+    const boardUser = board.user;
+    const commentUser = user;
+    
+    const usersToSendAlarm = [commentUser, boardUser];
+    
+    if (usersToSendAlarm.length > 0) {
+      const newAlarm =  this.alarmsRepository.create({
+        users: board.user,
+        comments: newComment,  
+        commentUserImg: newComment.user.userImg,
+        alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다` 
+      });
+      this.alarmsRepository.save(newAlarm);
+    }
+    return newComment;
   }
 
   // 댓글 수정
@@ -119,9 +128,11 @@ export class CommentsService {
       ...comments,
       comment,
     });
+
     const updateAlarm = this.alarmsRepository.create({
       users: comments.user,
       comments: updateComment,
+      commentUserImg: updateComment.user.userImg,
       alarmMessage: `${updateComment.user.nickname}님이 댓글을 수정했습니다`
     });
     await this.alarmsRepository.save(updateAlarm);
