@@ -19,11 +19,13 @@ export class Alarm {
   @Field(() => User)
   users: User;
 
-  @ManyToOne(() => Comment, (comment) => comment.alarms,{ onDelete: 'CASCADE' })
+  @ManyToOne(() => Comment, (comment) => comment.alarms, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Comment)
   comments: Comment;
 
-  @ManyToOne(() => Reply, (replies) => replies.alarms,{ onDelete: 'CASCADE' })
+  @ManyToOne(() => Reply, (replies) => replies.alarms, { onDelete: 'CASCADE' })
   @Field(() => Reply)
   replies: Reply;
 
