@@ -27,6 +27,7 @@ jobs:
 
             - name: Food-service Build tag Docker image
               run: |-
+                  gcloud auth activate-service-account --key-file=${{ secrets.GCP_CREDENTIALS }}
                   gcloud auth configure-docker
                   cd services/graphql
                   touch .gcp-file-storage.json
