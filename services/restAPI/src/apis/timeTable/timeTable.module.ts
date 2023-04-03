@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TimeTableSchema } from './schemas/timeTable.schemas';
-import { TimeTalbesService } from './timeTable.service';
+import { TimeTablesService } from './timeTable.service';
 
 @Module({
   imports: [
@@ -10,10 +10,10 @@ import { TimeTalbesService } from './timeTable.service';
     ]),
   ],
   providers: [
-    TimeTalbesService, //
+    TimeTablesService, //
   ],
   exports: [
-    TimeTalbesService, //
+    TimeTablesService, //
   ],
 })
 export class TimeTableModule {}

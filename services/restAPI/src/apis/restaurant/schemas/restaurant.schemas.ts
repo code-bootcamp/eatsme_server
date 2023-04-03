@@ -10,7 +10,7 @@ export type RestaurantDocument = HydratedDocument<Restaurant>;
 export class Restaurant {
   @ApiProperty()
   @Prop({ type: String, default: randomUUID })
-  _id: string;
+  _id?: string;
 
   @ApiProperty()
   @Prop({ type: String, required: true })
