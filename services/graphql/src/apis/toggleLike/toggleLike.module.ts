@@ -19,5 +19,8 @@ import { ToggleLikeService } from './toggleLike.service';
     ToggleLikeResolver,
     ToggleLikeService, //
   ],
+  exports: [
+    ToggleLikeService, //
+  ],
 })
 export class ToggleLikeModule {}

@@ -7,5 +7,8 @@ import { FilesService } from './files.service';
     FilesResolver, //
     FilesService,
   ],
+  exports: [
+    FilesService, //
+  ],
 })
 export class FilesModule {}

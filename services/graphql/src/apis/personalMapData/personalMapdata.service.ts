@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PersonalMapData } from './entities/personalMapData.entity';
-import { IPersonalMapServiceSavePersonalMapData } from './interface/personalMapData-service.interface';
+import {
+  IPersonalMapServiceDeletePersonalMapData,
+  IPersonalMapServiceSavePersonalMapData,
+} from './interface/personalMapData-service.interface';
 
 @Injectable()
 export class PersonalMapDataService {
@@ -17,5 +20,14 @@ export class PersonalMapDataService {
     return this.personalMapDataRepository.save({
       ...isSave,
     });
+  }
+
+  async deletePersonalMapDatas({
+    personalMapDataIds,
+  }: IPersonalMapServiceDeletePersonalMapData) {
+    const DeleteResult = await this.personalMapDataRepository.delete(
+      personalMapDataIds,
+    );
+    return DeleteResult;
   }
 }

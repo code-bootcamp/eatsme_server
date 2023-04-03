@@ -8,3 +8,7 @@ export interface IPersonalMapServiceSavePersonalMapData {
     personalMapInfo: PersonalMapData;
   };
 }
+
+export interface IPersonalMapServiceDeletePersonalMapData {
+  personalMapDataIds: string[];
+}

@@ -1,4 +1,4 @@
-import { Body, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/commons/interfaces/context';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
@@ -7,7 +7,6 @@ import { CreateBoardInput } from './dto/create-board.input';
 import { FetchBoardsByEveryInput } from './dto/fetch-board-secton.input';
 import { BoardReturn } from './dto/fetch-board.object';
 import { UpdateBoardInput } from './dto/update-board.input';
-import { Board } from './entities/board.entity';
 
 @Resolver()
 export class BoardsResolver {

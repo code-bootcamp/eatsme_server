@@ -29,9 +29,6 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
 
-    @InjectRepository(PersonalMapData)
-    private readonly personalMapDataRepository: Repository<PersonalMapData>,
-
     private readonly personalMapDataService: PersonalMapDataService,
 
     private readonly toggleLikeService: ToggleLikeService,
@@ -227,9 +224,10 @@ export class BoardsService {
       // await this.imagesService.storageDelete({ ...el.imgUrl });
       personalMapDataIds.push(el.id);
     });
-    return await this.personalMapDataRepository
-      .delete(personalMapDataIds)
-      .then(async (el) => {
+
+    return this.personalMapDataService
+      .deletePersonalMapDatas({ personalMapDataIds })
+      .then(async (res) => {
         const json = JSON.stringify({ info });
         const restaurantInfo = await axios.post(
           'http://road-service:7100/info/road/map',
