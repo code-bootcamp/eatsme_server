@@ -29,7 +29,7 @@ jobs:
               run: |-
                   gcloud auth configure-docker
                   cd services/graphql
-                  touch ${{ secrets.GCP_FILE_STORAGE }} > gcp-file-storage.json
+                  touch gcp-file-storage.json
                   docker build -t ${{ secrets.GCP_REGION }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_FOOD_SERVICE }}:${{ github.sha }} -f ./DockerFile .
             - name: Food-service push tag Docker image
               run: |-
