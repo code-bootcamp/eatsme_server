@@ -1,4 +1,9 @@
 import { Request } from 'express';
+import { Restaurant } from '../schemas/restaurant.schemas';
+
+export interface IRestaurantServiceSaveRestaurantInfo {
+  saveRestaurantInPut: Restaurant;
+}
 
 export interface IRestaurantServiceFindByIds {
   req: Request;
@@ -15,6 +20,7 @@ export interface IRestaurantServiceFindByNameWithLocation {
 export interface IRestaurantServicePostAndGetRestaurant {
   req: Request;
 }
+
 export interface IRestaurantServiceGetRestaurant {
   req: Request;
 }

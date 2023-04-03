@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { RemainTablesService } from './remainTable.service';
 
 @Controller()
-export class RemainTalbeController {
+export class RemainTableController {
   constructor(
     private readonly remainTablesService: RemainTablesService, //
   ) {}

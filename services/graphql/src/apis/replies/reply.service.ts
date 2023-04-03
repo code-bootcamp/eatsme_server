@@ -7,8 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Alarm } from '../alarm/entities/alarm.entity';
-import { Comment } from '../Comments/entities/comment.entity';
-import { User } from '../users/entities/user.entity';
+import { CommentsService } from '../Comments/comments.service';
+import { UserService } from '../users/users.service';
 import { Reply } from './entities/reply.entity';
 import {
   IReplyServiceCheckUser,
@@ -25,14 +25,12 @@ export class ReplysService {
     @InjectRepository(Reply)
     private readonly replysRepository: Repository<Reply>,
 
-    @InjectRepository(Comment)
-    private readonly commentsRepository: Repository<Comment>,
-
     @InjectRepository(Alarm)
     private readonly alarmsRepository: Repository<Alarm>,
 
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly commentsService: CommentsService,
+
+    private readonly usersService: UserService,
   ) {}
 
   findOne({ replyId }: IReplysServiceFindOne): Promise<Reply> {
@@ -55,33 +53,39 @@ export class ReplysService {
 
   // 대댓글작성유저하고 로그인유저하고 일치하는지 확인
   async checkUser({ userId, replyId }: IReplyServiceCheckUser): Promise<void> {
-    const user = await this.usersRepository.findOne({ where: { id: userId } });
-    const replies = await this.replysRepository.findOne({ 
+    const user = await this.usersService.findOneByUser({ userId });
+
+    const replies = await this.replysRepository.findOne({
       where: { id: replyId },
-      relations: [ 'user' ]
+      relations: ['user'],
     });
     if (!replies) {
       throw new NotFoundException('댓글정보가 일치하지않습니다');
     }
-    if(user.id !== replies.user.id) {
+    if (user.id !== replies.user.id) {
       throw new NotFoundException('댓글 작성자가 아닙니다');
     }
   }
 
   //대댓글 생성
-  async create({ userId, createReplyInput }: IReplysServiceCreate): Promise<Reply> {
+  async create({
+    context,
+    createReplyInput,
+  }: IReplysServiceCreate): Promise<Reply> {
     const { reply, commentId } = createReplyInput;
-    const user = await this.usersRepository.findOne({
-      where: {
-        id: userId, 
-      },
-    });
+
+    const user = await this.usersService.findOneByUser({
+      userId: context.req.user.id,
+  
     const comments = await this.commentsRepository.findOne({
       where: {
         id: commentId,
       },
       relations: [ 'board.user', 'user' ]
     });
+
+    const comments = await this.commentsService.findOne({ commentId });
+
     if (!comments) {
       throw new NotFoundException('현재 없는 댓글 입니다');
     }
@@ -91,6 +95,14 @@ export class ReplysService {
       comments,
       user,
     });
+
+    const newAlarm = this.alarmsRepository.create({
+      users: comments.board.user,
+      replies: newComment,
+      alarmMessage: `${newComment.user.nickname}님이 대댓글을 작성했습니다`,
+    });
+    await this.alarmsRepository.save(newAlarm);
+
 
     const boardUser = comments.board.user;
     const commentUser = comments.user;
@@ -117,25 +129,26 @@ export class ReplysService {
   }
 
   // 대댓글 수정
-  async update({ userId, updateReplyInput }: IReplysServiceUpdate): Promise<Reply> {
+  async update({
+    userId,
+    updateReplyInput,
+  }: IReplysServiceUpdate): Promise<Reply> {
     const { reply, replyId } = updateReplyInput;
-    const replies = await this.replysRepository.findOne({ 
+    const replies = await this.replysRepository.findOne({
       where: { id: replyId },
       relations: [ 'user', 'comments.user', 'comments.board.user' ]
     });
-    await this.checkUser({ userId, replyId })
+    await this.checkUser({ userId, replyId });
     await this.nullCheck({ reply });
     const updateComment = await this.replysRepository.save({
       ...replies,
       reply,
     });
 
+
     const boardUser = replies.comments.board.user;
     const commentUser = replies.comments.user;
-
     const usersToSendAlarm = [commentUser, boardUser];
-
-    
 
     for (const user of usersToSendAlarm) { // user상수를 만들어서 usersToSendAlarm배열 안에 있는 값에 각각요소를 user에 할당후 알람을 보냄
       const updateAlarm = this.alarmsRepository.create({
@@ -150,7 +163,7 @@ export class ReplysService {
   }
 
   async delete({ userId, replyId }: IReplysServiceDelete): Promise<string> {
-    await this.checkUser({ replyId, userId })
+    await this.checkUser({ replyId, userId });
     const reply = await this.replysRepository.delete(replyId);
     return reply.affected ? '데이터삭제' : '데이터없음';
   }

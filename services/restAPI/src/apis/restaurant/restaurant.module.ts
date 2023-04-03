@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PersonalMapsService } from '../personalMaps/personlMaps.Service';
-import { RemainTableMoudle } from '../remaintable/remainTable.module';
-import { RemainTablesService } from '../remaintable/remainTable.service';
-import { RemainTableSchema } from '../remaintable/schemas/remaintable.schemas';
+import { RemainTableModule } from '../remaintable/remainTable.module';
 import { TimeTableModule } from '../timeTable/timeTable.module';
+import { PersonalMapsModule } from '../personalMaps/personlMaps.module';
+
 import { RestaurantController } from './restaurant.controller';
 import { RestaurantService } from './restaurant.service';
 import { RestaurantSchema } from './schemas/restaurant.schemas';
@@ -12,10 +11,9 @@ import { RestaurantSchema } from './schemas/restaurant.schemas';
 @Module({
   imports: [
     TimeTableModule,
-    RemainTableMoudle,
+    RemainTableModule,
     MongooseModule.forFeature([
       { name: 'Restaurant', schema: RestaurantSchema },
-      { name: 'RemainTable', schema: RemainTableSchema },
     ]),
   ],
   controllers: [
@@ -23,8 +21,6 @@ import { RestaurantSchema } from './schemas/restaurant.schemas';
   ],
   providers: [
     RestaurantService, //
-    PersonalMapsService,
-    RemainTablesService,
   ],
   exports: [
     RestaurantService, //

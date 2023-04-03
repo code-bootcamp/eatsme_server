@@ -31,6 +31,7 @@ export class UserService {
 
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+
     private readonly mailerService: MailerService,
 
     private readonly imagesService: ImagesService,
@@ -45,6 +46,8 @@ export class UserService {
         'alarms',
         'boards.comments.replies',
         'boards',
+        'toggleLikes',
+        'toggleLikes.board',
       ],
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');

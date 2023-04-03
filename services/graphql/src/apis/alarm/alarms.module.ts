@@ -1,3 +1,4 @@
+
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AlarmController } from "./alarms.controller";
@@ -19,7 +20,9 @@ import { Alarm } from "./entities/alarm.entity";
  ],
  controllers: [
   AlarmController,
- ]
+ ],
+   exports: [
+    AlarmService, //
+  ],
 })
-
 export class AlarmModule {}

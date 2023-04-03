@@ -5,7 +5,7 @@ import { ITimeTableFindOne } from './interfaces/timeTable.interface';
 import { TimeTableDocument } from './schemas/timeTable.schemas';
 
 @Injectable()
-export class TimeTalbesService {
+export class TimeTablesService {
   constructor(
     @InjectModel('TimeTable')
     private readonly timeTableModel: Model<TimeTableDocument>,

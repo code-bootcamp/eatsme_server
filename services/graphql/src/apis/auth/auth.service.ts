@@ -24,10 +24,12 @@ import { Cache } from 'cache-manager';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UserService, //
-    private readonly jwtService: JwtService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+
+    private readonly usersService: UserService, //
+
+    private readonly jwtService: JwtService,
   ) {}
 
   async login({ loginAuthInput, context }: IAuthServiceLogin): Promise<string> {
