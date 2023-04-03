@@ -12,7 +12,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({
-    origin: process.env.ORIGIN,
+    origin: process.env.ORIGIN2,
     // origin: '*',
     credentials: true,
   });

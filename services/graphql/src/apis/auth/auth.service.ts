@@ -101,7 +101,7 @@ export class AuthService {
 
     //배포환경
 
-    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN);
+    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN2);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader(
       'Set-Cookie',
