@@ -60,9 +60,9 @@ export class BoardsService {
     const board = await this.boardsRepository.findOne({
       where: { id: boardId }, //
       relations: [
-        'comments.replies',
         'comments',
         'comments.user',
+        'comments.replies',
         'personalMapData',
         'user',
       ],
