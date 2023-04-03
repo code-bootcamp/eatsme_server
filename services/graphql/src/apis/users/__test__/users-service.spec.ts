@@ -127,6 +127,10 @@ describe('UserService', () => {
       const result = await userService.findOneByEmail({ email });
       expect(result.email).toBe(email);
     });
+
+    // it('restaurantIdArr 값 가져오기', () => {
+    //   const restaurantIdArr =
+    // });
   });
 
   describe('matchAuthNumber', () => {

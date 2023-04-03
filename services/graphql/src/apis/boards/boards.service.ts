@@ -1,4 +1,3 @@
-
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
 
@@ -12,7 +11,6 @@ import { UserService } from '../users/users.service';
 import { FilesService } from '../files/files.service';
 import { ImagesService } from '../images/images.service';
 
-import { ToggleLikeService } from '../toggleLike/toggleLike.service';
 import { PersonalMapDataService } from '../personalMapData/personalMapdata.service';
 
 import {
@@ -34,11 +32,7 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
 
-
     private readonly personalMapDataService: PersonalMapDataService,
-
-
-    private readonly toggleLikeService: ToggleLikeService,
 
     private readonly userService: UserService,
 
@@ -124,20 +118,18 @@ export class BoardsService {
 
   async fetchMyLikeBoard({
     context,
-  }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[] | string> {
-    const ToggleLikeIds = await this.toggleLikeService.findToggleLikeIds({
-      context,
+  }: IBoardsServiceMyFetchBoard): Promise<BoardReturn[]> {
+    const user = await this.userService.findOneByUser({
+      userId: context.req.user.id,
     });
-    if (ToggleLikeIds.length) {
-      const fetchMyLikeBoard = await Promise.all(
-        ToggleLikeIds.map(async (el) => {
-          return await this.fetchBoard({ boardId: el.boardId });
-        }),
-      );
-      return fetchMyLikeBoard;
-    } else {
-      return '찜한 게시물이 없습니다.';
-    }
+
+    const fetchMyLikeBoard = await Promise.all(
+      user.toggleLikes.map(async (el) => {
+        return this.fetchBoard({ boardId: el.board.id });
+      }),
+    );
+
+    return fetchMyLikeBoard;
   }
 
   async findByEvery({

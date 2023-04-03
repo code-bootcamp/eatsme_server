@@ -11,8 +11,8 @@ import { JwtKakaoStrategy } from './strategies/jwt-social-kakao.strategy';
 
 @Module({
   imports: [
-    JwtModule.register({}), //
     UserModule,
+    JwtModule.register({}), //
   ],
   providers: [
     AuthResolver, //

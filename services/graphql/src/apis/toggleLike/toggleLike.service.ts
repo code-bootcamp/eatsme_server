@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Board } from '../boards/entities/board.entity';
+import { BoardsService } from '../boards/boards.service';
 import { UserService } from '../users/users.service';
 import { ToggleLike } from './entities/toggleLike.entity';
 import {
@@ -16,42 +16,31 @@ export class ToggleLikeService {
     private readonly toggleLikeRepository: Repository<ToggleLike>,
 
     private readonly userService: UserService,
+
+    @Inject(forwardRef(() => BoardsService))
+    private readonly boardsService: BoardsService,
   ) {}
 
-  async findToggleLikeIds(
-    { context }: IToggleLikeServicefindToggleLikeIds, //
-  ): Promise<ToggleLike[]> {
-    const user = await this.userService.findOneByUser({
-      userId: context.req.user.id,
-    });
-
-    return user.toggleLikes;
-    // return aaa;
-  }
-
   async toggleLike({
-    toggleLikeInput,
+    boardId,
     context,
   }: IBoardsServiceToggleLike): Promise<string> {
-    const { isLike, boardId } = toggleLikeInput;
     const user = await this.userService.findOneByUser({
       userId: context.req.user.id,
     });
-    if (isLike) {
-      const isValid = await this.toggleLikeRepository.find({
-        where: { boardId, user },
-      });
-      if (isValid.length) return '이미 찜목록에 추가 되었습니다.';
-      const isRegister = this.toggleLikeRepository.save({ boardId, user });
-      if (isRegister) return '찜목록에 추가되었습니다.';
+    const isSave = user.toggleLikes.filter((el) => el.board.id === boardId);
+    if (isSave.length) {
+      await this.toggleLikeRepository.delete({ board: isSave[0].board });
+      return '찜목록에서 삭제했습니다.';
     } else {
-      const isDelete = await this.toggleLikeRepository.delete({
+      const board = await this.boardsService.findOneByBoardId({
         boardId,
-        user,
       });
-      return isDelete.affected
-        ? '정상적으로 지워졌습니다.'
-        : '이미 지워졌습니다.';
+      await this.toggleLikeRepository.save({
+        user,
+        board,
+      });
+      return '찜목록에 추가되었습니다.';
     }
   }
 }

@@ -24,10 +24,12 @@ import { Cache } from 'cache-manager';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UserService, //
-    private readonly jwtService: JwtService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+
+    private readonly usersService: UserService, //
+
+    private readonly jwtService: JwtService,
   ) {}
 
   async login({ loginAuthInput, context }: IAuthServiceLogin): Promise<string> {
@@ -103,7 +105,7 @@ export class AuthService {
 
     //배포환경
 
-    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN2);
+    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader(
       'Set-Cookie',
@@ -124,7 +126,7 @@ export class AuthService {
 
   async socialLogin({ req, res }: IAuthServiceSocialLogin) {
     console.log(req, res);
-    let user = await this.usersService.isFindOneByEmail({
+    let user = await this.usersService.findOneByEmail({
       email: req.user.email,
     });
 

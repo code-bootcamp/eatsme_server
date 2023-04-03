@@ -19,7 +19,6 @@ export class User {
   email: string;
 
   @Column()
-  // @Field(() => String)
   password: string;
 
   @Column({ type: 'varchar', length: 20 })
@@ -30,12 +29,12 @@ export class User {
   @Field(() => String, { nullable: true })
   userImg: string;
 
+  @Field(() => [UserReservationRestaurant])
+  restaurant: UserReservationRestaurant[];
+
   @OneToMany(() => Reservation, (reservation) => reservation.users)
   @Field(() => [Reservation])
   reservations: Reservation[];
-
-  @Field(() => [UserReservationRestaurant])
-  restaurant: UserReservationRestaurant[];
 
   @OneToMany(() => Board, (boards) => boards.user)
   @Field(() => [Board])
