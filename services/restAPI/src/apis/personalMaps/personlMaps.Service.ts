@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConsoleLogger,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import axios from 'axios';
@@ -20,21 +25,19 @@ export class PersonalMapsService {
     private readonly restaurantModel: Model<RestaurantDocument>,
     private readonly restaurantService: RestaurantService,
   ) {}
-  apiKey = process.env.GOOGLE_MAP_API_KEY;
 
+  apiKey = process.env.GOOGLE_MAP_API_KEY;
   async createPersonalMap({
-    body,
+    req,
   }: IPersonalMapsServiceCreatePersonalMap): Promise<Restaurant[]> {
     console.log('---식당 정보 등록---');
-    const restaurantInfos = Promise.all(
-      body.info.map(async (el) => {
-        const restaurantInfo = await this.restaurantModel
-          .find({
+    const restaurantInfos = await Promise.all(
+      req.body.info.map(async (el) => {
+        const restaurantInfo =
+          await this.restaurantService.findByNameWithLocation({
             restaurantName: el.restaurantName,
             location: el.location,
-          })
-          .exec();
-
+          });
         if (restaurantInfo.length) {
           return await restaurantInfo[0];
         } else {
@@ -43,19 +46,11 @@ export class PersonalMapsService {
             url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${el.restaurantName}&key=${this.apiKey}&location=${el.location.lat}%2C${el.location.lng}&radius=100&language=ko`,
           };
           const result = await axios(config);
-          console.log(result.data);
+          //반복적으로 요청을보낸다.
           const newRestaurant = result.data.results.filter((it) => {
             return it.name === el.restaurantName;
           });
-
-          if (newRestaurant) {
-            const postRestaurant = await new this.restaurantModel({
-              ...el,
-              openingDays: null,
-              phoneNumber: null,
-            }).save();
-            return postRestaurant;
-          } else {
+          if (newRestaurant.length) {
             const {
               geometry,
               place_id,
@@ -78,7 +73,13 @@ export class PersonalMapsService {
               section: el.section,
               area: el.area,
             }).save();
-            console.log(postRestaurant);
+            return postRestaurant;
+          } else {
+            const postRestaurant = await new this.restaurantModel({
+              ...el,
+              openingDays: null,
+              phoneNumber: null,
+            }).save();
             return postRestaurant;
           }
         }
@@ -89,27 +90,22 @@ export class PersonalMapsService {
   }
 
   async getPersonalMap({
-    body,
+    req,
   }: IPersonalMapsServiceGetPersonalMap): Promise<
     IPersonalMapsServiceGetPersonalMapReturn[]
   > {
-    console.log('---식당 정보 조회---');
-    const restaurantInfo = await Promise.all(
-      body.map(async (_id) => {
-        //없는 경우 null을 반환한다. 이때 에러를 던져 준다.
-        const result = await this.restaurantModel.findById({ _id });
-        if (!result) {
-          throw new HttpException(
-            '등록되지 않은 식당입니다. 등록후 조회해주세요',
-            HttpStatus.BAD_REQUEST,
-          );
-        }
+    const restaurantInfo = await this.restaurantService.findByIds({ req });
+    const personalMapInfo = restaurantInfo.map((el) => {
+      const { _id: restaurantId, restaurantName, location } = el;
 
-        const { restaurantName, address, rating, _id: id, location } = result;
-        return { restaurantName, address, rating, _id, location };
-      }),
-    );
-    console.log('---식당 정보 조회 완료');
-    return restaurantInfo;
+      const address = el.address || null;
+
+      const rating = el.rating || null;
+
+      return { restaurantId, restaurantName, rating, address, location };
+    });
+
+    return personalMapInfo;
+
   }
 }

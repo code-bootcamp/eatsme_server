@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Board } from '../boards/entities/board.entity';
+import { UserService } from '../users/users.service';
 import { ToggleLike } from './entities/toggleLike.entity';
-import { IBoardsServiceToggleLike } from './interface/toggleLike-service.interface';
+import {
+  IBoardsServiceToggleLike,
+  IToggleLikeServicefindToggleLikeIds,
+} from './interface/toggleLike-service.interface';
 
 @Injectable()
 export class ToggleLikeService {
@@ -11,27 +15,39 @@ export class ToggleLikeService {
     @InjectRepository(ToggleLike)
     private readonly toggleLikeRepository: Repository<ToggleLike>,
 
-    @InjectRepository(Board)
-    private readonly boardsRepository: Repository<Board>,
+    private readonly userService: UserService,
   ) {}
+
+  async findToggleLikeIds(
+    { context }: IToggleLikeServicefindToggleLikeIds, //
+  ): Promise<ToggleLike[]> {
+    const user = await this.userService.findOneByUser({
+      userId: context.req.user.id,
+    });
+
+    return user.toggleLikes;
+    // return aaa;
+  }
 
   async toggleLike({
     toggleLikeInput,
-    userId,
+    context,
   }: IBoardsServiceToggleLike): Promise<string> {
     const { isLike, boardId } = toggleLikeInput;
-
+    const user = await this.userService.findOneByUser({
+      userId: context.req.user.id,
+    });
     if (isLike) {
       const isValid = await this.toggleLikeRepository.find({
-        where: { boardId, userId },
+        where: { boardId, user },
       });
       if (isValid.length) return '이미 찜목록에 추가 되었습니다.';
-      const isRegister = this.toggleLikeRepository.save({ boardId, userId });
+      const isRegister = this.toggleLikeRepository.save({ boardId, user });
       if (isRegister) return '찜목록에 추가되었습니다.';
     } else {
       const isDelete = await this.toggleLikeRepository.delete({
         boardId,
-        userId,
+        user,
       });
       return isDelete.affected
         ? '정상적으로 지워졌습니다.'

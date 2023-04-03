@@ -1,8 +1,8 @@
-version: '3.7'
+version: "3.7"
 
 services:
     # api-gateway:
-    #     image: asia.gcr.io/project-eatsme-backend/api-gateway:0.9
+    #     image: asia.gcr.io/project-eatsme-backend/api-gateway:1.0
     #     build:
     #         context: api-gateway
     #         dockerfile: DockerFile
@@ -12,7 +12,7 @@ services:
     #         - 80:80
 
     food-service:
-        image: asia.gcr.io/project-eatsme-backend/food-service:1.7
+        image: asia.gcr.io/project-eatsme-backend/food-service:1.5
         build:
             context: services/graphql/
             dockerfile: DockerFile
@@ -20,27 +20,10 @@ services:
             - .env
 
     # road-service:
-    #     image: asia.gcr.io/project-eatsme-backend/road-service:1.6
+    #     image: asia.gcr.io/project-eatsme-backend/road-service:1.1
     #     build:
     #         context: services/restAPI/
     #         dockerfile: DockerFile
     #     env_file:
     #         - .env
 
-    # mysql:
-    #     image: mysql:latest
-    #     environment:
-    #         MYSQL_DATABASE: 'eatsMe'
-    #         MYSQL_ROOT_PASSWORD: 'root'
-    #     ports:
-    #         - 3306:3306
-
-    # mongodb:
-    #     image: mongo:5
-    #     ports:
-    #         - 27017:27017
-
-    # redis:
-    #     image: redis:latest
-    #     ports:
-    #         - 6379:6379

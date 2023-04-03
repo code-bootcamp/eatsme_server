@@ -1,8 +1,19 @@
 import { Request } from 'express';
-import { Restaurant } from '../schemas/restaurant.schemas';
+
+export interface IRestaurantServiceFindByIds {
+  req: Request;
+}
+
+export interface IRestaurantServiceFindByNameWithLocation {
+  restaurantName: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+}
 
 export interface IRestaurantServicePostAndGetRestaurant {
-  body: { area: string; section: string };
+  req: Request;
 }
 export interface IRestaurantServiceGetRestaurant {
   req: Request;
@@ -13,16 +24,11 @@ export interface IRestaurantServiceFindOneRestaurant {
 }
 
 export interface IRestaurantServiceGetRestaurants {
-
-  body: {
-    area: string;
-    section: string;
-  };
+  req: Request;
 }
 
 export interface IRestaurantServiceUserGetRestaurants {
   req: Request;
-
 }
 
 export interface IRestaurantServiceUserGetRestaurants {
@@ -33,16 +39,10 @@ export interface IRestaurantServiceGetDetails {
   place_id: string;
 }
 
-export interface IRestaurantServiceSaveNextPage {
-  nextPageToken: string;
-  section: string;
-  area: string;
-}
-
 export interface IRestaurantServiceGetDetailsReturn {
   phoneNumber: string | null;
   openingDays: string[] | null;
 }
 export interface IRestaurantServiceDeleteCollection {
-  body: string;
+  req: Request;
 }

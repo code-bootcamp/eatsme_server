@@ -52,17 +52,23 @@ class RestaurantBoardInfo {
   @Field(() => String)
   restaurantId: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   restaurantName: string;
+
+  @Field(() => String)
+  area: string;
+
+  @Field(() => String)
+  section: string;
 
   @Field(() => String, { nullable: true })
   address: string;
 
   @Field(() => String, { nullable: true })
-  imgUrl: string | null;
+  imgUrl: string;
 
   @Field(() => String, { nullable: true })
-  recommend: string | null;
+  recommend: string;
 
   @Field(() => String, { nullable: true })
   rating: string;

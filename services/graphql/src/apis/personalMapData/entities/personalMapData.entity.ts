@@ -5,9 +5,17 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 @ObjectType()
 export class PersonalMapData {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   @Field(() => String)
   id: string;
+
+  @Column()
+  @Field(() => String)
+  area: string;
+
+  @Column()
+  @Field(() => String)
+  section: string;
 
   @Column()
   @Field(() => String)

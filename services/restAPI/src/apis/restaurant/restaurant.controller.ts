@@ -6,8 +6,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { getRestaurantsInput } from './dto/get-restaurants.input';
-import { IRestaurantServiceGetRestaurants } from './interfaces/restaurantService.interface';
 import { RestaurantService } from './restaurant.service';
 import { Restaurant } from './schemas/restaurant.schemas';
 
@@ -21,9 +19,9 @@ export class RestaurantController {
 
   @Post('/info/road/restaurant')
   postRestaurants(
-    @Body() body: { area: string; section: string }, //
+    @Req() req: Request, //
   ): Promise<void> {
-    return this.restaurantService.postRestaurants({ body });
+    return this.restaurantService.postRestaurants({ req });
   }
 
   @Get('/info/road/restaurant')
@@ -31,14 +29,12 @@ export class RestaurantController {
   @ApiResponse({
     status: 200,
     description: '행정구역의 추천 식당 정보를 조회합니다',
-
     type: Promise<Restaurant[]>,
   })
   getRestaurants(
-    @Body() body: getRestaurantsInput, //
+    @Req() req: Request, ////
   ): Promise<Restaurant[]> {
-    console.log(body);
-    return this.restaurantService.getRestaurants({ body });
+    return this.restaurantService.getRestaurants({ req });
   }
 
   @Get('/info/road/get/restaurant')
@@ -66,15 +62,15 @@ export class RestaurantController {
 
   @Delete('/info/road/restaurant')
   deleteRestaurant(
-    @Body() body: string, //
+    @Req() req: Request, //
   ): Promise<string> {
-    return this.restaurantService.deleteCollection({ body });
+    return this.restaurantService.deleteCollection({ req });
   }
 
   @Delete('/info/road/restaurants')
   deleteRestaurants(
-    @Body() body: string, //
+    @Req() req: Request, //
   ): Promise<string> {
-    return this.restaurantService.deleteSection({ body });
+    return this.restaurantService.deleteSection({ req });
   }
 }

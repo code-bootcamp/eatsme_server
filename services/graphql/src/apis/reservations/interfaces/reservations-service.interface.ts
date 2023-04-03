@@ -12,27 +12,3 @@ export interface IReservationDelete {
   restaurant_id: string;
   userId: User['id'];
 }
-
-// @ObjectType()
-// export class ILocationCreate {
-//   @Field(() => String)
-//   lat: string;
-
-//   @Field(() => String)
-//   lng: string;
-// }
-
-// @ObjectType()
-// export class IRestaurantCreate {
-//   @Field(() => String)
-//   restaurantName: string;
-
-//   @Field(() => String)
-//   address: string;
-
-//   @Field(() => String)
-//   rating: string;
-
-//   @Field(() => ILocationCreate)
-//   location: ILocationCreate;
-// }
