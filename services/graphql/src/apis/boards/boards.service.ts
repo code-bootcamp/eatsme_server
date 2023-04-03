@@ -65,7 +65,7 @@ export class BoardsService {
   }: IBoardsServiceFindByBoardId): Promise<Board> {
     const board = await this.boardsRepository.findOne({
       where: { id: boardId }, //
-      relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
+      relations: ['comments.replies.user', 'comments', 'personalMapData', 'user', 'comments.user'],
     });
     if (!board) throw new UnprocessableEntityException('등록후 조회해주세요');
     return board;

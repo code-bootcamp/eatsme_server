@@ -27,7 +27,7 @@ export class Alarm {
   @Field(() => Reply)
   replies: Reply;
 
-  @Column()
+  @Column({ nullable: true })
   @Field(() => String)
   commentUserImg: string;
 

@@ -18,9 +18,22 @@ export class AlarmController {
         alarms.map((alarm) => ({
           id: alarm.users.nickname,
           message: alarm.alarmMessage,
+          userImg: alarm.commentUserImg,
           type: alarm.comments ? 'comment' : 'reply',
+          alarmId: alarm.id,
         })),
       ),
     );
   }
+
+  @Delete('/:alarmId')
+@UseGuards(GqlAuthGuard('access'))
+async deleteAlarm(
+  @Param('alarmId') alarmId: string,
+  @Context() context: IContext,
+): Promise<string> {
+  const userId = context.req.user.id;
+  await this.alarmService.deleteAlarm({ userId, alarmId });
+  return '알람이 삭제되었습니다';
+}
 }
