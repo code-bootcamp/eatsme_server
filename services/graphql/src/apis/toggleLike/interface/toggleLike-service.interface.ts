@@ -4,6 +4,3 @@ export interface IBoardsServiceToggleLike {
   boardId: string;
   context: IContext;
 }
-export interface IToggleLikeServicefindToggleLikeIds {
-  context: IContext;
-}

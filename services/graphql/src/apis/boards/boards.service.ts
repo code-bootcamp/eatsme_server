@@ -3,12 +3,7 @@ import { Board } from './entities/board.entity';
 
 import axios from 'axios';
 
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -16,7 +11,6 @@ import { UserService } from '../users/users.service';
 import { FilesService } from '../files/files.service';
 import { ImagesService } from '../images/images.service';
 
-import { ToggleLikeService } from '../toggleLike/toggleLike.service';
 import { PersonalMapDataService } from '../personalMapData/personalMapdata.service';
 
 import {
@@ -65,7 +59,13 @@ export class BoardsService {
   }: IBoardsServiceFindByBoardId): Promise<Board> {
     const board = await this.boardsRepository.findOne({
       where: { id: boardId }, //
-      relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
+      relations: [
+        'comments.replies',
+        'comments',
+        'comments.user',
+        'personalMapData',
+        'user',
+      ],
     });
     if (!board) throw new UnprocessableEntityException('등록후 조회해주세요');
     return board;
@@ -155,7 +155,9 @@ export class BoardsService {
 
     const personalBoards = await Promise.all(
       boards.map(async (el) => {
-        return await this.fetchBoard({ boardId: el.id });
+        const qqq = await this.fetchBoard({ boardId: el.id });
+        console.log(qqq);
+        return qqq;
       }),
     );
 
