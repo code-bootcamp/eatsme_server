@@ -1,5 +1,9 @@
 import { MailerModule } from '@nestjs-modules/mailer';
-import { CacheModule, ConflictException } from '@nestjs/common';
+import {
+  CacheModule,
+  ConflictException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
@@ -45,6 +49,17 @@ describe('UserService', () => {
     }).compile();
 
     userService = moduelRef.get<UserService>(UserService);
+  });
+
+  describe('findOneByUser', () => {
+    it('db에 유저가 없을 때', async () => {
+      const userId = '10';
+      try {
+        await userService.findOneByUser({ userId });
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConflictException);
+      }
+    });
   });
 
   describe('checkEmail', () => {
@@ -114,20 +129,24 @@ describe('UserService', () => {
     });
   });
 
-  // describe('matchAuthNumber', async () => {
-  //   it('인증번호 못맞췄을 경우', () => {
-  //     const mydata: MatchAuthNumberInput = {
-  //       email: 'black1594@naver.com',
-  //       authNumber: '123456',
-  //     };
-
-  //     try {
-  //       //
-  //     } catch (err) {
-  //       expect(err).toBeInstanceOf(ConflictException);
-  //     }
-  //   });
-  // });
+  describe('matchAuthNumber', () => {
+    it('인증번호 못맞췄을 경우', async () => {
+      const mydata: MatchAuthNumberInput = {
+        email: 'black1594@naver.com',
+        authNumber: '123456',
+      };
+      try {
+        await userService.matchAuthNumber({
+          matchAuthNumberInput: {
+            email: 'black1594@naver.com',
+            authNumber: '112233',
+          },
+        });
+      } catch (err) {
+        expect(err).toBeInstanceOf(UnprocessableEntityException);
+      }
+    });
+  });
 
   describe('isFindOneByNickname', () => {
     it('닉네임 값을 입력 안한 경우', async () => {
@@ -178,7 +197,8 @@ describe('UserService', () => {
     it('이메일 양식 글자수 30개초과 에러', async () => {
       const mydata: IUsersCreate = {
         createUserInput: {
-          email: 'abcdefghijklmnopqrstuvwxyz@naver.com',
+          email:
+            'abcdefghijklmnopqrstuvwxyz@n        expect(err).toBeInstanceOf(Caver.com',
           password: '12341234',
           nickname: '짱아',
         },

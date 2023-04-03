@@ -82,7 +82,6 @@ export class UserService {
     await this.isFindOneByEmail({ email });
 
     await this.sendToAuthNumber({ email });
-    // await this.sendToTemplate({ email });
     return email;
   }
 
@@ -116,6 +115,7 @@ export class UserService {
                     <div style="color: black;">인증번호는 ${authNumber} 입니다.</div>
                 </div>
             </div>
+
         </body>
     </html>
   `;
