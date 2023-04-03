@@ -15,6 +15,7 @@ import {
 import { UserReservationRestaurant } from '../interfaces/user-reservationRestaurant.inferface';
 import { ToggleLike } from 'src/apis/toggleLike/entities/toggleLike.entity';
 import { Comment } from 'src/apis/Comments/entities/comment.entity';
+import { Reply } from 'src/apis/replies/entities/reply.entity';
 
 @Entity()
 @ObjectType()
@@ -53,8 +54,13 @@ export class User {
   @Field(() => [Alarm])
   alarms: Alarm[];
 
-  @OneToMany(() => Comment, (comments) => comments.user)
+  @OneToMany(() => Comment, (comments) => comments.user, {
+    onDelete: 'CASCADE',
+  })
   comments: Comment;
+
+  @OneToMany(() => Reply, (replies) => replies.user, { onDelete: 'CASCADE' })
+  replies: Reply;
 
   @OneToMany(() => ToggleLike, (toggleLikes) => toggleLikes.user)
   @Field(() => [ToggleLike])
