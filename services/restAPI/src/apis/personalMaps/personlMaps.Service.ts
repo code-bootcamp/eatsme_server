@@ -106,5 +106,6 @@ export class PersonalMapsService {
     });
 
     return personalMapInfo;
+
   }
 }
