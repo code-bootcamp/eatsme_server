@@ -23,7 +23,7 @@ jobs:
                   credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
             - name: Create gcp-file-storage.json
-              id: create-gcp-file-storage.json
+              id: create-gcp-file-storage-json
               uses: jsdaniell/create-json@v1.2.2
               with:
                   name: 'gcp-file-storage.json'
