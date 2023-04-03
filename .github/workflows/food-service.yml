@@ -21,10 +21,12 @@ jobs:
               uses: 'google-github-actions/auth@v0'
               with:
                   credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+                  export_default_credentials: true
 
             - name: Food-service Build tag Docker image
               run: |-
                   echo ${{ secrets.GCP_FILE_STORAGE }} > gcp-file-storage.json
+                  gcloud auth activate-service-account --key-file=gcp-credentials.json
                   gcloud auth configure-docker
                   cd services/graphql
                   touch .gcp-file-storage.json
