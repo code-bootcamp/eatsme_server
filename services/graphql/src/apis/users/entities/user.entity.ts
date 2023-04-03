@@ -14,6 +14,7 @@ import {
 
 import { UserReservationRestaurant } from '../interfaces/user-reservationRestaurant.inferface';
 import { ToggleLike } from 'src/apis/toggleLike/entities/toggleLike.entity';
+import { Comment } from 'src/apis/Comments/entities/comment.entity';
 
 @Entity()
 @ObjectType()
@@ -51,6 +52,9 @@ export class User {
   @OneToMany(() => Alarm, (alarm) => alarm.users)
   @Field(() => [Alarm])
   alarms: Alarm[];
+
+  @OneToMany(() => Comment, (comments) => comments.user)
+  comments: Comment;
 
   @OneToMany(() => ToggleLike, (toggleLikes) => toggleLikes.user)
   @Field(() => [ToggleLike])
