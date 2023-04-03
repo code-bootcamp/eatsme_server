@@ -1,15 +1,18 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import axios from 'axios';
-import { Repository } from 'typeorm';
-import { FilesService } from '../files/files.service';
-import { ImagesService } from '../images/images.service';
-import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
-import { PersonalMapDataService } from '../personalMapData/personalMapdata.service';
-import { ToggleLikeService } from '../toggleLike/toggleLike.service';
-import { UserService } from '../users/users.service';
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
+
+import axios from 'axios';
+
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { UserService } from '../users/users.service';
+import { FilesService } from '../files/files.service';
+import { ImagesService } from '../images/images.service';
+import { ToggleLikeService } from '../toggleLike/toggleLike.service';
+import { PersonalMapDataService } from '../personalMapData/personalMapdata.service';
+
 import {
   IBoardsServiceCreate,
   IBoardsServiceDelete,

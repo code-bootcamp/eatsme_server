@@ -1,28 +1,24 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FilesModule } from '../files/files.module';
 
-import { FilesService } from '../files/files.service';
-
-import { ImagesService } from '../images/images.service';
-
-import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
-import { PersonalMapDataModule } from '../personalMapData/personalMapData.module';
-import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
-import { ToggleLikeModule } from '../toggleLike/toggleLike.module';
-import { ToggleLikeService } from '../toggleLike/toggleLike.service';
-import { UserModule } from '../users/users.module';
+import { Board } from './entities/board.entity';
 import { BoardsResolver } from './boards.resolver';
 import { BoardsService } from './boards.service';
-import { Board } from './entities/board.entity';
+
+import { UserModule } from '../users/users.module';
+import { FilesModule } from '../files/files.module';
+import { ImagesModule } from '../images/images.module';
+import { PersonalMapDataModule } from '../personalMapData/personalMapData.module';
+import { ToggleLikeModule } from '../toggleLike/toggleLike.module';
 
 @Module({
   imports: [
+    UserModule,
+    FilesModule,
+    ImagesModule,
     ToggleLikeModule,
     PersonalMapDataModule,
     PersonalMapDataModule,
-    UserModule,
-    FilesModule,
     TypeOrmModule.forFeature([
       Board, //
     ]),
@@ -30,7 +26,6 @@ import { Board } from './entities/board.entity';
   providers: [
     BoardsResolver, //
     BoardsService,
-    ImagesService,
   ],
 })
 export class BoardModule {}
