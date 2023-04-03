@@ -34,7 +34,7 @@ export class User {
   nickname: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   userImg: string;
 
   @Field(() => [UserReservationRestaurant])

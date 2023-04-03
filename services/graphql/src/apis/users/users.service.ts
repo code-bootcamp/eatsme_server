@@ -52,13 +52,11 @@ export class UserService {
     });
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
-
     if (restaurantIdArr.length) {
       const reservationRestaurant = await axios.get(
         'http://road-service:7100/info/road/find/restaurant',
         { data: restaurantIdArr },
       );
-
       return {
         ...user,
         restaurant: reservationRestaurant.data,
@@ -71,12 +69,7 @@ export class UserService {
 
   //-----유저email확인-----
   async findOneByEmail({ email }: IUsersFindOneByEmail): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user) {
-      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
-    }
-    return user;
+    return this.userRepository.findOne({ where: { email } });
   }
 
   //-----이메일 만드는 방식 확인-----
@@ -201,18 +194,16 @@ export class UserService {
     await this.isFindOneByNickname({ nickname });
 
     await this.welcomeToTemplate({ email, nickname });
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!password) {
-      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+      return this.userRepository.save({
+        email,
+        password: hashedPassword,
+        nickname,
+      });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    return this.userRepository.save({
-      email,
-      password: hashedPassword,
-      nickname,
-    });
+    return this.userRepository.save({ ...createUserInput });
   }
 
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {

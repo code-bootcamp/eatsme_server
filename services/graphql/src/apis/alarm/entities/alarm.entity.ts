@@ -29,5 +29,9 @@ export class Alarm {
 
   @Column()
   @Field(() => String)
+  commentUserImg: string;
+
+  @Column()
+  @Field(() => String)
   alarmMessage: string;
 }
