@@ -9,7 +9,9 @@ services:
             - 80:80
 
     food-service:
-        image: asia.gcr.io/project-eatsme-backend/food-service:cfeed5b807e9a553897f7bfa60dca63f26de752b
+        build:
+            context: ./services/graphql
+            dockerfile: DockerFile
         volumes:
             - ./services/graphql/src:/food-service/src
         env_file:
