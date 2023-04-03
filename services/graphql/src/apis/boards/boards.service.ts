@@ -1,4 +1,3 @@
-
 import { BoardReturn } from './dto/fetch-board.object';
 import { Board } from './entities/board.entity';
 
@@ -34,9 +33,7 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
 
-
     private readonly personalMapDataService: PersonalMapDataService,
-
 
     private readonly toggleLikeService: ToggleLikeService,
 

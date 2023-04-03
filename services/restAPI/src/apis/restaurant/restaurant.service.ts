@@ -12,6 +12,7 @@ import {
   IRestaurantServiceGetRestaurant,
   IRestaurantServiceGetRestaurants,
   IRestaurantServicePostAndGetRestaurant,
+  IRestaurantServiceSaveRestaurantInfo,
   IRestaurantServiceUserGetRestaurants,
 } from './interfaces/restaurantService.interface';
 import {
@@ -36,7 +37,14 @@ export class RestaurantService {
 
   apiKey = process.env.GOOGLE_MAP_API_KEY;
 
-  // saveRestaurantInfo() {}
+  async saveRestaurantInfo({
+    saveRestaurantInPut,
+  }: IRestaurantServiceSaveRestaurantInfo): Promise<Restaurant> {
+    return await new this.restaurantModel({
+      ...saveRestaurantInPut,
+    }).save();
+  }
+
   async findByIds({ req }: IRestaurantServiceFindByIds): Promise<Restaurant[]> {
     const ids = JSON.parse(JSON.stringify(req.query.data)).split(',');
     return this.restaurantModel.find({
@@ -120,9 +128,9 @@ export class RestaurantService {
     });
   }
 
-  async getDetails(
-    place_id: IRestaurantServiceGetDetails,
-  ): Promise<IRestaurantServiceGetDetailsReturn> {
+  async getDetails({
+    place_id,
+  }: IRestaurantServiceGetDetails): Promise<IRestaurantServiceGetDetailsReturn> {
     const placeConfig = {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${this.apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
