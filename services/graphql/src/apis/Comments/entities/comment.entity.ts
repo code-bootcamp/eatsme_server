@@ -38,6 +38,6 @@ export class Comment {
   alarms: Alarm[];
 
   @ManyToOne(() => User)
-  @Field(() => User)
+  @Field(() => User, { nullable: true })
   user: User;
 }
