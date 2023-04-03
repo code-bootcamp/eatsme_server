@@ -22,8 +22,12 @@ jobs:
               with:
                   credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-            - name: Create gcp-file-storage.json
-              run: echo "${{ secrets.GCP_FILE_STORAGE }}" >> gcp-file-storage.json
+            - name: gcp-file-storage.json
+              id: create-json
+              uses: jsdaniell/create-json@v1.2.2
+              with:
+                  name: 'gcp-file-storage.json'
+                  json: ${{ secrets.GCP_FILE_STORAGE }}
 
             - name: Food-service Build tag Docker image
               run: |-
