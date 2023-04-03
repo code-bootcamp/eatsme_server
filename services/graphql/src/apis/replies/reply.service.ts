@@ -76,12 +76,6 @@ export class ReplysService {
 
     const user = await this.usersService.findOneByUser({
       userId: context.req.user.id,
-  
-    const comments = await this.commentsRepository.findOne({
-      where: {
-        id: commentId,
-      },
-      relations: [ 'board.user', 'user' ]
     });
 
     const comments = await this.commentsService.findOne({ commentId });
@@ -103,14 +97,17 @@ export class ReplysService {
     });
     await this.alarmsRepository.save(newAlarm);
 
-
     const boardUser = comments.board.user;
     const commentUser = comments.user;
     // 게시판 작성자와 댓글 작성자 및 댓글작성자와 대댓글작성자가 같은 경우 중복해서 알람을 보내지 않도록 처리
     let usersToSendAlarm = [];
-    if (commentUser.id !== boardUser.id && boardUser.id !== user.id && commentUser.id !== user.id) {
+    if (
+      commentUser.id !== boardUser.id &&
+      boardUser.id !== user.id &&
+      commentUser.id !== user.id
+    ) {
       usersToSendAlarm = [commentUser, boardUser];
-    } else if (commentUser.id !== user.id){
+    } else if (commentUser.id !== user.id) {
       usersToSendAlarm = [commentUser];
     } else if (boardUser.id !== user.id) {
       usersToSendAlarm = [boardUser];
@@ -121,7 +118,7 @@ export class ReplysService {
         users: user,
         replies: newComment,
         commentUserImg: newComment.user.userImg,
-        alarmMessage: `${newComment.user.nickname}님이 대댓글을 작성했습니다`
+        alarmMessage: `${newComment.user.nickname}님이 대댓글을 작성했습니다`,
       });
       await this.alarmsRepository.save(newAlarm);
     }
@@ -136,7 +133,7 @@ export class ReplysService {
     const { reply, replyId } = updateReplyInput;
     const replies = await this.replysRepository.findOne({
       where: { id: replyId },
-      relations: [ 'user', 'comments.user', 'comments.board.user' ]
+      relations: ['user', 'comments.user', 'comments.board.user'],
     });
     await this.checkUser({ userId, replyId });
     await this.nullCheck({ reply });
@@ -145,21 +142,21 @@ export class ReplysService {
       reply,
     });
 
-
     const boardUser = replies.comments.board.user;
     const commentUser = replies.comments.user;
     const usersToSendAlarm = [commentUser, boardUser];
 
-    for (const user of usersToSendAlarm) { // user상수를 만들어서 usersToSendAlarm배열 안에 있는 값에 각각요소를 user에 할당후 알람을 보냄
+    for (const user of usersToSendAlarm) {
+      // user상수를 만들어서 usersToSendAlarm배열 안에 있는 값에 각각요소를 user에 할당후 알람을 보냄
       const updateAlarm = this.alarmsRepository.create({
         users: replies.user,
         replies: updateComment,
         commentUserImg: updateComment.user.userImg,
-        alarmMessage: `${updateComment.user.nickname}님이 대댓글을 수정했습니다`
+        alarmMessage: `${updateComment.user.nickname}님이 대댓글을 수정했습니다`,
       });
       await this.alarmsRepository.save(updateAlarm);
     }
-    return updateComment
+    return updateComment;
   }
 
   async delete({ userId, replyId }: IReplysServiceDelete): Promise<string> {
