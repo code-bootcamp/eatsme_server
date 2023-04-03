@@ -38,12 +38,12 @@ export class CommentsService {
       where: {
         id: commentId,
       },
-      relations: ['board.user', 'replies'],
+      relations: ['board.user', 'replies', 'user'],
     });
     return comment;
   }
 
-  async nullCheck({ comment }: ICommentServiceNullList): Promise<void> {
+  nullCheck({ comment }: ICommentServiceNullList): void {
     // 댓글을 입력했는지 확인
     if (!comment.trim()) {
       throw new UnprocessableEntityException('댓글을 입력해주세요');
@@ -82,9 +82,6 @@ export class CommentsService {
     });
 
     const board = await this.boardsService.findOneByBoardId({ boardId });
-    if (!board) {
-      throw new UnprocessableEntityException('게시판정보가 없습니다');
-    }
 
     await this.nullCheck({ comment });
 
@@ -93,23 +90,17 @@ export class CommentsService {
       board,
       user,
     });
-
-
-    const boardUser = board.user;
-    const commentUser = user;
-    
-    const usersToSendAlarm = [commentUser, boardUser];
-    
-    if (usersToSendAlarm.length > 0) {
-      const newAlarm =  this.alarmsRepository.create({
+    console.log('==========================')
+    console.log(newComment)
+    console.log('==========================')
+    if(user.id  !== board.user.id) {
+      await this.alarmsRepository.save({
         users: board.user,
         comments: newComment,  
         commentUserImg: newComment.user.userImg,
         alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다` 
       });
-      this.alarmsRepository.save(newAlarm);
     }
-
     return newComment;
   }
 
@@ -119,25 +110,14 @@ export class CommentsService {
     updateCommentInput,
   }: ICommentsServiceUpdate): Promise<Comment> {
     const { comment, commentId } = updateCommentInput;
-    const comments = await this.commentsRepository.findOne({
-      where: { id: commentId },
-      relations: ['user'],
-    });
+    const comments = await this.findOne({ commentId });
+
     await this.checkUser({ userId, commentId });
-    await this.nullCheck({ comment });
-    const updateComment = await this.commentsRepository.save({
+    this.nullCheck({ comment });
+    return this.commentsRepository.save({
       ...comments,
       comment,
     });
-
-    const updateAlarm = this.alarmsRepository.create({
-      users: comments.user,
-      comments: updateComment,
-      commentUserImg: updateComment.user.userImg,
-      alarmMessage: `${updateComment.user.nickname}님이 댓글을 수정했습니다`
-    });
-    await this.alarmsRepository.save(updateAlarm);
-    return updateComment;
   }
 
   async delete({ commentId, userId }: ICommentsServiceDelete): Promise<string> {
