@@ -53,7 +53,6 @@ import { ReplysModule } from './apis/replies/reply.module';
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
-      charset: 'utf8mb4_unicode_ci',
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
