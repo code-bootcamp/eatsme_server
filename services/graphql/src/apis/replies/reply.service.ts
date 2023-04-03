@@ -8,8 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Alarm } from '../alarm/entities/alarm.entity';
 import { CommentsService } from '../Comments/comments.service';
-import { Comment } from '../Comments/entities/comment.entity';
-import { User } from '../users/entities/user.entity';
 import { UserService } from '../users/users.service';
 import { Reply } from './entities/reply.entity';
 import {

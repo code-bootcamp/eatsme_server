@@ -14,7 +14,10 @@ import { ReplysService } from './reply.service';
   imports: [
     CommentModule,
     UserModule,
-    TypeOrmModule.forFeature([Reply, Alarm]),
+    TypeOrmModule.forFeature([
+      Reply,
+      Alarm, //
+    ]),
   ],
   providers: [
     ReplysResolver,

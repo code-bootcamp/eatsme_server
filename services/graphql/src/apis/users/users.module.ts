@@ -15,7 +15,6 @@ import { UserService } from './users.service';
     ]),
   ],
   providers: [
-    JwtAccessStrategy,
     UserResolver, //
     UserService,
   ],
