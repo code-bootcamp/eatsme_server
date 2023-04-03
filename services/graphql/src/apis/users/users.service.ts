@@ -31,7 +31,9 @@ export class UserService {
 
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+
     private readonly mailerService: MailerService,
+
     private readonly imagesService: ImagesService,
   ) {}
 

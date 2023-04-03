@@ -21,7 +21,7 @@ import {
 } from './schemas/restaurant.schemas';
 
 import { Model } from 'mongoose';
-import { TimeTalbesService } from '../timeTable/timeTable.service';
+import { TimeTablesService } from '../timeTable/timeTable.service';
 import { RemainTablesService } from '../remaintable/remainTable.service';
 
 @Injectable()
@@ -30,9 +30,9 @@ export class RestaurantService {
     @InjectModel('Restaurant')
     private readonly restaurantModel: Model<RestaurantDocument>,
 
-    private readonly remainTalblesServcie: RemainTablesService, //
+    private readonly remainTablesService: RemainTablesService, //
 
-    private readonly timeTablesServcie: TimeTalbesService,
+    private readonly timeTablesService: TimeTablesService,
   ) {}
 
   apiKey = process.env.GOOGLE_MAP_API_KEY;
@@ -223,18 +223,18 @@ export class RestaurantService {
     const restaurantInfo = await this.findOneRestaurant({
       restaurant_id: restaurantId,
     });
-    const isRemainTable = await this.remainTalblesServcie.findOne({
+    const isRemainTable = await this.remainTablesService.findOne({
       createReamintalbeInput: {
         reservation_time,
         restaurant: restaurantInfo,
       },
     });
 
-    await this.remainTalblesServcie.remainTable({
+    await this.remainTablesService.remainTable({
       _id: isRemainTable._id,
       table,
     });
-    const reservationTime = await this.timeTablesServcie.findOne({
+    const reservationTime = await this.timeTablesService.findOne({
       _id: reservation_time,
     });
 
