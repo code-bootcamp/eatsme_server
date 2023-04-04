@@ -82,9 +82,28 @@ export class BoardsService {
         return el.restaurantId;
       },
     );
-    const restaurantInfo = await axios.get(
-      `http://road-service:7100/info/road/map?data=${restaurantIds}`,
-    );
+
+    let restaurantInfo;
+    try {
+      restaurantInfo = await axios.get(
+        `http://road-service:7100/info/road/map?data=${restaurantIds}`,
+      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error:', error.message);
+        console.error('Axios request config:', error.config);
+        if (error.response) {
+          console.error('Axios response data:', error.response.data);
+          console.error('Axios response status:', error.response.status);
+          console.error('Axios response headers:', error.response.headers);
+        }
+      } else {
+        // axios 에러가 아닌 다른 에러인 경우
+        console.error('Unknown error:', error);
+      }
+      throw error;
+    }
+
     board.personalMapData = restaurantInfo.data.map((el, i) => {
       return { ...el, ...board.personalMapData[i] };
     });
@@ -279,16 +298,18 @@ export class BoardsService {
     const user = await this.userService.findOneByUser({
       userId: context.req.user.id,
     });
+
     const isDelete = JSON.parse(JSON.stringify(user.boards)).filter((el) => {
       return el.id === boardId;
     });
-    if (!isDelete.length) {
+
+    if (isDelete.length) {
       const board = await this.boardsRepository.delete(boardId);
       return board.affected
         ? '게시물이 정상적으로 삭제되었습니다.'
         : '이미 지워진 게시물입니다.';
     } else {
-      return '이미 지워진 게시물입니다.';
+      return '지울 권한이 없습니다.';
     }
   }
 }
