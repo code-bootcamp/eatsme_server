@@ -90,7 +90,6 @@ export class CommentsService {
       user,
     });
 
- 
     //조건???? 댓글유저와 게시물 작성자가 같으면 알람이 안간다.
     if (board.user.id !== context.req.user.id) {
       await this.alarmService.createAlarm({
@@ -98,7 +97,6 @@ export class CommentsService {
         commentId: newComment.id,
         commentUserImg: newComment.user.userImg || null,
         alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다`,
-
       });
     }
     return newComment;
@@ -118,9 +116,6 @@ export class CommentsService {
       ...comments,
       comment,
     });
-
-    return updateComment;
-
   }
 
   async delete({ commentId, userId }: ICommentsServiceDelete): Promise<string> {
