@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Alarm } from '../alarm/entities/alarm.entity';
+import { AlarmService } from '../alarm/alarms.service';
 import { BoardsService } from '../boards/boards.service';
 import { UserService } from '../users/users.service';
 import { Comment } from './entities/comment.entity';
@@ -25,8 +25,7 @@ export class CommentsService {
     @InjectRepository(Comment)
     private readonly commentsRepository: Repository<Comment>,
 
-    @InjectRepository(Alarm)
-    private readonly alarmsRepository: Repository<Alarm>,
+    private readonly alarmService: AlarmService,
 
     private readonly boardsService: BoardsService,
 
@@ -90,15 +89,16 @@ export class CommentsService {
       board,
       user,
     });
-    console.log('==========================')
-    console.log(newComment)
-    console.log('==========================')
-    if(user.id  !== board.user.id) {
-      await this.alarmsRepository.save({
-        users: board.user,
-        comments: newComment,  
-        commentUserImg: newComment.user.userImg,
-        alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다` 
+
+ 
+    //조건???? 댓글유저와 게시물 작성자가 같으면 알람이 안간다.
+    if (board.user.id !== context.req.user.id) {
+      await this.alarmService.createAlarm({
+        authorId: board.user.id,
+        commentId: newComment.id,
+        commentUserImg: newComment.user.userImg || null,
+        alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다`,
+
       });
     }
     return newComment;
@@ -118,6 +118,9 @@ export class CommentsService {
       ...comments,
       comment,
     });
+
+    return updateComment;
+
   }
 
   async delete({ commentId, userId }: ICommentsServiceDelete): Promise<string> {
