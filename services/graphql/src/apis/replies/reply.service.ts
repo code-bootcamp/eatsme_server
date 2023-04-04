@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Alarm } from '../alarm/entities/alarm.entity';
+import { AlarmService } from '../alarm/alarms.service';
 import { CommentsService } from '../Comments/comments.service';
 import { UserService } from '../users/users.service';
 import { Reply } from './entities/reply.entity';
@@ -25,8 +25,7 @@ export class ReplysService {
     @InjectRepository(Reply)
     private readonly replysRepository: Repository<Reply>,
 
-    @InjectRepository(Alarm)
-    private readonly alarmsRepository: Repository<Alarm>,
+    private readonly AlarmService: AlarmService,
 
     private readonly commentsService: CommentsService,
 
@@ -91,7 +90,7 @@ export class ReplysService {
 
     const boardUser = comments.board.user;
     const commentUser = comments.user;
-    // 게시판 작성자와 댓글 작성자 및 댓글작성자와 대댓글작성자가 같은 경우 중복해서 알람을 보내지 않도록 처리
+
     let usersToSendAlarm = [];
     if (
       commentUser.id !== boardUser.id &&
@@ -104,15 +103,16 @@ export class ReplysService {
     } else if (boardUser.id !== user.id) {
       usersToSendAlarm = [boardUser];
     }
-    // 두 명의 사용자에게 각각 알람을 보냅니다.
-    usersToSendAlarm.forEach(async (el) => {
-      await this.alarmsRepository.save({
-        users: el,
-        replies: newComment,
-        commentUserImg: newComment.user.userImg,
-        alarmMessage: `${newComment.user.nickname}님이 대댓글을 작성했습니다`,
+    if (usersToSendAlarm.length) {
+      usersToSendAlarm.forEach(async (el) => {
+        await this.AlarmService.createAlarm({
+          authorId: el.id,
+          commentId: newComment.commentId,
+          commentUserImg: newComment.user.userImg,
+          alarmMessage: `${newComment.user.nickname}님이 대댓글을 작성했습니다`,
+        });
       });
-    });
+    }
 
     return newComment;
   }

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Alarm } from '../alarm/entities/alarm.entity';
+import { AlarmService } from '../alarm/alarms.service';
 import { BoardsService } from '../boards/boards.service';
 import { UserService } from '../users/users.service';
 import { Comment } from './entities/comment.entity';
@@ -25,8 +25,7 @@ export class CommentsService {
     @InjectRepository(Comment)
     private readonly commentsRepository: Repository<Comment>,
 
-    @InjectRepository(Alarm)
-    private readonly alarmsRepository: Repository<Alarm>,
+    private readonly alarmService: AlarmService,
 
     private readonly boardsService: BoardsService,
 
@@ -38,7 +37,7 @@ export class CommentsService {
       where: {
         id: commentId,
       },
-      relations: ['board.user', 'replies'],
+      relations: ['board.user', 'replies', 'user'],
     });
     return comment;
   }
@@ -93,21 +92,17 @@ export class CommentsService {
       board,
       user,
     });
-
-
-    const boardUser = board.user;
-    const commentUser = user;
-    
-    const usersToSendAlarm = [commentUser, boardUser];
-    
-    if (usersToSendAlarm.length > 0) {
-      const newAlarm =  this.alarmsRepository.create({
-        users: board.user,
-        comments: newComment,  
-        commentUserImg: newComment.user.userImg,
-        alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다` 
+    console.log(board);
+    console.log('#######');
+    console.log(newComment);
+    //조건???? 댓글유저와 게시물 작성자가 같으면 알람이 안간다.
+    if (board.user.id !== context.req.user.id) {
+      await this.alarmService.createAlarm({
+        authorId: board.user.id,
+        commentId: newComment.id,
+        commentUserImg: newComment.user.userImg || null,
+        alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다`,
       });
-      this.alarmsRepository.save(newAlarm);
     }
 
     return newComment;
@@ -130,13 +125,6 @@ export class CommentsService {
       comment,
     });
 
-    const updateAlarm = this.alarmsRepository.create({
-      users: comments.user,
-      comments: updateComment,
-      commentUserImg: updateComment.user.userImg,
-      alarmMessage: `${updateComment.user.nickname}님이 댓글을 수정했습니다`
-    });
-    await this.alarmsRepository.save(updateAlarm);
     return updateComment;
   }
 

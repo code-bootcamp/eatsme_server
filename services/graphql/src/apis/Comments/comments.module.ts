@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AlarmModule } from '../alarm/alarms.module';
 import { Alarm } from '../alarm/entities/alarm.entity';
 import { BoardModule } from '../boards/boards.module';
 import { UserModule } from '../users/users.module';
@@ -11,9 +12,9 @@ import { Comment } from './entities/comment.entity';
   imports: [
     BoardModule,
     UserModule,
+    AlarmModule,
     TypeOrmModule.forFeature([
-      Comment,
-      Alarm, //
+      Comment, //
     ]),
   ],
   providers: [
