@@ -43,6 +43,7 @@ export class UserService {
       where: { id: userId },
       relations: [
         'reservations',
+        'reservations.user',
         'alarms',
         'boards.comments.replies',
         'boards',
