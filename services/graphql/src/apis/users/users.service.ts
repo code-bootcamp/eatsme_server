@@ -51,7 +51,7 @@ export class UserService {
         'toggleLikes.board',
       ],
     });
-    console.log(user);
+
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
     if (restaurantIdArr.length) {

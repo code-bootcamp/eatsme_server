@@ -1,6 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Repository } from 'typeorm';
 import { UserService } from '../users/users.service';
 import { Reservation } from './entities/reservation.entity';
@@ -9,6 +9,7 @@ import {
   IReservationsCreate,
 } from './interfaces/reservations-service.interface';
 import { Response } from 'express';
+import { HttpExceptionFilter } from 'src/commons/filter/http-exception.filter';
 
 @Injectable()
 export class ReservationsService {
@@ -38,10 +39,15 @@ export class ReservationsService {
 
     if (isReservation.length)
       throw new UnprocessableEntityException('이미 예약한 내역이 있습니다.');
-
-    const restaurants = await axios.get(
-      `http://road-service:7100/info/road/get/restaurant?restaurantId=${restaurantId}&reservation_time=${reservation_time}&table=${table}`,
-    );
+    let restaurants;
+    try {
+      restaurants = await axios.get(
+        `http://road-service:7100/info/road/get/restaurant?restaurantId=${restaurantId}&reservation_time=${reservation_time}&table=${table}`,
+        { timeout: 2000 },
+      );
+    } catch (error) {
+      throw new UnprocessableEntityException('axios에러');
+    }
 
     const { _id } = restaurants.data.restaurantInfo;
     return this.reservationsRepository.save({
@@ -65,10 +71,19 @@ export class ReservationsService {
     );
     if (!deleteRestaurant.length)
       throw new UnprocessableEntityException('예약정보가 없습니다.');
-    const result = await axios.delete(
-      'http://road-service:7100/info/road/remainTable',
-      { data: { ...deleteRestaurant[0] } },
-    );
+
+    let result;
+    try {
+      result = await axios.delete(
+        'http://road-service:7100/info/road/remainTable',
+        {
+          data: { ...deleteRestaurant[0] },
+          timeout: 2000,
+        },
+      );
+    } catch (error) {
+      throw new UnprocessableEntityException('변경되지 않았다.');
+    }
 
     if (result.data) {
       return (await this.reservationsRepository.delete({ restaurant_id }))
