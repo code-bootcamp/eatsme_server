@@ -39,7 +39,7 @@ export class User {
   @Field(() => String, { nullable: true })
   userImg: string;
 
-  @Field(() => [UserReservationRestaurant])
+  @Field(() => [UserReservationRestaurant], { nullable: true })
   restaurant: UserReservationRestaurant[];
 
   @OneToMany(() => Reservation, (reservation) => reservation.users)

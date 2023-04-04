@@ -85,13 +85,13 @@ export class RestaurantService {
     section, //
     area,
   }): void {
+    console.log(restaurantsInfos);
     restaurantsInfos.forEach(async (el) => {
       // console.log(el?.photos[0]?.photo_reference, '####');
-      // const config = {
-      //   method: 'get',
-      //   url: `https://maps.googleapis.com/maps/api/place/photo/?maxwidth=300&photo_reference=${el?.photos[0]?.photo_reference}&key=${this.apiKey}`,
-      // };
-      // const result = await axios(config);
+      // const result = await axios(
+      //   `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${el?.photos[0]?.photo_reference}&key=${this.apiKey}`,
+      // );
+      // console.log(result);
       const {
         geometry,
         place_id,

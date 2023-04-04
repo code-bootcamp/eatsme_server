@@ -12,8 +12,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({
-    origin: process.env.ORIGIN,
-    // origin: '*',
+    origin: process.env.ORIGIN2,
     credentials: true,
   });
   app.use(graphqlUploadExpress());
