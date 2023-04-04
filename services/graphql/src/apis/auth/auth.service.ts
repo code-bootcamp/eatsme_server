@@ -35,6 +35,10 @@ export class AuthService {
   async login({ loginAuthInput, context }: IAuthServiceLogin): Promise<string> {
     const { email, password } = loginAuthInput;
     const user = await this.usersService.findOneByEmail({ email });
+    if (!user) {
+      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
+    }
+
     const isAuth = await bcrypt.compare(password, user.password);
     if (!isAuth) {
       throw new UnprocessableEntityException(
@@ -84,8 +88,6 @@ export class AuthService {
       },
     );
 
-    console.log(isAccessToken, isRefreshToken, '@@@');
-
     return '로그아웃';
   }
 
@@ -95,7 +97,9 @@ export class AuthService {
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
 
-    // 개발환경
+
+    //개발환경
+
     res.setHeader(
       'Set-Cookie',
       `refreshToken=${refreshToken};path=/; httpOnly`,
@@ -135,6 +139,6 @@ export class AuthService {
     }
 
     this.setRefreshToken({ user, res });
-    res.redirect('https://eatsme.site');
+    res.redirect('http://eatsme.site');
   }
 }

@@ -59,6 +59,7 @@ export class BoardsService {
   }: IBoardsServiceFindByBoardId): Promise<Board> {
     const board = await this.boardsRepository.findOne({
       where: { id: boardId }, //
+
       relations: [
         'comments',
         'comments.user',

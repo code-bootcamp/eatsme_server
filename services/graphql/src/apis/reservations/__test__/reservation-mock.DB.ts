@@ -1,4 +1,4 @@
-import { ConflictException, HttpException, HttpStatus } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 
 export class MockUserRepository {
   database = [

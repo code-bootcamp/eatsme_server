@@ -1,11 +1,5 @@
 import { MailerModule } from '@nestjs-modules/mailer';
-import {
-  CacheModule,
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { CacheModule, UnprocessableEntityException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/apis/users/entities/user.entity';

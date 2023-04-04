@@ -8,6 +8,7 @@ import {
   IReservationDelete,
   IReservationsCreate,
 } from './interfaces/reservations-service.interface';
+import { Response } from 'express';
 
 @Injectable()
 export class ReservationsService {
@@ -39,15 +40,14 @@ export class ReservationsService {
       throw new UnprocessableEntityException('이미 예약한 내역이 있습니다.');
 
     const restaurants = await axios.get(
-      'http://road-service:7100/info/road/get/restaurant',
-      { data: { ...createReservationInput } },
+      `http://road-service:7100/info/road/get/restaurant?restaurantId=${restaurantId}&reservation_time=${reservation_time}&table=${table}`,
     );
 
     const { _id } = restaurants.data.restaurantInfo;
     return this.reservationsRepository.save({
       table,
       time,
-      reservation_time,
+      reservation_time: restaurants.data.reservationTime._id,
       restaurant_id: _id,
       users: {
         ...user,
@@ -65,7 +65,6 @@ export class ReservationsService {
     );
     if (!deleteRestaurant.length)
       throw new UnprocessableEntityException('예약정보가 없습니다.');
-
     const result = await axios.delete(
       'http://road-service:7100/info/road/remainTable',
       { data: { ...deleteRestaurant[0] } },

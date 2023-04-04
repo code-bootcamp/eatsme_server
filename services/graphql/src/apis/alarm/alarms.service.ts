@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Alarm } from "./entities/alarm.entity";
@@ -30,13 +30,12 @@ export class AlarmService {
  }
 
  // 알람 확인시 삭제기능
- async delete({ alarmId }: IAlarmServiceDelete): Promise<string> {
-  const alarm = await this.alarmRepository.findOne({ where: { id: alarmId }});
-  if (!alarm) {
-    return '알람이 존재하지않습니다';
-  }
-  alarm.isAlarm = false; 
-  await this.alarmRepository.save(alarm);
-  return '알람이 삭제되었습니다';
+  async deleteAlarm({ userId, alarmId }: IAlarmServiceDelete): Promise<string> {
+    const alarm = await this.alarmRepository.findOne({ where: { id: alarmId, users: { id: userId } } });
+    if (!alarm) {
+      throw new NotFoundException('해당 알람을 찾을 수 없습니다.');
+    }
+    await this.alarmRepository.delete(alarm);
+    return '알람이 삭제되었습니다';
   }
 }

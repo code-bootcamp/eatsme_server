@@ -76,10 +76,6 @@ export class ReplysService {
 
     const comments = await this.commentsService.findOne({ commentId });
 
-    if (!comments) {
-      throw new NotFoundException('현재 없는 댓글 입니다');
-    }
-
     this.nullCheck({ reply });
 
     const newComment = await this.replysRepository.save({

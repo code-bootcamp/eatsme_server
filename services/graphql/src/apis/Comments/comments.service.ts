@@ -42,7 +42,7 @@ export class CommentsService {
     return comment;
   }
 
-  async nullCheck({ comment }: ICommentServiceNullList): Promise<void> {
+  nullCheck({ comment }: ICommentServiceNullList): void {
     // 댓글을 입력했는지 확인
     if (!comment.trim()) {
       throw new UnprocessableEntityException('댓글을 입력해주세요');
@@ -81,9 +81,6 @@ export class CommentsService {
     });
 
     const board = await this.boardsService.findOneByBoardId({ boardId });
-    if (!board) {
-      throw new UnprocessableEntityException('게시판정보가 없습니다');
-    }
 
     await this.nullCheck({ comment });
 
@@ -92,9 +89,8 @@ export class CommentsService {
       board,
       user,
     });
-    console.log(board);
-    console.log('#######');
-    console.log(newComment);
+
+ 
     //조건???? 댓글유저와 게시물 작성자가 같으면 알람이 안간다.
     if (board.user.id !== context.req.user.id) {
       await this.alarmService.createAlarm({
@@ -102,9 +98,9 @@ export class CommentsService {
         commentId: newComment.id,
         commentUserImg: newComment.user.userImg || null,
         alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다`,
+
       });
     }
-
     return newComment;
   }
 
@@ -114,18 +110,17 @@ export class CommentsService {
     updateCommentInput,
   }: ICommentsServiceUpdate): Promise<Comment> {
     const { comment, commentId } = updateCommentInput;
-    const comments = await this.commentsRepository.findOne({
-      where: { id: commentId },
-      relations: ['user'],
-    });
+    const comments = await this.findOne({ commentId });
+
     await this.checkUser({ userId, commentId });
-    await this.nullCheck({ comment });
-    const updateComment = await this.commentsRepository.save({
+    this.nullCheck({ comment });
+    return this.commentsRepository.save({
       ...comments,
       comment,
     });
 
     return updateComment;
+
   }
 
   async delete({ commentId, userId }: ICommentsServiceDelete): Promise<string> {

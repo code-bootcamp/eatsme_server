@@ -25,13 +25,12 @@ export class RemainTablesService {
       })
       .exec();
 
-    if (!isRemainTable.remainTable)
-      throw new UnprocessableEntityException('더 이상 예약이 불가능합니다.');
-
     if (!isRemainTable) {
       return await new this.reaminTableModel({
         ...createReamintalbeInput,
       }).save();
+    } else if (!isRemainTable.remainTable) {
+      throw new UnprocessableEntityException('더 이상 예약이 불가능합니다.');
     }
 
     return isRemainTable;
