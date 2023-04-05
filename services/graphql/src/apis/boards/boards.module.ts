@@ -1,32 +1,33 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Comment } from '../Comments/entities/comment.entity';
 
-import { ImagesService } from '../images/images.service';
-
-import { PersonalMapData } from '../personalMapData/entities/personalMapData.entity';
-import { ToggleLike } from '../toggleLike/entities/toggleLike.entity';
-import { User } from '../users/entities/user.entity';
-import { UserService } from '../users/users.service';
+import { Board } from './entities/board.entity';
 import { BoardsResolver } from './boards.resolver';
 import { BoardsService } from './boards.service';
-import { Board } from './entities/board.entity';
+
+import { UserModule } from '../users/users.module';
+import { FilesModule } from '../files/files.module';
+import { ImagesModule } from '../images/images.module';
+import { PersonalMapDataModule } from '../personalMapData/personalMapData.module';
 
 @Module({
   imports: [
+    UserModule,
+    FilesModule,
+    ImagesModule,
+    PersonalMapDataModule,
+    PersonalMapDataModule,
     TypeOrmModule.forFeature([
       Board, //
-      Comment,
-      User,
-      ToggleLike,
-      PersonalMapData,
     ]),
   ],
   providers: [
     BoardsResolver, //
     BoardsService,
-    UserService,
-    ImagesService,
+  ],
+
+  exports: [
+    BoardsService, //
   ],
 })
 export class BoardModule {}

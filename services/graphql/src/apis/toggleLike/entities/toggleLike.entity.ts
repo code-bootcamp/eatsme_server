@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Board } from 'src/apis/boards/entities/board.entity';
+import { User } from 'src/apis/users/entities/user.entity';
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -8,11 +10,13 @@ export class ToggleLike {
   @Field(() => String)
   id: string;
 
-  @Column()
-  @Field(() => String)
-  userId: string;
+  @ManyToOne(() => Board, (board) => board.toggleLike)
+  @JoinColumn()
+  @Field(() => Board)
+  board: Board;
 
-  @Column()
-  @Field(() => String)
-  boardId: string;
+  @ManyToOne(() => User, (user) => user.toggleLikes)
+  @JoinColumn()
+  @Field(() => User)
+  user: User;
 }

@@ -4,13 +4,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
 import {
   IRestaurantServiceDeleteCollection,
+  IRestaurantServiceFindByIds,
+  IRestaurantServiceFindByNameWithLocation,
   IRestaurantServiceFindOneRestaurant,
   IRestaurantServiceGetDetails,
   IRestaurantServiceGetDetailsReturn,
   IRestaurantServiceGetRestaurant,
   IRestaurantServiceGetRestaurants,
   IRestaurantServicePostAndGetRestaurant,
-  IRestaurantServiceSaveNextPage,
+  IRestaurantServiceSaveRestaurantInfo,
   IRestaurantServiceUserGetRestaurants,
 } from './interfaces/restaurantService.interface';
 import {
@@ -19,7 +21,7 @@ import {
 } from './schemas/restaurant.schemas';
 
 import { Model } from 'mongoose';
-import { TimeTalbesService } from '../timeTable/timeTable.service';
+import { TimeTablesService } from '../timeTable/timeTable.service';
 import { RemainTablesService } from '../remaintable/remainTable.service';
 
 @Injectable()
@@ -28,23 +30,51 @@ export class RestaurantService {
     @InjectModel('Restaurant')
     private readonly restaurantModel: Model<RestaurantDocument>,
 
-    private readonly remainTalblesServcie: RemainTablesService, //
+    private readonly remainTablesService: RemainTablesService, //
 
-    private readonly timeTablesServcie: TimeTalbesService,
+    private readonly timeTablesService: TimeTablesService,
   ) {}
+
   apiKey = process.env.GOOGLE_MAP_API_KEY;
+
+  async saveRestaurantInfo({
+    saveRestaurantInPut,
+  }: IRestaurantServiceSaveRestaurantInfo): Promise<Restaurant> {
+    return await new this.restaurantModel({
+      ...saveRestaurantInPut,
+    }).save();
+  }
+
+  async findByIds({ req }: IRestaurantServiceFindByIds): Promise<Restaurant[]> {
+    const ids = JSON.parse(JSON.stringify(req.query.data)).split(',');
+    return this.restaurantModel.find({
+      _id: { $in: ids },
+    });
+  }
+
+  async findByNameWithLocation({
+    restaurantName,
+    location,
+  }: IRestaurantServiceFindByNameWithLocation): Promise<Restaurant[]> {
+    const restaurantInfo = await this.restaurantModel
+      .find({
+        restaurantName,
+        location,
+      })
+      .exec();
+    return restaurantInfo;
+  }
+
   async postRestaurants({
     req,
   }: IRestaurantServicePostAndGetRestaurant): Promise<void> {
-    const location = Object.values(req.body).join(' ');
-    const { area, section } = req.body;
+    const { area, section } = req.query;
     const config = {
       method: 'get',
-      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${location}&key=${this.apiKey}&language=ko&type=restaurant`,
+      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${area} ${section}&key=${this.apiKey}&language=ko&type=restaurant`,
     };
     const result = await axios(config);
     const restaurantsInfos = result.data.results;
-    console.log(restaurantsInfos);
     await this.saveRepeat({ restaurantsInfos, section, area });
     const nextPageToken = result.data.next_page_token;
     await this.saveNextPage({ nextPageToken, section, area });
@@ -80,7 +110,6 @@ export class RestaurantService {
             restaurantName,
           })
           .exec();
-
         if (!findRestaurant) {
           const postRestaurant = await new this.restaurantModel({
             restaurantName,
@@ -98,9 +127,10 @@ export class RestaurantService {
       }
     });
   }
-  async getDetails(
-    place_id: IRestaurantServiceGetDetails,
-  ): Promise<IRestaurantServiceGetDetailsReturn> {
+
+  async getDetails({
+    place_id,
+  }: IRestaurantServiceGetDetails): Promise<IRestaurantServiceGetDetailsReturn> {
     const placeConfig = {
       method: 'get',
       url: `https://maps.googleapis.com/maps/api/place/details/json?&key=${this.apiKey}&language=ko&place_id=${place_id}&fields=formatted_phone_number,opening_hours`,
@@ -111,11 +141,7 @@ export class RestaurantService {
     return { phoneNumber, openingDays };
   }
 
-  async saveNextPage({
-    nextPageToken,
-    section,
-    area,
-  }: IRestaurantServiceSaveNextPage): Promise<void> {
+  async saveNextPage({ nextPageToken, section, area }): Promise<void> {
     const getNextRestaurant = ({ nextPageToken }) => {
       if (nextPageToken) {
         const nextConfig = {
@@ -192,36 +218,35 @@ export class RestaurantService {
   async getRestaurant({
     req,
   }: IRestaurantServiceGetRestaurant): Promise<object> {
-    const { restaurantId, reservation_time, table } = req.body;
+    const { restaurantId, reservation_time, table } = req.query;
 
     const restaurantInfo = await this.findOneRestaurant({
-      restaurant_id: restaurantId,
+      restaurant_id: String(restaurantId),
     });
-    const isRemainTable = await this.remainTalblesServcie.findOne({
+    const isRemainTable = await this.remainTablesService.findOne({
       createReamintalbeInput: {
-        reservation_time,
+        reservation_time: Number(reservation_time),
         restaurant: restaurantInfo,
       },
     });
 
-    await this.remainTalblesServcie.remainTable({
+    await this.remainTablesService.remainTable({
       _id: isRemainTable._id,
-      table,
+      table: Number(table),
     });
-    const reservationTime = await this.timeTablesServcie.findOne({
-      _id: reservation_time,
+    const reservationTime = await this.timeTablesService.findOne({
+      _id: String(reservation_time),
     });
 
-    const result = { restaurantInfo, ...reservationTime };
-    return result;
+    return { restaurantInfo, reservationTime };
   }
 
   deleteCollection({
-    body,
+    req,
   }: IRestaurantServiceDeleteCollection): Promise<string> {
     return this.restaurantModel
       .deleteOne({
-        _id: Object.values(body)[0],
+        _id: req.query._id,
       })
       .then((res) => {
         return res.deletedCount
@@ -236,12 +261,14 @@ export class RestaurantService {
       });
   }
 
-  deleteSection({ body }: IRestaurantServiceDeleteCollection): Promise<string> {
+  deleteSection({ req }: IRestaurantServiceDeleteCollection): Promise<string> {
     return this.restaurantModel
       .deleteMany({
-        section: Object.values(body)[0],
+        area: req.query.area,
+        section: req.query.section,
       })
       .then((res) => {
+        console.log(res);
         return res.deletedCount
           ? `${res.deletedCount}개의 식당 정보를 정상적으로 지웠습니다.`
           : '이미 지워진 행정구역입니다.';

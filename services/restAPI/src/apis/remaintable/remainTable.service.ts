@@ -1,5 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Response } from 'express';
 import { Model } from 'mongoose';
 import {
   IRemainTableReduceTable,
@@ -25,13 +26,12 @@ export class RemainTablesService {
       })
       .exec();
 
-    if (!isRemainTable.remainTable)
-      throw new UnprocessableEntityException('더 이상 예약이 불가능합니다.');
-
     if (!isRemainTable) {
       return await new this.reaminTableModel({
         ...createReamintalbeInput,
       }).save();
+    } else if (!isRemainTable.remainTable) {
+      throw new UnprocessableEntityException('더 이상 예약이 불가능합니다.');
     }
 
     return isRemainTable;

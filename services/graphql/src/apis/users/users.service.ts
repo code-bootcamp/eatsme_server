@@ -31,6 +31,7 @@ export class UserService {
 
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+
     private readonly mailerService: MailerService,
 
     private readonly imagesService: ImagesService,
@@ -42,11 +43,15 @@ export class UserService {
       where: { id: userId },
       relations: [
         'reservations',
+        'reservations.users',
         'alarms',
         'boards.comments.replies',
         'boards',
+        'toggleLikes',
+        'toggleLikes.board',
       ],
     });
+
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
     const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
     if (restaurantIdArr.length) {
@@ -66,12 +71,7 @@ export class UserService {
 
   //-----유저email확인-----
   async findOneByEmail({ email }: IUsersFindOneByEmail): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user) {
-      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
-    }
-    return user;
+    return this.userRepository.findOne({ where: { email } });
   }
 
   //-----이메일 만드는 방식 확인-----
@@ -79,20 +79,28 @@ export class UserService {
     if (!email || !email.includes('@') || 30 <= email.length) {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
+
     await this.isFindOneByEmail({ email });
 
     await this.sendToAuthNumber({ email });
-
-    // await this.sendToTemplate({ email });
     return email;
   }
 
   //-----이메일인증번호 템플릿 전송-----
   async sendToAuthNumber({ email }: IUsersSendToTemplate): Promise<string> {
+    const user = await this.findOneByEmail({ email });
+
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
     );
+
+    if (user) {
+      this.updateUser({
+        userId: user.id,
+        updateUserInput: { password: authNumber },
+      });
+    }
 
     this.cacheManager.set(email, authNumber, {
       ttl: 180,
@@ -108,6 +116,7 @@ export class UserService {
                     <div style="color: black;">인증번호는 ${authNumber} 입니다.</div>
                 </div>
             </div>
+
         </body>
     </html>
   `;
@@ -196,18 +205,16 @@ export class UserService {
     await this.isFindOneByNickname({ nickname });
 
     await this.welcomeToTemplate({ email, nickname });
-
     if (password) {
-      throw new ConflictException('제대로 비밀번호를 입력해주세요');
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      return this.userRepository.save({
+        email,
+        password: hashedPassword,
+        nickname,
+      });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    return this.userRepository.save({
-      email,
-      password: hashedPassword,
-      nickname,
-    });
+    return this.userRepository.save({ ...createUserInput });
   }
 
   async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RemainTalbeController } from './reaminTable.controller';
+import { RemainTableController } from './reaminTable.controller';
 import { RemainTablesService } from './remainTable.service';
 import { RemainTableSchema } from './schemas/remaintable.schemas';
 
@@ -11,10 +11,13 @@ import { RemainTableSchema } from './schemas/remaintable.schemas';
     ]),
   ],
   controllers: [
-    RemainTalbeController, //
+    RemainTableController, //
   ],
   providers: [
     RemainTablesService, //
   ],
+  exports: [
+    RemainTablesService, //
+  ],
 })
-export class RemainTableMoudle {}
+export class RemainTableModule {}

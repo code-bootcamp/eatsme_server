@@ -2,7 +2,13 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Alarm } from 'src/apis/alarm/entities/alarm.entity';
 import { Comment } from 'src/apis/Comments/entities/comment.entity';
 import { User } from 'src/apis/users/entities/user.entity';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -15,7 +21,9 @@ export class Reply {
   @Field(() => String)
   reply: string;
 
-  @ManyToOne(() => Comment, (comments) => comments.replies, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Comment, (comments) => comments.replies, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Comment)
   comments: Comment;
 
@@ -23,7 +31,7 @@ export class Reply {
   @Field(() => [Alarm])
   alarms: Alarm[];
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.replies, { onDelete: 'CASCADE' })
   @Field(() => User)
   user: User;
 }

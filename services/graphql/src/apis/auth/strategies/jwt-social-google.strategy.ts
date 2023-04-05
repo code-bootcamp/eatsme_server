@@ -6,7 +6,7 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: 'https://jjjbackendclass.shop/graphql/login/google',
+      callbackURL: 'https://eatsme.site/login/google',
       scope: ['email', 'profile'],
     });
   }
@@ -16,6 +16,7 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
       name: profile.displayName,
       email: profile._json.email,
       nickname: profile._json.given_name,
+      password: 0,
     };
   }
 }

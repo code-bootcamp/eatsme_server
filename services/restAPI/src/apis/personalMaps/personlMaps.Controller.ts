@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { Restaurant } from '../restaurant/schemas/restaurant.schemas';
 import { IPersonalMapsServiceGetPersonalMapReturn } from './interface/personalMapsService.interface';
 import { PersonalMapsService } from './personlMaps.Service';
@@ -11,15 +12,15 @@ export class PersonalMapsController {
 
   @Post('/info/road/map')
   postPersonalMap(
-    @Body() body, //
+    @Req() req: Request, //
   ): Promise<Restaurant[]> {
-    return this.personalMapService.createPersonalMap({ body });
+    return this.personalMapService.createPersonalMap({ req });
   }
 
   @Get('/info/road/map')
   getPersonalMap(
-    @Body() body: string[], //
+    @Req() req: Request, //
   ): Promise<IPersonalMapsServiceGetPersonalMapReturn[]> {
-    return this.personalMapService.getPersonalMap({ body });
+    return this.personalMapService.getPersonalMap({ req });
   }
 }

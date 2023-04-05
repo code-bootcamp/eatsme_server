@@ -17,8 +17,7 @@ export class CommentsResolver {
     @Args('createCommentInput') createCommentInput: CreateCommentInput,
     @Context() context: IContext,
   ): Promise<Comment> {
-    const userId = context.req.user.id
-    return this.commentsService.create({ createCommentInput, userId });
+    return this.commentsService.create({ createCommentInput, context });
   }
 
   @UseGuards(GqlAuthGuard('access'))
@@ -27,7 +26,7 @@ export class CommentsResolver {
     @Args('updateCommentInput') updateCommentInput: UpdateCommentInput,
     @Context() context: IContext,
   ): Promise<Comment> {
-    const userId = context.req.user.id
+    const userId = context.req.user.id;
     return this.commentsService.update(
       JSON.parse(JSON.stringify({ updateCommentInput, userId })),
     );
@@ -39,7 +38,7 @@ export class CommentsResolver {
     @Args('commentId') commentId: string,
     @Context() context: IContext,
   ): Promise<string> {
-    const userId = context.req.user.id
+    const userId = context.req.user.id;
     return this.commentsService.delete({ commentId, userId });
   }
 }

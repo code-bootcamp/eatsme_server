@@ -1,22 +1,10 @@
-import { Type } from '@nestjs/common';
-import { RestaurantDocument } from 'src/apis/restaurant/schemas/restaurant.schemas';
+import { Request } from 'express';
 
 export interface IPersonalMapsServiceCreatePersonalMap {
-  body: {
-    info: {
-      area: string;
-      section: string;
-      restaurantName: string;
-      recommend: string;
-      location: {
-        lat: number;
-        lng: number;
-      };
-    }[];
-  } | null;
+  req: Request;
 }
 export interface IPersonalMapsServiceGetPersonalMap {
-  body: string[];
+  req: Request;
 }
 export interface IPersonalMapsServiceGetPersonalMapReturn {
   restaurantName: string;

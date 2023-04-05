@@ -22,10 +22,7 @@ export class ReplysResolver {
     @Args('createReplyInput') createReplyInput: CreateReplyInput,
     @Context() context: IContext, //
   ): Promise<Reply> {
-    const userId = context.req.user.id
-    return this.replysService.create(
-      JSON.parse(JSON.stringify({ createReplyInput, userId })),
-    );
+    return this.replysService.create({ createReplyInput, context });
   }
 
   @UseGuards(GqlAuthGuard('access'))
@@ -34,7 +31,7 @@ export class ReplysResolver {
     @Args('updateReplyInput') updateReplyInput: UpdateReplyInput,
     @Context() context: IContext, //
   ): Promise<Reply> {
-    const userId = context.req.user.id
+    const userId = context.req.user.id;
     return this.replysService.update(
       JSON.parse(JSON.stringify({ updateReplyInput, userId })),
     );
@@ -46,7 +43,7 @@ export class ReplysResolver {
     @Args('replyId') replyId: string, //
     @Context() context: IContext, //
   ): Promise<string> {
-    const userId = context.req.user.id
+    const userId = context.req.user.id;
     return this.replysService.delete({ replyId, userId });
   }
 }

@@ -1,6 +1,12 @@
-import { ToggleLikeInput } from '../dto/toggle-Like.input';
+import { IContext } from 'src/commons/interfaces/context';
 
 export interface IBoardsServiceToggleLike {
-  toggleLikeInput: ToggleLikeInput;
-  userId: string;
+  boardId: string;
+
+  context: IContext;
+}
+export interface IToggleLikeServicefindToggleLikeIds {
+
+
+  context: IContext;
 }

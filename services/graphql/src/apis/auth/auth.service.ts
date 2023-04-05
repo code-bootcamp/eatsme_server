@@ -24,15 +24,21 @@ import { Cache } from 'cache-manager';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UserService, //
-    private readonly jwtService: JwtService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+
+    private readonly usersService: UserService, //
+
+    private readonly jwtService: JwtService,
   ) {}
 
   async login({ loginAuthInput, context }: IAuthServiceLogin): Promise<string> {
     const { email, password } = loginAuthInput;
     const user = await this.usersService.findOneByEmail({ email });
+    if (!user) {
+      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
+    }
+
     const isAuth = await bcrypt.compare(password, user.password);
     if (!isAuth) {
       throw new UnprocessableEntityException(
@@ -82,8 +88,6 @@ export class AuthService {
       },
     );
 
-    console.log(isAccessToken, isRefreshToken, '@@@');
-
     return '로그아웃';
   }
 
@@ -93,11 +97,13 @@ export class AuthService {
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
 
+
     //개발환경
-    // res.setHeader(
-    //   'Set-Cookie',
-    //   `refreshToken=${refreshToken};path=/; httpOnly`,
-    // );
+
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken};path=/; httpOnly`,
+    );
 
     //배포환경
 
@@ -122,7 +128,7 @@ export class AuthService {
 
   async socialLogin({ req, res }: IAuthServiceSocialLogin) {
     console.log(req, res);
-    let user = await this.usersService.isFindOneByEmail({
+    let user = await this.usersService.findOneByEmail({
       email: req.user.email,
     });
 
@@ -133,6 +139,6 @@ export class AuthService {
     }
 
     this.setRefreshToken({ user, res });
-    res.redirect('https://eatsme.site');
+    res.redirect('http://eatsme.site');
   }
 }

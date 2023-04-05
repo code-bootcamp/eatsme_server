@@ -10,18 +10,17 @@ export class UserReservationRestaurantLocation {
 }
 
 @ObjectType()
-
 export class UserReservationRestaurant {
-
   @Field(() => String)
   _id: string;
+
   @Field(() => String)
   restaurantName: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   address: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   rating: string;
 
   @Field(() => UserReservationRestaurantLocation)

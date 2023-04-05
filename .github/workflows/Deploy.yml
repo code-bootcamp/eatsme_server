@@ -9,7 +9,7 @@ on:
 
 jobs:
     eatsme-deploy:
-        name: eatsme-deploy
+        name: Api-gateway-eatsme-deploy
         runs-on: ubuntu-latest
 
         steps:
