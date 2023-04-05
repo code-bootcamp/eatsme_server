@@ -51,7 +51,7 @@ export class RemainTablesService {
     table,
   }: IRemainTableServiceDelete): Promise<boolean> {
     const result = await this.reaminTableModel.updateOne(
-      { 'restaurant._id': _id },
+      { _id },
       { $inc: { remainTable: +table } },
     );
     if (!result.matchedCount)

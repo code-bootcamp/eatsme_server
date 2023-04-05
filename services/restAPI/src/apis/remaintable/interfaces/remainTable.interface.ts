@@ -1,8 +1,5 @@
 import { CreateReamintalbeInput } from '../dto/create-reamintable.input';
-import {
-  RemainTable,
-  RemainTableDocument,
-} from '../schemas/remaintable.schemas';
+import { RemainTable } from '../schemas/remaintable.schemas';
 
 export interface IRemainTableReduceTable {
   _id: RemainTable['_id'];

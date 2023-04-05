@@ -16,7 +16,6 @@ export class AuthController {
     @Req() req: Request & IOAuthUser, //
     @Res() res: Response,
   ) {
-    req.params;
     return this.authService.socialLogin({ req, res });
   }
 }

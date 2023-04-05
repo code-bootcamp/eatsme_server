@@ -197,7 +197,7 @@ export class UserService {
 
     await this.welcomeToTemplate({ email, nickname });
 
-    if (!password) {
+    if (password) {
       throw new ConflictException('제대로 비밀번호를 입력해주세요');
     }
 
