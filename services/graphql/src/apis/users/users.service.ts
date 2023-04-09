@@ -146,9 +146,6 @@ export class UserService {
     const isValidEmail = await this.userRepository.findOne({
       where: { email },
     });
-    if (isValidEmail) {
-      throw new ConflictException('이미 회원가입이 되어있는 이메일입니다.');
-    }
 
     return isValidEmail;
   }

@@ -62,7 +62,7 @@ class RestaurantBoardInfo {
   address: string;
 
   @Field(() => String, { nullable: true })
-  imgUrl: string;
+  image: string;
 
   @Field(() => String, { nullable: true })
   recommend: string;

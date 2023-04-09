@@ -93,13 +93,13 @@ export class PersonalMapsService {
   > {
     const restaurantInfo = await this.restaurantService.findByIds({ req });
     const personalMapInfo = restaurantInfo.map((el) => {
-      const { _id: restaurantId, restaurantName, location } = el;
+      const { _id: restaurantId, restaurantName, location, image } = el;
 
       const address = el.address || null;
 
       const rating = el.rating || null;
 
-      return { restaurantId, restaurantName, rating, address, location };
+      return { restaurantId, restaurantName, rating, address, location, image };
     });
 
     return personalMapInfo;

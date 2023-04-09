@@ -136,9 +136,10 @@ export class BoardsService {
           return await this.fetchBoard({ boardId: el.id });
         }),
       );
+
       return fetchMyBoards;
     } else {
-      return '작성한 게시물이 없습니다.';
+      throw new UnprocessableEntityException('작성한 게시물이 없습니다.');
     }
   }
 
@@ -149,13 +150,22 @@ export class BoardsService {
       userId: context.req.user.id,
     });
 
-    const fetchMyLikeBoard = await Promise.all(
-      user.toggleLikes.map(async (el) => {
-        return this.fetchBoard({ boardId: el.board.id });
-      }),
-    );
+    if (user.toggleLikes.length) {
+      const fetchMyLikeBoard = await Promise.all(
+        user.toggleLikes.map(async (el) => {
+          return this.fetchBoard({ boardId: el.board.id });
+        }),
+      );
 
-    return fetchMyLikeBoard;
+      //시간 순으로 정렬 createdAt을 이용하면 할 수 있다.
+      const result = fetchMyLikeBoard.sort((a, b) => {
+        return b.createdAt > a.createdAt ? 1 : -1;
+      });
+
+      return result;
+    } else {
+      throw new UnprocessableEntityException('찜목록이 없습니다.');
+    }
   }
 
   async findByEvery({
@@ -165,6 +175,7 @@ export class BoardsService {
       where: { ...fetchBoardsByEveryInput },
       relations: ['comments.replies', 'comments', 'personalMapData', 'user'],
     });
+
     return boards;
   }
   //시,행정구역별 게시물 조회
@@ -175,13 +186,15 @@ export class BoardsService {
 
     const personalBoards = await Promise.all(
       boards.map(async (el) => {
-        const qqq = await this.fetchBoard({ boardId: el.id });
-        console.log(qqq);
-        return qqq;
+        return this.fetchBoard({ boardId: el.id });
       }),
     );
 
-    return personalBoards;
+    const result = personalBoards.sort((a, b) => {
+      return b.createdAt > a.createdAt ? 1 : -1;
+    });
+
+    return result;
   }
 
   //게시물 작성하기

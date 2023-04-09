@@ -6,7 +6,7 @@ export class JwtKakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     super({
       clientID: process.env.KAKAO_CLIENT_ID,
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
-      callbackURL: 'https://eatsme.site/login/kakao',
+      callbackURL: 'https://jjjbackendclass.shop/graphql/login/kakao',
       scope: ['account_email', 'profile_nickname'],
     });
   }

@@ -47,5 +47,9 @@ export class Restaurant {
   @ApiProperty()
   @Prop({ type: String })
   rating: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: false })
+  image?: string;
 }
 export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);

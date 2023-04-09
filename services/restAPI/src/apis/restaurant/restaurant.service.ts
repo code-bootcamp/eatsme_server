@@ -87,11 +87,6 @@ export class RestaurantService {
   }): void {
     console.log(restaurantsInfos);
     restaurantsInfos.forEach(async (el) => {
-      // console.log(el?.photos[0]?.photo_reference, '####');
-      // const result = await axios(
-      //   `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${el?.photos[0]?.photo_reference}&key=${this.apiKey}`,
-      // );
-      // console.log(result);
       const {
         geometry,
         place_id,
@@ -121,6 +116,7 @@ export class RestaurantService {
             openingDays,
             section,
             area,
+            image: el && el?.photos ? el.photos[0].photo_reference : null,
           }).save();
           console.log(postRestaurant);
         }
@@ -172,12 +168,26 @@ export class RestaurantService {
         section: req.query.section,
       })
       .exec();
+
     if (!result[0]) {
       throw new HttpException(
         '등록되지 않은 행정구역입니다. 등록후 조회해주세요',
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    result.forEach(async (el) => {
+      if (el?.image && !el.image.includes('https')) {
+        const image = await axios(
+          `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${el.image}&key=${this.apiKey}`,
+        );
+        await this.restaurantModel.updateOne(
+          { _id: el._id },
+          { image: image.request.res.responseUrl },
+        );
+      }
+    });
+
     return result;
   }
 
