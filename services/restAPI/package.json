@@ -20,20 +20,23 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/cli": "^9.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/mongoose": "^9.2.1",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/swagger": "^6.2.1",
     "axios": "^1.3.4",
     "cache-manager": "^5.1.7",
     "cache-manager-redis-store": "2.0.0",
+    "helmet": "^6.0.1",
     "mongoose": "^7.0.1",
     "openai": "^3.2.1",
     "redis": "^4.6.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "@nestjs/cli": "^9.0.0"
+    "swagger-ui-express": "^4.6.2"
   },
   "devDependencies": {
     "@nestjs/schematics": "^9.0.0",
@@ -67,15 +70,16 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
+    "modulePaths": [
+      "<rootDir>"
     ],
-    "coverageDirectory": "../coverage",
+    "roots": [
+      "<rootDir>"
+    ],
+    "testRegex": "..spec.ts$",
+    "transform": {
+      "^.+.(t|j)s$": "ts-jest"
+    },
     "testEnvironment": "node"
   }
 }

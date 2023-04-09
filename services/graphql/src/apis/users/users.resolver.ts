@@ -1,9 +1,10 @@
-
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/commons/interfaces/context';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guards';
 import { CreateUserInput } from './dto/create-user.input';
+import { MatchAuthNumberInput } from './dto/matchAuthNumber-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
@@ -15,22 +16,25 @@ export class UserResolver {
 
   // -----로그인회원 조회-----
   @UseGuards(GqlAuthGuard('access'))
-  @Query(() => String)
+  @Query(() => User)
   fetchLoginUser(
     @Context() context: IContext, //
-  ): string {
-    console.log('================');
-    console.log(context.req.user);
-    console.log('================');
-    return '인가에 성공하였습니다.';
+  ): Promise<User> {
+    return this.userService.findOneByUser({ userId: context.req.user.id });
+  }
+
+  //-----인증번호 확인매치-----
+  @Mutation(() => String)
+  async matchAuthNumber(
+    @Args('matchAuthNumberInput') matchAuthNumberInput: MatchAuthNumberInput,
+  ) {
+    return this.userService.matchAuthNumber({ matchAuthNumberInput });
   }
 
   // -----회원 조회-----
 
   @Query(() => User)
-  fetchUser(
-    @Args('userId') userId: string, //
-  ): Promise<User> {
+  fetchUser(@Args('userId') userId: string): Promise<User> {
     return this.userService.findOneByUser({ userId });
   }
 
@@ -54,20 +58,16 @@ export class UserResolver {
   createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
-    return this.userService.create({ createUserInput });
+    return this.userService.createUser({ createUserInput });
   }
 
-  // //-----비밀번호 인가-----  //로그인코드 만든 후 다시 작업
-  // @Mutation(GqlAuthGuard('access')
-
-  // //-----비밀번호변경 및 이미지 변경-----  //로그인코드 만든 후 다시 작업
-  // @Mutation(() => User)
-  // updateUser(
-  //   @Args('userId') userId: string,
-  //   @Args('password') password: string,
-  //   @Args('userImg') userImg: string,
-  // ): Promise<User> {
-  //   return this.userService.update({ userId, password, userImg });
-  // }
-
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => User)
+  updateUser(
+    @Context() context: IContext,
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ): Promise<User> {
+    const userId = context.req.user.id;
+    return this.userService.updateUser({ userId, updateUserInput });
+  }
 }

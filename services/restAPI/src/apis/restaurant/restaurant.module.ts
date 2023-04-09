@@ -1,15 +1,19 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RemainTableModule } from '../remaintable/remainTable.module';
+import { TimeTableModule } from '../timeTable/timeTable.module';
+import { PersonalMapsModule } from '../personalMaps/personlMaps.module';
+
 import { RestaurantController } from './restaurant.controller';
 import { RestaurantService } from './restaurant.service';
-import { Restaurant, RestaurantSchema } from './schemas/restaurant.schemas';
+import { RestaurantSchema } from './schemas/restaurant.schemas';
 
 @Module({
   imports: [
-
+    TimeTableModule,
+    RemainTableModule,
     MongooseModule.forFeature([
-      { name: Restaurant.name, schema: RestaurantSchema },
+      { name: 'Restaurant', schema: RestaurantSchema },
     ]),
   ],
   controllers: [
@@ -18,6 +22,8 @@ import { Restaurant, RestaurantSchema } from './schemas/restaurant.schemas';
   providers: [
     RestaurantService, //
   ],
-
+  exports: [
+    RestaurantService, //
+  ],
 })
 export class RestaurantModule {}

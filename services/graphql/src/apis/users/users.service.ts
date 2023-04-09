@@ -15,37 +15,63 @@ import {
   IUsersFindOneByEmail,
   IUsersFindOneByNickname,
   IUsersSendToTemplate,
+  IUsersUpdate,
 } from './interfaces/user-service.interface';
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
+import axios from 'axios';
+
+import { ImagesService } from '../images/images.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+
     private readonly mailerService: MailerService,
+
+    private readonly imagesService: ImagesService,
   ) {}
 
   //-----유저id확인-----
   async findOneByUser({ userId }: IUserFindOneByUser): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
+      relations: [
+        'reservations',
+        'reservations.users',
+        'alarms',
+        'boards.comments.replies',
+        'boards',
+        'toggleLikes',
+        'toggleLikes.board',
+      ],
     });
+
     if (!user) throw new ConflictException('등록되지 않은 회원입니다.');
-    return user;
+    const restaurantIdArr = user.reservations.map((el) => el.restaurant_id);
+    if (restaurantIdArr.length) {
+      const reservationRestaurant = await axios.get(
+        'http://road-service:7100/info/road/find/restaurant',
+        { data: restaurantIdArr },
+      );
+      return {
+        ...user,
+        restaurant: reservationRestaurant.data,
+      };
+    }
+    return {
+      ...user,
+    };
   }
 
   //-----유저email확인-----
   async findOneByEmail({ email }: IUsersFindOneByEmail): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user) {
-      throw new UnprocessableEntityException('이메일이 존재하지 않습니다.');
-    }
-    return user;
+    return this.userRepository.findOne({ where: { email } });
   }
 
   //-----이메일 만드는 방식 확인-----
@@ -53,17 +79,32 @@ export class UserService {
     if (!email || !email.includes('@') || 30 <= email.length) {
       throw new ConflictException('제대로된 이메일을 입력해주세요');
     }
+
     await this.isFindOneByEmail({ email });
-    // await this.sendToTemplate({ email });
+
+    await this.sendToAuthNumber({ email });
     return email;
   }
 
   //-----이메일인증번호 템플릿 전송-----
-  async sendToTemplate({ email }: IUsersSendToTemplate): Promise<string> {
+  async sendToAuthNumber({ email }: IUsersSendToTemplate): Promise<string> {
+    const user = await this.findOneByEmail({ email });
+
     const authNumber = String(Math.floor(Math.random() * 1000000)).padStart(
       6,
       '0',
     );
+
+    if (user) {
+      this.updateUser({
+        userId: user.id,
+        updateUserInput: { password: authNumber },
+      });
+    }
+
+    this.cacheManager.set(email, authNumber, {
+      ttl: 180,
+    });
 
     const eatsMeTemplate = `
     <html>
@@ -75,10 +116,11 @@ export class UserService {
                     <div style="color: black;">인증번호는 ${authNumber} 입니다.</div>
                 </div>
             </div>
+
         </body>
     </html>
   `;
-    await this.mailerService.sendMail({
+    this.mailerService.sendMail({
       to: email,
       from: process.env.EMAIL_USER,
       subject: 'EatsMe 인증 번호입니다', //이메일 제목
@@ -89,13 +131,14 @@ export class UserService {
   }
 
   //-----인증번호 확인매치-----
-  async matchAuthNumber({ email, authNumber }) {
+  async matchAuthNumber({ matchAuthNumberInput }) {
+    const { email, authNumber } = matchAuthNumberInput;
     const pass = await this.cacheManager.get(email);
 
-    if (pass === authNumber) {
-      return true;
+    if (pass !== authNumber) {
+      throw new UnprocessableEntityException('토큰이 잘못되었습니다.');
     }
-    throw new UnprocessableEntityException('토큰이 잘못되었습니다.');
+    return true;
   }
 
   //-----이메일 db 유무확인-----
@@ -103,9 +146,6 @@ export class UserService {
     const isValidEmail = await this.userRepository.findOne({
       where: { email },
     });
-    if (isValidEmail) {
-      throw new ConflictException('이미 회원가입이 되어있는 이메일입니다.');
-    }
 
     return isValidEmail;
   }
@@ -127,25 +167,21 @@ export class UserService {
   }
 
   //-----회원가입환영template-----
-  async welcomeToTemplate({ email }: IUsersSendToTemplate) {
+  async welcomeToTemplate({ email, nickname }: IUsersSendToTemplate) {
     const eatsMeTemplate = `
     <html>
         <body>
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="width: 500px;">
                     <h1>🌟🌟EatsMe 가입을 환영합니다🌟🌟</h1>
-                    <hr /=> {
-                      return email;
-                    });
-                    expect(await userService.checkEmail({ email })).toBe(email);
-                  });>
-                    <div style="color: black;">가입을 환영합니다.</div>
+              
+                    <div style="color: black;">${nickname}님의 가입을 환영합니다.</div>
                 </div>
             </div>
         </body>
     </html>
   `;
-    await this.mailerService.sendMail({
+    this.mailerService.sendMail({
       to: email,
       from: process.env.EMAIL_USER,
       subject: 'EatsMe 가입을 환영합니다.', //이메일 제목
@@ -154,7 +190,7 @@ export class UserService {
   }
 
   //-----회원가입-----
-  async create({ createUserInput }: IUsersCreate): Promise<User> {
+  async createUser({ createUserInput }: IUsersCreate): Promise<User> {
     const { email, password, nickname } = createUserInput;
 
     if (!email || !email.includes('@') || 30 <= email.length) {
@@ -165,14 +201,38 @@ export class UserService {
 
     await this.isFindOneByNickname({ nickname });
 
-    await this.welcomeToTemplate({ email });
+    await this.welcomeToTemplate({ email, nickname });
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+      return this.userRepository.save({
+        email,
+        password: hashedPassword,
+        nickname,
+      });
+    }
+    return this.userRepository.save({ ...createUserInput });
+  }
 
-    return this.userRepository.save({
-      email,
-      password: hashedPassword,
-      nickname,
-    });
+  async updateUser({ userId, updateUserInput }: IUsersUpdate): Promise<User> {
+    const user = await this.findOneByUser({ userId });
+
+    if (user.userImg !== updateUserInput?.userImg) {
+      this.imagesService.storageDelete({ storageDel: user.userImg });
+    }
+
+    if (updateUserInput.password) {
+      const hashpw = await bcrypt.hash(updateUserInput.password, 10);
+      return this.userRepository.save({
+        ...user,
+        ...updateUserInput,
+        password: hashpw,
+      });
+    } else {
+      return this.userRepository.save({
+        ...user,
+        ...updateUserInput,
+      });
+    }
   }
 }

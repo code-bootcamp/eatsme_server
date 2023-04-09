@@ -1,2 +1,28 @@
-##필요없음
-        image: asia.gcr.io/project-eatsme-backend/eatsme-project:0.2
+version: '3.7'
+
+services:
+    # api-gateway:
+    #     image: asia.gcr.io/project-eatsme-backend/api-gateway:1.1
+    #     build:
+    #         context: api-gateway
+    #         dockerfile: DockerFile
+    #     env_file:
+    #         - .env
+    #     ports:
+    #         - 80:80
+
+    food-service:
+        image: asia.gcr.io/project-eatsme-backend/food-service:2.6
+        build:
+            context: services/graphql/
+            dockerfile: DockerFile
+        env_file:
+            - .env
+
+    road-service:
+        image: asia.gcr.io/project-eatsme-backend/road-service:2.1
+        build:
+            context: services/restAPI/
+            dockerfile: DockerFile
+        env_file:
+            - .env

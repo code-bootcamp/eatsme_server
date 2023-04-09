@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Comment } from 'src/apis/Comments/entities/comment.entity';
+import { Reply } from 'src/apis/replies/entities/reply.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -14,11 +15,25 @@ export class Alarm {
   @Field(() => Boolean)
   isAlarm: boolean;
 
-  // @ManyToOne(() => User, (user) => user.alarms)
-  // @Field(() => User)
-  // users: User;
+  @ManyToOne(() => User, (user) => user.alarms, { onDelete: 'CASCADE' })
+  @Field(() => User)
+  users: User;
 
-  // @ManyToOne(() => Comment, (comment) => comment.alarms)
-  // @Field(() => Comment)
-  // comments: Comment;
+  @ManyToOne(() => Comment, (comment) => comment.alarms, {
+    onDelete: 'CASCADE',
+  })
+  @Field(() => Comment)
+  comments: Comment;
+
+  @ManyToOne(() => Reply, (replies) => replies.alarms, { onDelete: 'CASCADE' })
+  @Field(() => Reply)
+  replies: Reply;
+
+  @Column({ nullable: true })
+  @Field(() => String)
+  commentUserImg: string;
+
+  @Column()
+  @Field(() => String)
+  alarmMessage: string;
 }

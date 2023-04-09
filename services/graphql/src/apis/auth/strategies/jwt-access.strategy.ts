@@ -16,10 +16,10 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
   }
   async validate(req, payload) {
     const accessToken = req.headers.authorization.split(' ')[1];
-    const redisAccessTokne = await this.cacheManager.get(
+    const redisAccessToken = await this.cacheManager.get(
       `accessToken : ${accessToken}`,
     );
-    if (redisAccessTokne) throw new UnauthorizedException();
+    if (redisAccessToken) throw new UnauthorizedException();
     return {
       id: payload.sub,
       exp: payload.exp,

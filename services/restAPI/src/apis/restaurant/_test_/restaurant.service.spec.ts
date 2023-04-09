@@ -98,7 +98,6 @@ describe('RestaurantService', () => {
         mockRestaurantDb.restaurantInfo,
       );
     });
-    // it('등록되지 않은 행정구역을 요청한경우');
   });
 
   describe('deleteCollection', () => {
