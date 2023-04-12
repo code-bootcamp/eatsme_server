@@ -16,7 +16,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(graphqlUploadExpress());
-  await app.listen(7000, () => {
+  await app.listen(5000, () => {
     console.log('=================');
     console.log('🐶🐶🐶 graphql 백엔드 서버 오픈 🐶🐶🐶');
     console.log('=================');
