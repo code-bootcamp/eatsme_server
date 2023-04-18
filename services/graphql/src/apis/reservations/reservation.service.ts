@@ -8,8 +8,6 @@ import {
   IReservationDelete,
   IReservationsCreate,
 } from './interfaces/reservations-service.interface';
-import { Response } from 'express';
-import { HttpExceptionFilter } from 'src/commons/filter/http-exception.filter';
 
 @Injectable()
 export class ReservationsService {
@@ -50,6 +48,7 @@ export class ReservationsService {
     }
 
     const { _id } = restaurants.data.restaurantInfo;
+
     return this.reservationsRepository.save({
       table,
       time,

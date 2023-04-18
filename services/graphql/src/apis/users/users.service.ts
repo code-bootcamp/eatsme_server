@@ -22,6 +22,7 @@ import { Cache } from 'cache-manager';
 import axios from 'axios';
 
 import { ImagesService } from '../images/images.service';
+import { time } from 'console';
 
 @Injectable()
 export class UserService {
@@ -59,11 +60,25 @@ export class UserService {
         'http://road-service:7100/info/road/find/restaurant',
         { data: restaurantIdArr },
       );
+      const timeObj = {
+        '1': 10,
+        '2': 12,
+        '3': 14,
+        '4': 16,
+        '5': 18,
+        '6': 20,
+        '7': 22,
+        '8': 24,
+      };
+      user.reservations.forEach((el) => {
+        el.reservation_time = timeObj[el.reservation_time];
+      });
       return {
         ...user,
         restaurant: reservationRestaurant.data,
       };
     }
+
     return {
       ...user,
     };

@@ -36,7 +36,6 @@ export class AlarmController {
         alarms.map((alarm) => ({
           id: alarm.users.nickname,
           message: alarm.alarmMessage,
-          userImg: alarm.commentUserImg,
           type: alarm.comments ? 'comment' : 'reply',
           alarmId: alarm.id,
         })),

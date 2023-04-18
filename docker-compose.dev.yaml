@@ -12,17 +12,17 @@ services:
     #         - 80:80
 
     food-service:
-        image: asia.gcr.io/eatsme/food-service:0.7
+        image: asia.gcr.io/eatsme/food-service:0.9
         build:
             context: services/graphql/
             dockerfile: DockerFile
         env_file:
             - .env
 
-    road-service:
-        image: asia.gcr.io/eatsme/road-service:0.4
-        build:
-            context: services/restAPI/
-            dockerfile: DockerFile
-        env_file:
-            - .env
+    # road-service:
+    #     image: asia.gcr.io/eatsme/road-service:0.5
+    #     build:
+    #         context: services/restAPI/
+    #         dockerfile: DockerFile
+    #     env_file:
+    #         - .env
