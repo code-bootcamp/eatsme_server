@@ -12,11 +12,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({
-    origin: process.env.ORIGIN2,
+    origin: process.env.ORIGIN,
     credentials: true,
   });
   app.use(graphqlUploadExpress());
-  await app.listen(5000, () => {
+  await app.listen(7000, () => {
     console.log('=================');
     console.log('🐶🐶🐶 graphql 백엔드 서버 오픈 🐶🐶🐶');
     console.log('=================');

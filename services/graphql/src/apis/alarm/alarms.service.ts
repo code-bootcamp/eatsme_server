@@ -19,13 +19,11 @@ export class AlarmService {
   async createAlarm({
     commentId,
     authorId,
-    commentUserImg,
     alarmMessage,
   }: IAlarmServiceCreate) {
-    await this.alarmRepository.save({
+    const alarm = this.alarmRepository.create({
       users: { id: authorId },
       comments: { id: commentId },
-      commentUserImg: commentUserImg,
       alarmMessage: alarmMessage,
     });
   }

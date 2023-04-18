@@ -95,7 +95,6 @@ export class CommentsService {
       await this.alarmService.createAlarm({
         authorId: board.user.id,
         commentId: newComment.id,
-        commentUserImg: newComment.user.userImg || null,
         alarmMessage: `${newComment.user.nickname}님이 댓글을 작성했습니다`,
       });
     }
