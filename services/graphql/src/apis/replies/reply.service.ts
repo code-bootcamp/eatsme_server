@@ -104,7 +104,6 @@ export class ReplysService {
         await this.AlarmService.createAlarm({
           authorId: el.id,
           commentId: newComment.commentId,
-          commentUserImg: newComment.user.userImg,
           alarmMessage: `${newComment.user.nickname}님이 대댓글을 작성했습니다`,
         });
       });

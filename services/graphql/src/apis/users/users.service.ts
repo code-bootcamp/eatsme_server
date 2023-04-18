@@ -44,7 +44,7 @@ export class UserService {
       relations: [
         'reservations',
         'reservations.users',
-        'alarms',
+        'alarms.comments.user',
         'boards.comments.replies',
         'boards',
         'toggleLikes',
