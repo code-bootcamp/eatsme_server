@@ -26,6 +26,7 @@ export class AlarmService {
       comments: { id: commentId },
       alarmMessage: alarmMessage,
     });
+    await this.alarmRepository.save(alarm);
   }
 
   async findByUserId({ userId }: IAlarmServiceFindByUserId): Promise<Alarm[]> {
