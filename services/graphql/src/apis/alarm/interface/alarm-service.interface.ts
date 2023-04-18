@@ -5,7 +5,6 @@ export interface IAlarmServiceFindByUserId{
 export interface IAlarmServiceCreate{
   commentId: string;
   authorId: string;
-  commentUserImg: string;
   alarmMessage: string;
 }
 

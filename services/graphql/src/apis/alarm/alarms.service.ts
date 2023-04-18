@@ -12,11 +12,10 @@ export class AlarmService {
   ) {}
 
   // 댓글 및 대댓글알람 생성기능
-  async createAlarm({ commentId, authorId, commentUserImg, alarmMessage }: IAlarmServiceCreate) {
+  async createAlarm({ commentId, authorId, alarmMessage }: IAlarmServiceCreate) {
     const alarm = this.alarmRepository.create({
       users: { id: authorId },
       comments: { id: commentId },
-      commentUserImg: commentUserImg,
       alarmMessage: alarmMessage,
     });
     await this.alarmRepository.save(alarm);
