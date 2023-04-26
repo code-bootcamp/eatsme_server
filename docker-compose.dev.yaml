@@ -12,7 +12,7 @@ services:
     #         - 80:80
 
     food-service:
-        image: asia.gcr.io/eatsme/food-service:0.9
+        image: asia.gcr.io/eatsme/food-service:1.4
         build:
             context: services/graphql/
             dockerfile: DockerFile
