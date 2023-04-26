@@ -96,22 +96,12 @@ export class AuthService {
       { sub: user.id },
       { secret: process.env.JWT_REFRESH_KEY, expiresIn: '2w' },
     );
-
-    //개발환경
-
+    res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader(
       'Set-Cookie',
-      `refreshToken=${refreshToken};path=/; httpOnly`,
+      `refreshToken=${refreshToken};path=/; domain=.sit-woo.store; SameSite=None; Secure; httpOnly`,
     );
-
-    //배포환경
-
-    // res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN2);
-    // res.setHeader('Access-Control-Allow-Credentials', 'true');
-    // res.setHeader(
-    //   'Set-Cookie',
-    //   `refreshToken=${refreshToken};path=/; domain=.jjjbackendclass.shop; SameSite=None; Secure; httpOnly`,
-    // );
   }
 
   restoreAccessToken({ user }: IAuthServiceGetRefreshToken): string {
@@ -126,7 +116,6 @@ export class AuthService {
   }
 
   async socialLogin({ req, res }: IAuthServiceSocialLogin) {
-    console.log(req, res);
     let user = await this.usersService.findOneByEmail({
       email: req.user.email,
     });

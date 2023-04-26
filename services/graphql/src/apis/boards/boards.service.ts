@@ -103,10 +103,17 @@ export class BoardsService {
       }
       throw error;
     }
-
-    board.personalMapData = restaurantInfo.data.map((el, i) => {
-      return { ...el, ...board.personalMapData[i] };
+    // console.log(board, restaurantInfo.data);
+    const obj = {};
+    restaurantInfo.data.forEach((el) => {
+      obj[el.restaurantId] = { ...el };
     });
+    console.log(obj, board, '!!!!!!!!!!!!!!!!');
+    board.personalMapData = board.personalMapData.map((el) => {
+      return { ...el, ...obj[el.restaurantId] };
+    });
+
+    console.log(board, 'return board');
     return {
       ...JSON.parse(JSON.stringify(board)),
       createdAt: board.createdAt,
