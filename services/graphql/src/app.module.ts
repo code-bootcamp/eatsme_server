@@ -38,7 +38,7 @@ import { ReplysModule } from './apis/replies/reply.module';
         autoSchemaFile: true,
         context: ({ req, res }) => ({ req, res }),
         cors: {
-          origin: process.env.ORIGIN,
+          origin: process.env.ORIGIN2,
           credentials: true,
         },
       }),
