@@ -20,8 +20,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
-  app.useGlobalFilters(new HttpExceptionFilter());
+  // app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+  // app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({
     origin: process.env.ORIGIN2,
     credentials: true,

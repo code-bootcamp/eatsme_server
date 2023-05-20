@@ -89,19 +89,7 @@ export class BoardsService {
         `http://road-service:7100/info/road/map?data=${restaurantIds}`,
       );
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Axios error:', error.message);
-        console.error('Axios request config:', error.config);
-        if (error.response) {
-          console.error('Axios response data:', error.response.data);
-          console.error('Axios response status:', error.response.status);
-          console.error('Axios response headers:', error.response.headers);
-        }
-      } else {
-        // axios 에러가 아닌 다른 에러인 경우
-        console.error('Unknown error:', error);
-      }
-      throw error;
+      throw new Error(error.response.data.message);
     }
 
     const obj = {};

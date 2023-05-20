@@ -37,15 +37,15 @@ export class ReservationsService {
 
     if (isReservation.length)
       throw new UnprocessableEntityException('이미 예약한 내역이 있습니다.');
-    let restaurants;
-    try {
-      restaurants = await axios.get(
+
+    const restaurants = await axios
+      .get(
         `http://road-service:7100/info/road/get/restaurant?restaurantId=${restaurantId}&reservation_time=${reservation_time}&table=${table}`,
-        { timeout: 2000 },
-      );
-    } catch (error) {
-      throw new UnprocessableEntityException('axios에러');
-    }
+      )
+      .then((data) => data)
+      .catch((error) => {
+        throw new UnprocessableEntityException(error.response.data.message);
+      });
 
     const { _id } = restaurants.data.restaurantInfo;
 
@@ -71,18 +71,14 @@ export class ReservationsService {
     if (!deleteRestaurant.length)
       throw new UnprocessableEntityException('예약정보가 없습니다.');
 
-    let result;
-    try {
-      result = await axios.delete(
-        'http://road-service:7100/info/road/remainTable',
-        {
-          data: { ...deleteRestaurant[0] },
-          timeout: 2000,
-        },
-      );
-    } catch (error) {
-      throw new UnprocessableEntityException('변경되지 않았다.');
-    }
+    const result = await axios
+      .delete('http://road-service:7100/info/road/remainTable', {
+        data: { ...deleteRestaurant[0] },
+      })
+      .then((data) => data)
+      .catch((error) => {
+        throw new UnprocessableEntityException(error.response.data.message);
+      });
 
     if (result.data) {
       return (await this.reservationsRepository.delete({ restaurant_id }))
